@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="msapplication-tap-highlight" content="no">
+        <title>Kaboom Rewards</title>
+
+        <link rel="icon" href="assets/images/logo.png" sizes="32x32">
+        <meta name="msapplication-TileColor" content="#00bcd4">
+        <link href="assets/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection">
+        <link href="assets/css/mdl.min.css" type="text/css" rel="stylesheet" media="screen,projection">
+        <link href="assets/css/style.css" type="text/css" rel="stylesheet" media="screen,projection">
+        <link href="assets/css/custom.css" type="text/css" rel="stylesheet" media="screen,projection">
+        <link href="assets/css/animate.css" type="text/css" rel="stylesheet" media="screen,projection">
+        <link href="assets/css/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
+        <link href="assets/css/plugins/dataTables/dataTables.responsive.css" type="text/css" rel="stylesheet" media="screen,projection">
+        <link href="assets/css/plugins/dataTables/dataTables.tableTools.min.css" type="text/css" rel="stylesheet" media="screen,projection">
+        <link href="assets/css/plugins/dataTables/dataTables.material.min.css" type="text/css" rel="stylesheet" media="screen,projection">
+    </head>
+    <body style="overflow-y: hidden;">
+        <div id='block-control' class=''></div>
+        <div class="progress hide-on-med-and-up hide-on-med-and-down" style="margin: 0rem 0 1rem 0;">
+            <div class="indeterminate"></div>
+        </div>
+        <div id="loader-wrapper">
+            <div id="loader"></div>
+            <div class="loader-section section-left"></div>
+            <div class="loader-section section-right"></div>
+        </div>
+        <div class="wrapper" id="content">
+            <nav class="navbar-color grey darken-3">
+                <div class="nav-wrapper row">
+                    <div class="col col s1 m1 l1">
+                        <img src="assets/images/logo.png" draggable='false' alt="" width='50px' class="circle responsive-img valign profile-image">
+                        <a class='dropdown-button waves-effect waves-light white-text profile-btn hidden'  data-activates='account'>
+                            <span>Kaboom Rewards</span>
+                            <i class='mdi-navigation-arrow-drop-down right'></i>
+                        </a>
+                        <ul id='account' class='dropdown-content'>
+                            <li><a id='log-out' style="line-height: 42px;"><i class="mdi-hardware-keyboard-tab"></i> Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <aside id="right-sidebar-nav overlap-gradient">
+                <ul id="chat-out" class="side-nav rightside-navigation right-aligned ps-container ps-active-y" style="width: 300px; right: 0px;">
+                    <li class="">
+                        <div id='display_login' class="animated row margin">
+                            <div class='login-gradient' style="overflow: hidden;">
+                                <div class='col-s12 m12 l12' style='margin-top:20%; padding:10px;'>
+                                    <form id="form_login" method="get" action="" novalidate="novalidate">
+                                        <div class="input-field col s12 m12 l12">
+                                            <h5>Log in and get started</h5>
+                                        </div>
+                                        <div class="input-field col s12 m12 l12">
+                                            <input id="field_empID" name="field_empID" type="text" data-error=".error_field_empID">
+                                            <label for="field_empID" class="center-align">Employee ID</label>  
+                                            <div class="error_field_empID"></div>  
+                                        </div>
+                                        <div class="input-field col s12 m12 l12">
+                                            <input id="field_password" name="field_password" type="password" data-error=".error_field_password">
+                                            <label for="field_password" class="">Password</label>
+                                            <div class="error_field_password"></div>  
+                                        </div>
+                                        <div class="col s12 m12 l12">
+                                            <input type="checkbox" name="field_remember" id="field_remember">
+                                            <label for="field_remember">Remember me</label>
+                                        </div>
+                                        <div class="input-field col s12 m12 l12">
+                                            <button class="btn waves-effect waves-light col s12" type='submit'>Login</button>
+                                        </div>
+                                        <div class="input-field col s12 m12 l12">
+                                            <p class="margin right-align medium-small"><a href="page-forgot-password.html">Forgot password?</a></p>
+                                        </div>          
+                                    </form>
+                                </div>
+                            </div>
+                            <!-- <a data-activates="slide-out" class="waves-effect waves-block waves-light button-collapse" style='display:block !important;'>
+                                <i class="mdi-action-shopping-cart mdl-badge mdl-badge--overlap"  data-badge="1"></i>
+                            </a> -->
+                        </div>                        
+                    </li>
+                    <li>
+                        <div id='display_cart' class="animated bounceOutUp row margin blue lighten-2">
+                            <div id='display_account' class="white-text">
+                                <div class="row center">
+                                    <div class="col s12 m12 l12 settings-button">
+                                        <button class="btn-floating no-shadow blue lighten-2 waves-effect right dropdown-button" data-activates="dropdown1">
+                                            <i class="mdi-navigation-more-vert"></i>
+                                        </button>
+                                        <ul id="dropdown1" class="dropdown-content">
+                                        <li><a data-cmd="account">Account</a></li>
+                                        <li><a data-cmd="logout">Log out</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="col col s12 m12 l12">
+                                        <img src="assets/images/avatar.jpg" draggable='false' alt="" class="circle responsive-img valign profile-image">
+                                        <p>Name Here</p>
+                                    </div>
+                                </div>
+                            </div>  
+                            <div id='display_points' class="center white-text blue darken-3">
+                                <span class='cart_bigNumber'>0<small>point</small>
+                                    <p>93 points left</p>
+                                </span>
+                            </div>
+                            <div id='display_productInCart' class="white" style='overflow-y: scroll;'>
+                                <ul class='collection' style='border: none;border-radius: 0px;margin: 0px;'></ul>
+                            </div>
+                            <div id='display_total' class="white-text">
+                                <div class='col s12'>
+                                    <h5>TOTAL:<span class="right"> 0.00</span></h5>
+                                    <button data-cmd='checkOut' class="btn waves-effect waves-light col s12" type="submit">Check Out</button>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </aside>
+            <section id="subcontent" class='row'>
+                <!-- <div class="col s12 grey lighten-2" style='top:-1px; position:relative;'>
+                    <br/>Categories Here<br/>
+                </div> -->
+                <div class="col s9" id='products' style="padding-top: 20px; width:78%; height:600px; overflow-y: scroll;"></div>
+            </section>
+            <aside id="right-sidebar-nav">
+                <ul id="slide-out" class="side-nav">
+                    <li>
+                        Hello World
+                    </li>
+                </ul>
+            </aside>
+        </div>
+        <div id="modal" class="modal bottom-sheet">
+            <div class="modal-content"></div>
+            <div class="modal-footer"></div>
+        </div>
+        <div id="modal_popUp" class="modal">
+            <div class="modal-content"></div>
+            <div class="modal-footer"></div>
+        </div>
+        <script type="text/javascript" src="assets/js/jquery.js"></script>    
+        <script type="text/javascript" src="assets/js/app.js"></script>
+        <script type="text/javascript" src="assets/js/perfect-scrollbar.min.js"></script>
+        <script type="text/javascript" src="assets/js/materialize.min.js"></script>
+        <script type="text/javascript" src="assets/js/jquery.idle.min.js"></script>
+        <script type="text/javascript" src="assets/js/validation/jquery.validate.min.js"></script>
+        <script type="text/javascript" src="assets/js/validation/additional-methods.min.js"></script>
+        <script type="text/javascript" src="assets/js/dataTables/jquery.dataTables.js"></script>
+        <script type="text/javascript" src="assets/js/dataTables/dataTables.fixedcolumns.js"></script>
+        <script type="text/javascript" src="assets/js/dataTables/dataTables.responsive.js"></script>
+        <script type="text/javascript" src="assets/js/dataTables/dataTables.tableTools.min.js"></script>
+        <script type="text/javascript" src="assets/js/dataTables/dataTables.material.min.js"></script>
+        <script type="text/javascript" src="assets/js/plugins.js"></script>
+        <script type="text/javascript" src="assets/js/process.js"></script>
+        <script type="text/javascript" src="assets/js/market.js"></script>
+        <script type="text/javascript">
+            $(".dropdown-button").dropdown();
+            market.ini();
+            login.market();
+            // $(".side-nav").sideNav();
+            // $(".button-collapse").sideNav({
+            //     menuWidth: 300,
+            //     edge: 'right',
+            //     closeOnClick: true,
+            //     draggable: true
+            // });
+        </script>
+    </body>
+</html>
