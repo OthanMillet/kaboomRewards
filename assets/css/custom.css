@@ -215,6 +215,7 @@ i.icon:before{
 
 .hover{
     opacity: 0.1;
+    cursor: pointer;
 }
 .hover:hover{
     opacity: 1;

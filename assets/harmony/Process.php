@@ -346,20 +346,6 @@ $function = new DatabaseClasses;
 			}
 		}
 
-		if(isset($_GET['get-request'])){
-			$data = $_POST['data'];
-			$account = [];
-			$requests = [];
-			$val = [];
-			$q1 = $function->PDO(true,"SELECT DISTINCT(request_by) FROM tbl_request LIMIT {$data[1]}, {$data[0]}");
-			foreach ($q1 as $i => $v) {
-				$account = $function->PDO(true,"SELECT * FROM tbl_employee WHERE id = '{$v[0]}'");
-				$requests = $function->PDO(true,"SELECT * FROM tbl_request WHERE request_by = '{$v[0]}' AND status = 0");
-				$val[] = [$account[0],$requests];
-			}
-			print_r(json_encode($val));
-		}
-
 	//setters
 		if(isset($_GET['set-newAdmin'])){
 	        $id = $function->PDO_IDGenerator('tbl_admin','id');
@@ -1208,7 +1194,7 @@ $function = new DatabaseClasses;
 			}
 			else if($data[1][0]['name'] == "field_Phone"){
 				$value =  $function->escape($data[1][0]['value']);
-				$query = $function->PDO(false,"INSERT INTO tbl_request(id,header,request_by,request_to,value,remarks,status,`date`) VALUES ('{$id}','Update Employee Account','{$user}','Admin',{$value},'Contat Number','0','{$date}')");
+				$query = $function->PDO(false,"INSERT INTO tbl_request(id,header,request_by,request_to,value,remarks,status,`date`) VALUES ('{$id}','Update Employee Account','{$user}','Admin',{$value},'Contact Number','0','{$date}')");
 				if($query->execute()){
 					$log = $function->log("request",$user,"Request to update employee account");
 					echo 1;
@@ -1516,6 +1502,168 @@ $function = new DatabaseClasses;
 				}
 		    }
 
+		// request
+
+		   	/*
+				status code:
+					0. pending
+					1. accepted
+					2. declined
+					3. invisible
+		   	*/
+
+			if(isset($_GET['get-request'])){
+				$data = $_POST['data'];
+				$account = [];
+				$requests = [];
+				$val = [];
+				$q1 = $function->PDO(true,"SELECT DISTINCT(request_by) FROM tbl_request LIMIT {$data[1]}, {$data[0]}");
+				foreach ($q1 as $i => $v) {
+					$account = $function->PDO(true,"SELECT * FROM tbl_employee WHERE id = '{$v[0]}'");
+					$requests = $function->PDO(true,"SELECT * FROM tbl_request WHERE request_by = '{$v[0]}' AND header = 'Update Employee Account' AND status = 0");
+					if(count($requests)>0){
+						$val[] = [$account[0],$requests];		
+					}
+				}
+				print_r(json_encode($val));
+			}
+
+		    if(isset($_GET['request-approve'])){
+		    	$data = $_POST['data'];
+				$q1 = $function->PDO(true,"SELECT * FROM tbl_request WHERE id = '{$data['request']}'");
+		    	if($q1[0][5] == 'Name'){
+		    		$names = json_decode($q1[0][4]);
+		    		$id = $q1[0][2];
+					$query = $function->PDO(false,"UPDATE tbl_employee SET family_name = '{$names[0]}', given_name = '{$names[1]}', middle_name = '{$names[2]}' WHERE id = '{$id}'; UPDATE tbl_request SET status = '1' WHERE id = '{$data['request']}';");
+					if($query->execute()){
+						$log = $function->log2($id,"Name has been changed.","Accepted Request");
+						echo 1;
+					}
+					else{
+						$Data = $query->errorInfo();
+						print_r($Data);
+					}
+		    	}
+		    	else if($q1[0][5] == 'Nickname'){
+		    		$value = $q1[0][4];
+		    		$id = $q1[0][2];
+					$query = $function->PDO(false,"UPDATE tbl_employee SET nickname = '{$value}' WHERE id = '{$id}'; UPDATE tbl_request SET status = '1' WHERE id = '{$data['request']}';");
+					if($query->execute()){
+						$log = $function->log2($id,"Nickname has been changed.","Accepted Request");
+						echo 1;
+					}
+					else{
+						$Data = $query->errorInfo();
+						print_r($Data);
+					}
+		    	}
+		    	else if($q1[0][5] == 'Position'){
+		    		$value = $q1[0][4];
+		    		$id = $q1[0][2];
+					$query = $function->PDO(false,"UPDATE tbl_employee SET 	position = '{$value}' WHERE id = '{$id}'; UPDATE tbl_request SET status = '1' WHERE id = '{$data['request']}';");
+					if($query->execute()){
+						$log = $function->log2($id,"Position has been changed.","Accepted Request");
+						echo 1;
+					}
+					else{
+						$Data = $query->errorInfo();
+						print_r($Data);
+					}
+		    	}
+		    	else if($q1[0][5] == 'Contact Number'){
+		    		$value = $q1[0][4];
+		    		$id = $q1[0][2];
+					$query = $function->PDO(false,"UPDATE tbl_employee SET contact_number = '{$value}' WHERE id = '{$id}'; UPDATE tbl_request SET status = '1' WHERE id = '{$data['request']}';");
+					if($query->execute()){
+						$log = $function->log2($id,"Contact Number has been changed.","Accepted Request");
+						echo 1;
+					}
+					else{
+						$Data = $query->errorInfo();
+						print_r($Data);
+					}
+		    	}
+		    	else if($q1[0][5] == 'Date of Birth'){
+		    		$value = $q1[0][4];
+		    		$id = $q1[0][2];
+					$query = $function->PDO(false,"UPDATE tbl_employee SET date_of_birth = '{$value}' WHERE id = '{$id}'; UPDATE tbl_request SET status = '1' WHERE id = '{$data['request']}';");
+					if($query->execute()){
+						$log = $function->log2($id,"Date  of birth has been changed.","Accepted Request");
+						echo 1;
+					}
+					else{
+						$Data = $query->errorInfo();
+						print_r($Data);
+					}
+		    	}
+		    	else if($q1[0][5] == 'Email'){
+		    		$value = $q1[0][4];
+		    		$id = $q1[0][2];
+					$query = $function->PDO(false,"UPDATE tbl_employee SET email_address = '{$value}' WHERE id = '{$id}'; UPDATE tbl_request SET status = '1' WHERE id = '{$data['request']}';");
+					if($query->execute()){
+						$log = $function->log2($id,"Email has been changed.","Accepted Request");
+						echo 1;
+					}
+					else{
+						$Data = $query->errorInfo();
+						print_r($Data);
+					}
+		    	}
+		    	else if($q1[0][5] == 'Address'){
+		    		$value = $q1[0][4];
+		    		$id = $q1[0][2];
+					$query = $function->PDO(false,"UPDATE tbl_employee SET 	address = '{$value}' WHERE id = '{$id}'; UPDATE tbl_request SET status = '1' WHERE id = '{$data['request']}';");
+					if($query->execute()){
+						$log = $function->log2($id,"Address has been changed.","Accepted Request");
+						echo 1;
+					}
+					else{
+						$Data = $query->errorInfo();
+						print_r($Data);
+					}
+		    	}
+		    	else if($q1[0][5] == 'Gender'){
+		    		$value = $q1[0][4];
+		    		$id = $q1[0][2];
+					$query = $function->PDO(false,"UPDATE tbl_employee SET 	gender = '{$value}' WHERE id = '{$id}'; UPDATE tbl_request SET status = '1' WHERE id = '{$data['request']}';");
+					if($query->execute()){
+						$log = $function->log2($id,"Gender has been changed.","Accepted Request");
+						echo 1;
+					}
+					else{
+						$Data = $query->errorInfo();
+						print_r($Data);
+					}
+		    	}
+		    	else if($q1[0][5] == 'Profile Picture'){
+		    		$value = $q1[0][4];
+		    		$id = $q1[0][2];
+					$query = $function->PDO(false,"UPDATE tbl_employee SET picture = '{$value}' WHERE id = '{$id}'; UPDATE tbl_request SET status = '1' WHERE id = '{$data['request']}';");
+					if($query->execute()){
+						$log = $function->log2($id,"Picture has been changed.","Accepted Request");
+						echo 1;
+					}
+					else{
+						$Data = $query->errorInfo();
+						print_r($Data);
+					}
+		    	}
+		    }
+
+		    if(isset($_GET['request-cancel'])){
+		    	// print_r($q1);
+		    	$data = $_POST['data'];
+	    		$id = $data['node'];
+				$query = $function->PDO(false,"UPDATE tbl_request SET status = '2' WHERE id = '{$data['request']}';");
+				if($query->execute()){
+						$log = $function->log2($id,"Request to change has been cancelled.","Cancelled Request");
+					echo 1;
+				}
+				else{
+					$Data = $query->errorInfo();
+					print_r($Data);
+				}
+		    }
 
     //backups
 	    if(isset($_GET['buckup-db'])){

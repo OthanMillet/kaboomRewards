@@ -3394,66 +3394,113 @@ product = {
 
 request = {
 	ini:function(){
-		var content = "", profile = "",req = "",reqCount = "";
+		var content = "", profile = "", req = "", reqCount = "", reqContent = "", genderCall = "", value = "";
 		var data = request.get(10,0);
 		data = JSON.parse(data);
 
 		$.each(data,function(i,v){
 			profile = (v[0][12] == "")?'avatar.jpg':v[0][12];
-			req = JSON.stringify(v[1]);
 
-			localStorage.setItem(v[0][0],req);
-			if(v[1].length==1){
-				reqCount = "<span class='new badge one'>"+v[1].length+"</span>";
-			}
-			else{
-				reqCount = "<span class='new badge'>"+v[1].length+"</span>";
-			}
+			if(v[0][7] == "Male")
+				genderCall = "his";
+			else
+				genderCall = "her";
 
-			content += "<li class='collection-item avatar'>c"+
-						"	"+reqCount+
-						"   <img src='../assets/images/profile/"+profile+"' class='circle' width='42px' />"+
-						"	<p>"+v[0][4]+" "+v[0][3]+"</p>"+
-						"	<a data-cmd='viewRequests' data-node='"+v[0][0]+"'>hello world</a>"+
+			if(v[1].length==1)
+				reqCount = "<span class=''>"+v[1].length+" request</span>";
+			else
+				reqCount = "<span class=''>"+v[1].length+" requests</span>";
+
+			reqContent = "";
+			$.each(v[1],function(i2,v2){
+				if(v2[5] == "Name"){
+					var chunk = JSON.parse(v2[4]);
+					value = chunk[1]+" "+chunk[2]+" "+chunk[0];
+				}
+				else if(v2[5] == "Profile Picture"){
+					value = "click to show picture";				
+				}
+				else{
+					value = v2[4];
+				}
+
+				reqContent += "<li style='padding:10px; border-bottom: 1px solid #ccc;'>"+
+							  v[0][4]+" wants to change "+genderCall+" "+v2[5]+" to <u>"+value+".</u>"+
+							  " <a data-cmd='approve' data-node='"+v[0][0]+"' data-request='"+v2[0]+"' class='blue-text hover'>Approve</a>"+
+							  " <a data-cmd='cancel' data-node='"+v[0][0]+"' data-request='"+v2[0]+"' class='black-text hover'>Cancel</a>"+
+							  "</li>";
+			});
+
+			content += "<li class='avatar'>"+
+						"   <div class='collapsible-header' style='padding-top: 10px;padding-bottom: 10px;'>"+
+						"   	<img src='../assets/images/profile/"+profile+"' class='circle' width='42px'/>"+
+						"		"+v[0][4]+" "+v[0][3]+""+
+						"		<a data-cmd='viewRequests' data-node='"+v[0][0]+"'>"+reqCount+"</a>"+
+						"	</div>"+
+						"   <div class='collapsible-body'>"+
+						"		<ul style='margin: 20px;'>"+reqContent+"</ul>"+
+						"	</div>"+
 						"</li>"; 
 		})
 		$("#display_requestsList ul").append(content);
 		$("#display_requestsList ul li").removeClass('active');
+	    $('.collapsible').collapsible();
 
-		$("a[data-cmd='viewRequests']").on('click',function(){
+		$("a[data-cmd='approve']").on('click',function(){
 			var data = $(this).data();
-			request.view(data);
-		})
+			request.options(['approve',data]);
+		});
+
+		$("a[data-cmd='cancel']").on('click',function(){
+			var data = $(this).data();
+			request.options(['cancel',data]);
+		});
 	},
 	get:function(min,offset){
 		var data = system.ajax('../assets/harmony/Process.php?get-request',[min,offset]);
-		return data.responseText;		
-	},
-	view:function(req){
-		var content = "", value = "";
-		var data = localStorage.getItem(req['node']);
-		data = JSON.parse(data);
+		data = data.responseText;
 		console.log(data);
-		$.each(req,function(i,v){
-			if(v[5] == "Name"){
-				var chunk = JSON.parse(v[4]);
-				console.log(chunk);
-				value = chunk[1]+" "+chunk[2]+" "+chunk[0];
-			}
-			else if(v[5] == "Profile Picture"){
-				value = "<img src='../assets/images/profile/"+v[4]+"' class='circle' width='42px'/>";				
+		// data = JSON.parse(data);
+		// console.log(data);
+		return data;		
+	},
+	options:function(data){
+		var content = "Are you sure you want to "+data[0]+" the request?<br/><br/>";
+		$("#modal_confirm .modal-content").html(content);
+		$('#modal_confirm .modal-footer').html("<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Close</a><button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Proceed</button>");			
+		$('#modal_confirm').openModal('show');			
+
+		$("button[data-cmd='button_proceed']").on('click',function(){
+			console.log(data);
+			if(data[0] == 'approve'){
+				var ajax = system.ajax('../assets/harmony/Process.php?request-approve',data[1]);
+				ajax.done(function(ajax){
+					console.log(ajax);
+					if(ajax == 1){
+						Materialize.toast('Account updated.',4000);
+						$('#modal_confirm').closeModal();	
+						App.handleLoadPage("#cmd=index;content=request_accountUpdate;");
+					}
+					else{
+						Materialize.toast('Cannot process request.',4000);
+					}
+				});
 			}
 			else{
-				value = v[4];
+				var ajax = system.ajax('../assets/harmony/Process.php?request-cancel',data[1]);
+				ajax.done(function(ajax){
+					console.log(ajax);
+					if(ajax == 1){
+						Materialize.toast('Request cancelled.',4000);
+						$('#modal_confirm').closeModal();	
+						App.handleLoadPage("#cmd=index;content=request_accountUpdate;");
+					}
+					else{
+						Materialize.toast('Cannot process request.',4000);
+					}
+				});
+
 			}
-			content += "<tr>"+
-						"<td>Requesting to change "+v[5]+" to "+value+" </td>"+
-						"<td width='5%'>Options</td>"+
-						"</tr>";
-			console.log(v);
-		})
-		$("#modal_confirm .modal-content").html(content);
-		$('#modal_confirm .modal-footer').html("");			
-		$('#modal_confirm').openModal('show');			
+		});
 	}
 }
