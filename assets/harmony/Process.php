@@ -731,18 +731,36 @@ $function = new DatabaseClasses;
 			$query = $function->PDO(true,"SELECT * FROM tbl_pointbalance WHERE id = '{$_id[0]}'");
 
 			if($query[0][1]>=$data[0][0]['value']){
-				$query2 = $function->PDO(false,"INSERT INTO tbl_request(id,header,request_by,request_to,value,remarks,status,`date`) VALUES ('{$id}','Add Points','{$user}','{$data[1]}','{$data[0][0]['value']}','{$data[0][1]['value']}','1','{$date}')");
+				$newBalance = (int)$query[0][1] - (int)$data[0][0]['value'];
+				$query2 = $function->PDO(false,"INSERT INTO tbl_request(id,header,request_by,request_to,value,remarks,status,`date`) VALUES ('{$id}','Add Points','{$user}','{$data[1]}','{$data[0][0]['value']}','{$data[0][1]['value']}','0','{$date}'); UPDATE tbl_pointbalance SET balance = '{$newBalance}' WHERE id = '{$_id[0]}'");
 				if($query2->execute()){
-					$newBalance = (int)$query[0][1] - (int)$data[0][0]['value'];
-					$query = $function->PDO(false,"UPDATE tbl_pointbalance SET balance = '{$newBalance}'");
-					if($query->execute()){
-						$log = $function->log2($data[1],"Added points to "+$data[1]+"Waiting for admin's confirmation.","Points");
-						echo 1;
-					}
-					else{
-						$Data = $query->errorInfo();
-						print_r($Data);
-					}
+					$log = $function->log2($data[1],"Added points to "+$data[1]+"Waiting for admin's confirmation.","Points");
+					echo 1;
+				}
+				else{
+					$Data = $query2->errorInfo();
+					print_r($Data);
+				}
+			}
+			else{
+				echo 0;
+			}
+		}
+
+		if(isset($_GET['set-addPendingPointsEmployer'])){
+	        $id = $function->PDO_IDGenerator('tbl_request','id');
+			$date = $function->PDO_DateAndTime();
+			$user = $function->getUser();
+			$data = $_POST['data'];
+			$_id = explode("-", $data[1]);
+			$query = $function->PDO(true,"SELECT * FROM tbl_pointbalance WHERE id = '{$_id[0]}'");
+
+			if($query[0][1]>=$data[0][0]['value']){
+				$newBalance = (int)$query[0][1] - (int)$data[0][0]['value'];
+				$query2 = $function->PDO(false,"INSERT INTO tbl_request(id,header,request_by,request_to,value,remarks,status,`date`) VALUES ('{$id}','Add Points','{$user}','{$data[1]}','{$data[0][0]['value']}','{$data[0][1]['value']}','0','{$date}'); UPDATE tbl_pointbalance SET balance = '{$newBalance}' WHERE id = '{$_id[0]}'");
+				if($query2->execute()){
+					$log = $function->log2($data[1],"Added points to "+$data[1]+"Waiting for admin's confirmation.","Points");
+					echo 1;
 				}
 				else{
 					$Data = $query2->errorInfo();
@@ -1512,7 +1530,7 @@ $function = new DatabaseClasses;
 					3. invisible
 		   	*/
 
-			if(isset($_GET['get-request'])){
+			if(isset($_GET['get-requestAccountUpdate'])){
 				$data = $_POST['data'];
 				$account = [];
 				$requests = [];
@@ -1522,7 +1540,23 @@ $function = new DatabaseClasses;
 					$account = $function->PDO(true,"SELECT * FROM tbl_employee WHERE id = '{$v[0]}'");
 					$requests = $function->PDO(true,"SELECT * FROM tbl_request WHERE request_by = '{$v[0]}' AND header = 'Update Employee Account' AND status = 0");
 					if(count($requests)>0){
-						$val[] = [$account[0],$requests];		
+						$val[] = [$account[0],$requests];
+					}
+				}
+				print_r(json_encode($val));
+			}
+
+			if(isset($_GET['get-requestPoints'])){
+				$data = $_POST['data'];
+				$account = [];
+				$requests = [];
+				$val = [];
+				$q1 = $function->PDO(true,"SELECT DISTINCT(request_to) FROM tbl_request LIMIT {$data[1]}, {$data[0]}");
+				foreach ($q1 as $i => $v) {
+					$account = $function->PDO(true,"SELECT * FROM tbl_employee WHERE id = '{$v[0]}'");
+					$requests = $function->PDO(true,"SELECT * FROM tbl_request WHERE request_to = '{$v[0]}' AND header = 'Add Points' AND status = 0");
+					if(count($requests)>0){
+						$val[] = [$account[0],$requests];
 					}
 				}
 				print_r(json_encode($val));
@@ -1657,6 +1691,49 @@ $function = new DatabaseClasses;
 				$query = $function->PDO(false,"UPDATE tbl_request SET status = '2' WHERE id = '{$data['request']}';");
 				if($query->execute()){
 						$log = $function->log2($id,"Request to change has been cancelled.","Cancelled Request");
+					echo 1;
+				}
+				else{
+					$Data = $query->errorInfo();
+					print_r($Data);
+				}
+		    }
+
+		    if(isset($_GET['request-approvePoints'])){
+		    	$data = $_POST['data'];
+				$date = $function->PDO_DateAndTime();
+				$quantity = $function->PDO(true,"SELECT COUNT(*) FROM tbl_pointsactivity");
+				$q1 = $function->PDO(true,"SELECT * FROM tbl_request WHERE id = '{$data['request']}'");
+				$count = $quantity[0][0];
+				$employee_id = $data['node'];
+				$points = (int)$q1[0][4];
+				$currentPoints = $function->PDO(true,"SELECT * FROM tbl_points WHERE id = '{$employee_id}';");
+				$newpoints = $currentPoints[0][2]+$points;
+		        $id = $currentPoints[0][3].'-'.($count+1);
+
+				$query = $function->PDO(false,"UPDATE tbl_points SET points = '{$newpoints}' WHERE id = '{$employee_id}' AND company_id = '{$currentPoints[0][3]}'; INSERT INTO tbl_pointsactivity(id,points,addedby,employee_id,`date`,remarks) VALUES('{$id}','{$points}','admin','{$currentPoints[0][1]}','{$date}','No remarks'); UPDATE tbl_request SET status = '1' WHERE id = '{$data['request']}';");
+				if($query->execute()){
+					$log = $function->log2($employee_id,"Points has been added.","Points Request");
+					echo 1;
+				}
+				else{
+					$Data = $query->errorInfo();
+					print_r($Data);
+				}
+		    }
+
+		    if(isset($_GET['request-cancelPoints'])){
+		    	$data = $_POST['data'];
+				$employee_id = $data['node'];
+				$q1 = $function->PDO(true,"SELECT * FROM tbl_request WHERE id = '{$data['request']}'");
+				$q2 = $function->PDO(true,"SELECT * FROM tbl_points WHERE id = '{$employee_id}';"); // just to get comany id
+				$company_id = $q2[0][3];
+				$queryPointBalance = $function->PDO(true,"SELECT * FROM tbl_pointbalance WHERE id = '{$company_id}'");
+		    	$newBalance = (int)$q1[0][4] + (int)($queryPointBalance[0][1]);
+
+				$query = $function->PDO(false,"UPDATE tbl_pointbalance SET balance = '{$newBalance}' WHERE id = '{$company_id}'; UPDATE tbl_request SET status = '2' WHERE id = '{$data['request']}';");
+				if($query->execute()){
+					$log = $function->log2($employee_id,"Points has been added.","Points Request");
 					echo 1;
 				}
 				else{

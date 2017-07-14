@@ -3394,77 +3394,154 @@ product = {
 
 request = {
 	ini:function(){
+	},
+	get:function(req,min,offset){
+		if(req == 'points'){
+			var data = system.ajax('../assets/harmony/Process.php?get-requestPoints',[min,offset]);
+			data = data.responseText;
+			return data;					
+		}
+		else{
+			var data = system.ajax('../assets/harmony/Process.php?get-requestAccountUpdate',[min,offset]);
+			data = data.responseText;
+			return data;					
+		}
+	},
+	accountUpdate:function(){
 		var content = "", profile = "", req = "", reqCount = "", reqContent = "", genderCall = "", value = "";
-		var data = request.get(10,0);
+		var data = request.get('account update',10,0);
 		data = JSON.parse(data);
+		if(data.length>0){
+			$.each(data,function(i,v){
+				profile = (v[0][12] == "")?'avatar.jpg':v[0][12];
 
-		$.each(data,function(i,v){
-			profile = (v[0][12] == "")?'avatar.jpg':v[0][12];
+				if(v[0][7] == "Male")
+					genderCall = "his";
+				else
+					genderCall = "her";
 
-			if(v[0][7] == "Male")
-				genderCall = "his";
-			else
-				genderCall = "her";
+				if(v[1].length==1)
+					reqCount = "<span class=''>"+v[1].length+" request</span>";
+				else
+					reqCount = "<span class=''>"+v[1].length+" requests</span>";
 
-			if(v[1].length==1)
-				reqCount = "<span class=''>"+v[1].length+" request</span>";
-			else
-				reqCount = "<span class=''>"+v[1].length+" requests</span>";
+				reqContent = "";
+				$.each(v[1],function(i2,v2){
+					if(v2[5] == "Name"){
+						var chunk = JSON.parse(v2[4]);
+						value = chunk[1]+" "+chunk[2]+" "+chunk[0];
+					}
+					else if(v2[5] == "Profile Picture"){
+						value = "click to show picture";				
+					}
+					else{
+						value = v2[4];
+					}
 
-			reqContent = "";
-			$.each(v[1],function(i2,v2){
-				if(v2[5] == "Name"){
-					var chunk = JSON.parse(v2[4]);
-					value = chunk[1]+" "+chunk[2]+" "+chunk[0];
-				}
-				else if(v2[5] == "Profile Picture"){
-					value = "click to show picture";				
-				}
-				else{
-					value = v2[4];
-				}
+					reqContent += "<li style='padding:10px; border-bottom: 1px solid #ccc;'>"+
+								  v[0][4]+" wants to change "+genderCall+" "+v2[5]+" to <u>"+value+".</u>"+
+								  " <a data-cmd='approve' data-node='"+v[0][0]+"' data-request='"+v2[0]+"' class='blue-text hover'>Approve</a>"+
+								  " <a data-cmd='cancel' data-node='"+v[0][0]+"' data-request='"+v2[0]+"' class='black-text hover'>Cancel</a>"+
+								  "</li>";
+				});
 
-				reqContent += "<li style='padding:10px; border-bottom: 1px solid #ccc;'>"+
-							  v[0][4]+" wants to change "+genderCall+" "+v2[5]+" to <u>"+value+".</u>"+
-							  " <a data-cmd='approve' data-node='"+v[0][0]+"' data-request='"+v2[0]+"' class='blue-text hover'>Approve</a>"+
-							  " <a data-cmd='cancel' data-node='"+v[0][0]+"' data-request='"+v2[0]+"' class='black-text hover'>Cancel</a>"+
-							  "</li>";
+				content += "<li class='avatar'>"+
+							"   <div class='collapsible-header' style='padding-top: 10px;padding-bottom: 10px;'>"+
+							"   	<img src='../assets/images/profile/"+profile+"' class='circle' width='42px'/>"+
+							"		"+v[0][4]+" "+v[0][3]+""+
+							"		<a data-cmd='viewRequests' data-node='"+v[0][0]+"'>"+reqCount+"</a>"+
+							"	</div>"+
+							"   <div class='collapsible-body'>"+
+							"		<ul style='margin: 20px;'>"+reqContent+"</ul>"+
+							"	</div>"+
+							"</li>"; 
+			})
+			$("#display_requestsList ul").append(content);
+			$("#display_requestsList ul li").removeClass('active');
+		    $('.collapsible').collapsible();
+
+			$("a[data-cmd='approve']").on('click',function(){
+				var data = $(this).data();
+				request.optionsAccountUpdate(['approve',data]);
 			});
 
-			content += "<li class='avatar'>"+
-						"   <div class='collapsible-header' style='padding-top: 10px;padding-bottom: 10px;'>"+
-						"   	<img src='../assets/images/profile/"+profile+"' class='circle' width='42px'/>"+
-						"		"+v[0][4]+" "+v[0][3]+""+
-						"		<a data-cmd='viewRequests' data-node='"+v[0][0]+"'>"+reqCount+"</a>"+
-						"	</div>"+
-						"   <div class='collapsible-body'>"+
-						"		<ul style='margin: 20px;'>"+reqContent+"</ul>"+
-						"	</div>"+
-						"</li>"; 
-		})
-		$("#display_requestsList ul").append(content);
-		$("#display_requestsList ul li").removeClass('active');
-	    $('.collapsible').collapsible();
-
-		$("a[data-cmd='approve']").on('click',function(){
-			var data = $(this).data();
-			request.options(['approve',data]);
-		});
-
-		$("a[data-cmd='cancel']").on('click',function(){
-			var data = $(this).data();
-			request.options(['cancel',data]);
-		});
+			$("a[data-cmd='cancel']").on('click',function(){
+				var data = $(this).data();
+				request.optionsAccountUpdate(['cancel',data]);
+			});
+		}
+		else{
+			$("#display_requestsList ul").append("<h4 class='center'>No account update request</h4>");
+		}
 	},
-	get:function(min,offset){
-		var data = system.ajax('../assets/harmony/Process.php?get-request',[min,offset]);
-		data = data.responseText;
-		console.log(data);
-		// data = JSON.parse(data);
-		// console.log(data);
-		return data;		
+	points:function(){
+		var content = "", profile = "", req = "", reqCount = "", reqContent = "", genderCall = "", value = "";
+		var data = request.get('points',10,0);
+		data = JSON.parse(data);
+		if(data.length>0){
+			$.each(data,function(i,v){
+				profile = (v[0][12] == "")?'avatar.jpg':v[0][12];
+
+				if(v[0][7] == "Male")
+					genderCall = "his";
+				else
+					genderCall = "her";
+
+				if(v[1].length==1)
+					reqCount = "<span class=''>"+v[1].length+" request</span>";
+				else
+					reqCount = "<span class=''>"+v[1].length+" requests</span>";
+
+				reqContent = "";
+				$.each(v[1],function(i2,v2){
+					if(v2[5] == "Name"){
+						var chunk = JSON.parse(v2[4]);
+						value = chunk[1]+" "+chunk[2]+" "+chunk[0];
+					}
+					else if(v2[5] == "Profile Picture"){
+						value = "click to show picture";				
+					}
+					else{
+						value = v2[4];
+					}
+
+					reqContent += "<li style='padding:10px; border-bottom: 1px solid #ccc;'>"+
+								  v[0][4]+" wants to change "+genderCall+" "+v2[5]+" to <u>"+value+".</u>"+
+								  " <a data-cmd='approve' data-node='"+v[0][0]+"' data-request='"+v2[0]+"' class='blue-text hover'>Approve</a>"+
+								  " <a data-cmd='cancel' data-node='"+v[0][0]+"' data-request='"+v2[0]+"' class='black-text hover'>Cancel</a>"+
+								  "</li>";
+				});
+
+				content += "<li class='avatar'>"+
+							"   <div class='collapsible-header' style='padding-top: 10px;padding-bottom: 10px;'>"+
+							"   	<img src='../assets/images/profile/"+profile+"' class='circle' width='42px'/>"+
+							"		"+v[0][4]+" "+v[0][3]+""+
+							"		<a data-cmd='viewRequests' data-node='"+v[0][0]+"'>"+reqCount+"</a>"+
+							"	</div>"+
+							"   <div class='collapsible-body'>"+
+							"		<ul style='margin: 20px;'>"+reqContent+"</ul>"+
+							"	</div>"+
+							"</li>"; 
+			})
+			$("#display_requestsList ul").append(content);
+			$("#display_requestsList ul li").removeClass('active');
+		    $('.collapsible').collapsible();
+
+			$("a[data-cmd='approve']").on('click',function(){
+				var data = $(this).data();
+				request.optionsPoints(['approve',data]);
+			});
+
+			$("a[data-cmd='cancel']").on('click',function(){
+				var data = $(this).data();
+				request.optionsPoints(['cancel',data]);
+			});
+		}
+		else{
+			$("#display_requestsList ul").append("<h4 class='center'>No points request</h4>");
+		}
 	},
-	options:function(data){
+	optionsAccountUpdate:function(data){
 		var content = "Are you sure you want to "+data[0]+" the request?<br/><br/>";
 		$("#modal_confirm .modal-content").html(content);
 		$('#modal_confirm .modal-footer').html("<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Close</a><button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Proceed</button>");			
@@ -3494,6 +3571,45 @@ request = {
 						Materialize.toast('Request cancelled.',4000);
 						$('#modal_confirm').closeModal();	
 						App.handleLoadPage("#cmd=index;content=request_accountUpdate;");
+					}
+					else{
+						Materialize.toast('Cannot process request.',4000);
+					}
+				});
+
+			}
+		});
+	},
+	optionsPoints:function(data){
+		var content = "Are you sure you want to "+data[0]+" the additional points?<br/><br/>";
+		$("#modal_confirm .modal-content").html(content);
+		$('#modal_confirm .modal-footer').html("<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Close</a><button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Proceed</button>");			
+		$('#modal_confirm').openModal('show');			
+
+		$("button[data-cmd='button_proceed']").on('click',function(){
+			console.log(data);
+			if(data[0] == 'approve'){
+				var ajax = system.ajax('../assets/harmony/Process.php?request-approvePoints',data[1]);
+				ajax.done(function(ajax){
+					console.log(ajax);
+					if(ajax == 1){
+						Materialize.toast('Points updated.',4000);
+						$('#modal_confirm').closeModal();	
+						App.handleLoadPage("#cmd=index;content=request_points;");
+					}
+					else{
+						Materialize.toast('Cannot process request.',4000);
+					}
+				});
+			}
+			else{
+				var ajax = system.ajax('../assets/harmony/Process.php?request-cancelPoints',data[1]);
+				ajax.done(function(ajax){
+					console.log(ajax);
+					if(ajax == 1){
+						Materialize.toast('Request cancelled.',4000);
+						$('#modal_confirm').closeModal();	
+						App.handleLoadPage("#cmd=index;content=request_points;");
 					}
 					else{
 						Materialize.toast('Cannot process request.',4000);

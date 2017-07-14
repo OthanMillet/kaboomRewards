@@ -1932,10 +1932,11 @@ points = {
 					},
 					submitHandler: function (form) {
 						var _form = $(form).serializeArray();
-						var data = system.ajax('../assets/harmony/Process.php?set-addPendingPointsAdmin',[_form,id]);
+						var data = system.ajax('../assets/harmony/Process.php?set-addPendingPointsEmployer',[_form,id]);
 						data.done(function(data){
 							console.log(data);
 							if(data == 1){
+								$('#modal_confirm').closeModal();	
 								Materialize.toast('Points added. Waiting for the administrator\'s confirmation.',1000,'',function(){
 									App.handleLoadPage("#cmd=index;content=focusEmployee;"+id);
 								});
