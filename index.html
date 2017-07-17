@@ -19,33 +19,39 @@
         <link href="assets/css/plugins/dataTables/dataTables.tableTools.min.css" type="text/css" rel="stylesheet" media="screen,projection">
         <link href="assets/css/plugins/dataTables/dataTables.material.min.css" type="text/css" rel="stylesheet" media="screen,projection">
     </head>
-    <body style="overflow-y: hidden;">
-        <div id='block-control' class=''></div>
-        <div class="progress hide-on-med-and-up hide-on-med-and-down" style="margin: 0rem 0 1rem 0;">
-            <div class="indeterminate"></div>
-        </div>
+    <body>
         <div id="loader-wrapper">
-            <div id="loader"></div>
+            <div id="loader"></div>        
             <div class="loader-section section-left"></div>
             <div class="loader-section section-right"></div>
         </div>
-        <div class="wrapper" id="content">
-            <nav class="navbar-color grey darken-3">
-                <div class="nav-wrapper row">
-                    <div class="col col s1 m1 l1">
-                        <img src="assets/images/logo.png" draggable='false' alt="" width='50px' class="circle responsive-img valign profile-image">
-                        <a class='dropdown-button waves-effect waves-light white-text profile-btn hidden'  data-activates='account'>
-                            <span>Kaboom Rewards</span>
-                            <i class='mdi-navigation-arrow-drop-down right'></i>
-                        </a>
-                        <ul id='account' class='dropdown-content'>
-                            <li><a id='log-out' style="line-height: 42px;"><i class="mdi-hardware-keyboard-tab"></i> Logout</a></li>
+        <header id="header" class="page-topbar">
+            <div class="navbar-fixed">
+                <nav class="navbar-color grey darken-">
+                    <div class="nav-wrapper">
+                        <ul class="left ">
+                            <li>
+                                <h1 class="logo-wrapper">
+                                    <a href="#" class="left brand-logo darken-1">
+                                        <img src="assets/images/logo.png" draggable='false' alt="" width='50px' class="circle responsive-img valign profile-image" style='width: 80px;'>
+                                    </a>
+                                    <span class="logo-text">Materialize</span>
+                                </h1>
+                            </li>
+                        </ul>
+                        <ul class="right ">
+                            <li>
+                                <a data-activates="chat-out" class="waves-effect waves-block waves-light chat-collapse"><i class="mdi-communication-chat"></i></a>
+                            </li>
                         </ul>
                     </div>
-                </div>
-            </nav>
-            <aside id="right-sidebar-nav overlap-gradient">
-                <ul id="chat-out" class="side-nav rightside-navigation right-aligned ps-container ps-active-y" style="width: 300px; right: 0px;">
+                </nav>
+            </div>
+        </header>
+        <div >
+            <div class="wrapper">
+                <aside id="right-sidebar-nav overlap-gradient">
+                    <ul id="chat-out" class="side-nav">
                     <li class="">
                         <div id='display_login' class="animated row margin">
                             <div class='login-gradient' style="overflow: hidden;">
@@ -64,22 +70,15 @@
                                             <label for="field_password" class="">Password</label>
                                             <div class="error_field_password"></div>  
                                         </div>
-                                        <div class="col s12 m12 l12">
-                                            <input type="checkbox" name="field_remember" id="field_remember">
-                                            <label for="field_remember">Remember me</label>
-                                        </div>
                                         <div class="input-field col s12 m12 l12">
                                             <button class="btn waves-effect waves-light col s12" type='submit'>Login</button>
                                         </div>
-                                        <div class="input-field col s12 m12 l12">
+                                        <div class="input-field col s12 m12 l12 hidden">
                                             <p class="margin right-align medium-small"><a href="page-forgot-password.html">Forgot password?</a></p>
                                         </div>          
                                     </form>
                                 </div>
                             </div>
-                            <!-- <a data-activates="slide-out" class="waves-effect waves-block waves-light button-collapse" style='display:block !important;'>
-                                <i class="mdi-action-shopping-cart mdl-badge mdl-badge--overlap"  data-badge="1"></i>
-                            </a> -->
                         </div>                        
                     </li>
                     <li>
@@ -110,41 +109,28 @@
                                 <ul class='collection' style='border: none;border-radius: 0px;margin: 0px;'></ul>
                             </div>
                             <div id='display_total' class="white-text">
-                                <div class='col s12'>
-                                    <h5>TOTAL:<span class="right"> 0.00</span></h5>
+                                <div class='col s12'><br/>
+                                    <!-- <h5>TOTAL:<span class="right"> 0.00</span></h5> -->
                                     <button data-cmd='checkOut' class="btn waves-effect waves-light col s12" type="submit">Check Out</button>
                                 </div>
                             </div>
                         </div>
                     </li>
-                </ul>
-            </aside>
-            <section id="subcontent" class='row'>
-                <!-- <div class="col s12 grey lighten-2" style='top:-1px; position:relative;'>
-                    <br/>Categories Here<br/>
-                </div> -->
-                <div class="col s9" id='products' style="padding-top: 20px; width:78%; height:600px; overflow-y: scroll;"></div>
-            </section>
-            <aside id="right-sidebar-nav">
-                <ul id="slide-out" class="side-nav">
-                    <li>
-                        Hello World
-                    </li>
-                </ul>
-            </aside>
-        </div>
-        <div id="modal" class="modal bottom-sheet">
-            <div class="modal-content"></div>
-            <div class="modal-footer"></div>
-        </div>
-        <div id="modal_popUp" class="modal">
-            <div class="modal-content"></div>
-            <div class="modal-footer"></div>
+                    </ul>
+                </aside>
+                <section id="subcontent" class='row rightside-navigation right-aligned ps-container ps-active-y'>
+                    <!-- <div class="col s12 grey lighten-2" style='top:-1px; position:relative; margin-bottom: 20px;'>
+                        <br/>Categories Here<br/>
+                    </div> -->
+                    <div class="col s12" id='products'></div>
+                </section>
+           </div>
         </div>
         <script type="text/javascript" src="assets/js/jquery.js"></script>    
+        <script type="text/javascript" src="assets/js/materialize.min.js"></script>
+        <script type="text/javascript" src="assets/js/plugins.js"></script>
         <script type="text/javascript" src="assets/js/app.js"></script>
         <script type="text/javascript" src="assets/js/perfect-scrollbar.min.js"></script>
-        <script type="text/javascript" src="assets/js/materialize.min.js"></script>
         <script type="text/javascript" src="assets/js/jquery.idle.min.js"></script>
         <script type="text/javascript" src="assets/js/validation/jquery.validate.min.js"></script>
         <script type="text/javascript" src="assets/js/validation/additional-methods.min.js"></script>
@@ -153,20 +139,12 @@
         <script type="text/javascript" src="assets/js/dataTables/dataTables.responsive.js"></script>
         <script type="text/javascript" src="assets/js/dataTables/dataTables.tableTools.min.js"></script>
         <script type="text/javascript" src="assets/js/dataTables/dataTables.material.min.js"></script>
-        <script type="text/javascript" src="assets/js/plugins.js"></script>
         <script type="text/javascript" src="assets/js/process.js"></script>
         <script type="text/javascript" src="assets/js/market.js"></script>
         <script type="text/javascript">
             $(".dropdown-button").dropdown();
             market.ini();
             login.market();
-            // $(".side-nav").sideNav();
-            // $(".button-collapse").sideNav({
-            //     menuWidth: 300,
-            //     edge: 'right',
-            //     closeOnClick: true,
-            //     draggable: true
-            // });
         </script>
     </body>
 </html>

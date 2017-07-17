@@ -256,21 +256,29 @@ market = {
 		console.log(points);
 		$("li button[data-cmd='addQuantity']").on('click',function(){
 			var data = $(this).data();
-			if($(this).parent().find('input').val() < data.limit){
-				count = Number($(this).parent().find('input').val()) + 1;
+			count = Number($(this).parent().find('input').val()) + 1;
+			if(($(this).parent().find('input').val() < data.limit) && (points-(count*data.cost) >= 0)){
+				$("li button[data-cmd='lessQuantity']").removeClass('disabled');
 				$(this).parent().find('input').val(count);				
 				$(this).parent().find('a.secondary-content').html(count*data.cost);	
 				console.log(points-(count*data.cost));
 				console.log("xx");
+			}
+			else{
+				$("li button[data-cmd='addQuantity']").addClass("disabled");
 			}
 		});
 
 		$("li button[data-cmd='lessQuantity']").on('click',function(){
 			var data = $(this).data();
 			if($(this).parent().find('input').val() > 1){
+				$("li button[data-cmd='addQuantity']").removeClass("disabled");
 				count = Number($(this).parent().find('input').val()) - 1;
 				$(this).parent().find('input').val(count);
 				$(this).parent().find('a.secondary-content').html(count*data.cost);	
+			}
+			else{
+				$("li button[data-cmd='lessQuantity']").addClass('disabled');
 			}
 		})
 
