@@ -206,17 +206,20 @@ market = {
 		var cart = market.addProduct(points,data);
 		products = JSON.parse(products);
 		search = system.searchJSON(products,0,data[0]);
+		$("#display_productInCart ul h6").remove();
 		content = "<li class='animated slideInLeft collection-item avatar'>"+
 				"	<img src='assets/images/products/"+search[0][10]+"' alt='' class='circle'>"+
 				"	<span class='title'>"+search[0][1]+"  <span class='grey-text'>"+search[0][3]+"pts<span><br/>"+
 				"		<button data-cmd='lessQuantity' style='border-radius: 0%;' class='btn-floating btn-flat blue waves-effect waves-light white-text'><i class='mdi-content-remove white-text'></i></button>"+
 				"		<input data-cart='"+cart+"' data-cmd='input' data-limit='"+search[0][2]+"' data-cost='"+search[0][3]+"' type='number' pattern='[1-9]*' class='validate valid' value='1' style='width: 40px;height: 35px;text-align: center;'>"+
 				"		<button data-cmd='addQuantity' style='border-radius: 0%;' class='btn-floating btn-flat purple darken-4 waves-effect waves-light white-text'><i class='mdi-content-add white-text'></i></button>"+
-				"		<a class='secondary-content' style='font-size: 20px;'>"+search[0][3]+"</a>"+
 				"	</span>"+
+				"	<a data-count='"+search[0][3]+"' class='secondary-content' style='font-size: 20px;'>"+search[0][3]+"</a>"+
+				"	<span data-cmd='removeCart' data-cart='"+cart+"' style='cursor: pointer;font-size: 12px;display: inline-block;'>Remove Item</span>"+
 				"</li>";
 
 		$("#display_productInCart ul").append(content);
+		$("button[data-cmd='checkOut']").removeAttr('disabled');
 		market.options();
 	},
 	showCart:function(){
@@ -227,42 +230,50 @@ market = {
 		var points = Number(localStorage.getItem('points'));
 		products = JSON.parse(products);
 
-		$.each(cart,function(i,v){
-			console.log(v);
-			search = system.searchJSON(products,0,v[1][0]);
-			total = total+Number(search[0][3]);
-			content += "<li class='animated slideInLeft collection-item avatar'>"+
-					"	<img src='assets/images/products/"+search[0][10]+"' alt='' class='circle' />"+
-					"	<span class='title'>"+search[0][1]+"  <span class='grey-text'>"+search[0][3]+"pts<span><br/>"+
-					"		<button data-cmd='lessQuantity' style='border-radius: 0%;' class='btn-floating btn-flat blue waves-effect waves-light white-text'><i class='mdi-content-remove white-text'></i></button>"+
-					"		<input data-cmd='input' data-cart='"+v[0]+"' data-limit='"+search[0][2]+"' data-cost='"+search[0][3]+"' value='"+v[1][1]+"' type='number' pattern='[1-9]*' class='validate valid' style='width: 40px;height: 35px;text-align: center;'/>"+
-					"		<button data-cmd='addQuantity' style='border-radius: 0%;' class='btn-floating btn-flat purple darken-4 waves-effect waves-light white-text'><i class='mdi-content-add white-text'></i></button>"+
-					"		<a class='secondary-content' style='font-size: 20px;'>"+search[0][3]+"</a>"+
-					"	</span>"+
-					"</li>";
-		})
-		$("#display_total span").html(total);
-		$("#display_productInCart ul").append(content);
-		market.options();
+		if(cart.length > 0){
+			$("#display_productInCart ul").html("");
+			$.each(cart,function(i,v){
+				console.log(v);
+				search = system.searchJSON(products,0,v[1][0]);
+				total = total+Number(search[0][3]);
+				content += "<li class='animated slideInLeft collection-item avatar'>"+
+						"	<img src='assets/images/products/"+search[0][10]+"' alt='' class='circle' />"+
+						"	<span class='title'>"+search[0][1]+"  <span class='grey-text'>"+search[0][3]+"pts<span><br/>"+
+						"		<button data-cmd='lessQuantity' style='border-radius: 0%;' class='btn-floating btn-flat blue waves-effect waves-light white-text'><i class='mdi-content-remove white-text'></i></button>"+
+						"		<input data-cmd='input' data-cart='"+v[0]+"' data-limit='"+search[0][2]+"' data-cost='"+search[0][3]+"' value='"+v[1][1]+"' type='number' pattern='[1-9]*' class='validate valid' style='width: 40px;height: 35px;text-align: center;'/>"+
+						"		<button data-cmd='addQuantity' style='border-radius: 0%;' class='btn-floating btn-flat purple darken-4 waves-effect waves-light white-text'><i class='mdi-content-add white-text'></i></button>"+
+						"	</span>"+
+						"	<a class='secondary-content count' style='font-size: 20px;'>"+(Number(search[0][3])*Number(v[1][1]))+"</a>"+
+						"	<span data-cmd='removeCart' data-cart='"+v[0]+"' style='cursor: pointer;font-size: 12px;display: inline-block;'>Remove Item</span>"+
+						"</li>";
+			})
+			$("#display_total span").html(total);
+			$("#display_productInCart ul").append(content);
+			market.options();
+			market.checkCart(cart);			
+			$("button[data-cmd='checkOut']").removeAttr('disabled');
+		}
+		else{
+			$("button[data-cmd='checkOut']").attr({'disabled':true});
+		}
 	},
 	options:function(){
 		var points = localStorage.getItem('points');
 		$("li button[data-cmd='addQuantity']").on('click',function(){
 			var data = $(this).parent().find('input').data();
 			count = Number($(this).parent().find('input').val()) + 1;
-			if(($(this).parent().find('input').val() < data.limit) && (points-(count*data.cost) >= 0)){
+			if(($(this).parent().find('input').val() <= data.limit) && (points-(count*data.cost) >= 0)){
 				var cart = JSON.parse(localStorage.getItem(data.cart));
-
 				cart = JSON.stringify([cart[0],cart[1]+1]);
 				localStorage.setItem(data.cart,cart);
-
-				$(this).parent().find("button[data-cmd='lessQuantity']").removeClass("disabled");
-
+				$(this).parent().find("button[data-cmd='lessQuantity']").removeAttr("disabled");
 				$(this).parent().find('input').val(count);				
 				$(this).parent().find('a.secondary-content').html(count*data.cost);
+
+				market.checkCart(cart);
 			}
 			else{
-				$(this).addClass("disabled");
+				$(this).attr({'disabled':true});
 			}
 		});
 
@@ -272,15 +283,15 @@ market = {
 				var cart = JSON.parse(localStorage.getItem(data.cart));
 				cart = JSON.stringify([cart[0],cart[1]-1]);
 				localStorage.setItem(data.cart,cart);
-
-				$(this).parent().find("button[data-cmd='addQuantity']").removeClass("disabled");
-
+				$(this).parent().find("button[data-cmd='addQuantity']").removeAttr("disabled");
 				count = Number($(this).parent().find('input').val()) - 1;
 				$(this).parent().find('input').val(count);
 				$(this).parent().find('a.secondary-content').html(count*data.cost);	
+
+				market.checkCart(cart);
 			}
 			else{
-				$(this).addClass('disabled');
+				$(this).attr({'disabled':true});
 			}
 		});
 
@@ -297,6 +308,8 @@ market = {
 
 				$(this).parent().find('input').val(count);				
 				$(this).parent().find('a.secondary-content').html(count*data.cost);
+
+				market.checkCart(cart);
 			}
 			else{
 				console.log('x');
@@ -305,27 +318,15 @@ market = {
 			}
 		});
 
-		$("button[data-cmd='removeCart']").on('click',function(){
-			var data = [$(this).data('node'),Number($(this).data('price')),Number($(this).data('qty'))];
-			var points = Number(localStorage.getItem('points'));
-			if(points>data[1]){
-				$( ".tooltipped" ).tooltip({
-				  hide: { effect: "explode", duration: 1000 }
-				})
-				$(this).attr({"disabled":"true"});
-				$(this).removeClass("tooltipped");
-			}
-			else{
-				Materialize.toast('Insufficient points',4000);
-			}
+		$("span[data-cmd='removeCart']").on('click',function(){
+			var data = $(this).data();
+			localStorage.removeItem(data.cart);
+	    	window.location.reload(true);
 		});
 
 		$("button[data-cmd='checkOut']").on('click',function(){
 			var cart = market.getCart();
-			console.log(cart);
-
-			market.checkCart(cart);
-			// market.checkout(cart);
+			market.checkout(cart);
 		});
 	},
 	getCart:function(){
@@ -340,19 +341,23 @@ market = {
 		return data;
 	},
 	checkCart:function(cart){
-		console.log(cart);
-	},
-	removeCart:function(){
-		var data = [];
-		var count = localStorage.getItem('cartCount');
-		for(x=0;x<count;x++){
-			localStorage.removeItem('cart-'+x);
-		}
-		localStorage.removeItem('cartCount')
+		var data = $(".count"), point = localStorage.getItem('points');
+		var count = 0;
+		$.each(data,function(i,v){
+			count = count + Number($(v).html());
+		})
+
+		if(count>point)
+			$("button[data-cmd='checkOut']").attr({'disabled':true});
+		else
+			$("button[data-cmd='checkOut']").removeAttr('disabled');
+
+		return count;
 	},
 	checkout:function(data){
 		var data = system.ajax('assets/harmony/Process.php?set-orders',data);
 		data.done(function(data){
+			console.log(data);
 			if(data == 1){
 				Materialize.toast('Order Placed.',4000);
 				market.removeLocalStorage();
@@ -371,7 +376,6 @@ market = {
 			localStorage.removeItem('cart-'+x);
 		}
 		localStorage.removeItem('cartCount');
-		console.log(localStorage);		
 	}
 };
 
