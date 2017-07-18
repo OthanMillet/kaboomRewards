@@ -26,7 +26,7 @@ class DatabaseClasses extends DataClasses{
 	}
 
 	function getEmployee(){
-		$user = DatabaseClasses::PDO(true,"SELECT * FROM tbl_employee WHERE emplyee_id = '{$_SESSION['kaboom'][0]}' AND password = '{$_SESSION['kaboom'][1]}'");
+		$user = DatabaseClasses::PDO(true,"SELECT * FROM tbl_employee WHERE employee_id = '{$_SESSION['kaboom'][0]}' AND password = '{$_SESSION['kaboom'][1]}'");
 		return (count($user)<=0)?0:$user[0][0];
 	}
 

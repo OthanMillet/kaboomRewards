@@ -623,7 +623,7 @@ $function = new DatabaseClasses;
 		}	
 
 		if(isset($_GET['set-orders'])){
-			$q1 = ""; $q2 = ""; $q3 = ""; $points = 0;
+			$q1 = ""; $q2 = ""; $q3 = ""; $points = 0; $spent = 0;
 			$data = $_POST['data'];
 			$user = $function->getEmployee();
 			$date = $function->PDO_DateAndTime();
@@ -632,35 +632,42 @@ $function = new DatabaseClasses;
 			$count = $numProd[0][0];
 
 			foreach ($data as $key => $value) {
-				$qty = $value[1];
-				$points = $points + $value[1];
+				$qty = $value[1][1];
+				$points = $points + $qty;
 		        $id = $user.'-'.($count++);
-				$prodQty = $function->PDO(true,"SELECT * FROM tbl_product WHERE id = '{$value[0]}';");
-				// $_prodQty = $prodQty[0][2]-$qty;
-				$_prodQty = $prodQty[0][2]-1;
+				$prodQty = $function->PDO(true,"SELECT * FROM tbl_product WHERE id = '{$value[1][0]}';");
+				$_prodQty = $prodQty[0][2]-$qty;
+
+				$spent = $spent + $prodQty[0][3] * $qty;
 
 		        if((count($data)-1) <= $key){
-					$q1 .= "('{$id}',1,'{$value[0]}','{$orderID}','{$date}','',1)";
-					$q2 .= "UPDATE tbl_product SET qty = '{$_prodQty}' WHERE id = '{$value[0]}';";
+					$q1 .= "('{$id}',{$qty},'{$value[1][0]}','{$orderID}','{$date}','',1)";
+					$q2 .= "UPDATE tbl_product SET qty = '{$_prodQty}' WHERE id = '{$value[1][0]}';";
 		        }
 		        else{
-					$q1 .= "('{$id}',1,'{$value[0]}','{$orderID}','{$date}','',1),";
-					$q2 .= "UPDATE tbl_product SET qty = '{$_prodQty}' WHERE id = '{$value[0]}';";
+					$q1 .= "('{$id}',{$qty},'{$value[1][0]}','{$orderID}','{$date}','',1),";
+					$q2 .= "UPDATE tbl_product SET qty = '{$_prodQty}' WHERE id = '{$value[1][0]}';";
 		        }
 			}
 
-			$currentPoints = $function->PDO(true,"SELECT * FROM tbl_points WHERE id = '{$user}';");
-			$newpoints = $currentPoints[0][2]-$points;
-			$q3 .= "UPDATE tbl_points SET points = '{$newpoints}' WHERE id = '{$user}';";
 
-			$query = $function->PDO(false,"INSERT INTO tbl_orders(id,employee_id,order_date,date_delivered,status) VALUES ('{$orderID}','{$user}','{$date}','',1); INSERT INTO tbl_orderdetails(id,qty,product_id,order_id,order_date,order_delivered,status) VALUES ".$q1.";".$q2.";".$q3);
-			if($query->execute()){
-				$log = $function->log("add",$user,"Placed orders. Order ID: "+$orderID);
-				echo 1;
+			$currentPoints = $function->PDO(true,"SELECT * FROM tbl_points WHERE id = '{$user}';");
+			$newpoints = $currentPoints[0][2]-$spent;
+			if($newpoints>=0){
+				$q3 .= "UPDATE tbl_points SET points = '{$newpoints}' WHERE id = '{$user}';";
+
+				$query = $function->PDO(false,"INSERT INTO tbl_orders(id,employee_id,order_date,date_delivered,status) VALUES ('{$orderID}','{$user}','{$date}','',1); INSERT INTO tbl_orderdetails(id,qty,product_id,order_id,order_date,order_delivered,status) VALUES ".$q1.";".$q2.";".$q3);
+				if($query->execute()){
+					$log = $function->log("add",$user,"Placed orders. Order ID: "+$orderID);
+					echo 1;
+				}
+				else{
+					$Data = $query->errorInfo();
+					print_r($Data);
+				}
 			}
 			else{
-				$Data = $query->errorInfo();
-				print_r($Data);
+				echo 2;
 			}
 		}
 

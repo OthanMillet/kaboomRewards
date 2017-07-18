@@ -27,7 +27,7 @@
         </div>
         <header id="header" class="page-topbar">
             <div class="navbar-fixed">
-                <nav class="navbar-color grey darken-">
+                <nav class="navbar-color white">
                     <div class="nav-wrapper">
                         <ul class="left ">
                             <li>
@@ -41,7 +41,7 @@
                         </ul>
                         <ul class="right ">
                             <li>
-                                <a data-activates="chat-out" class="waves-effect waves-block waves-light chat-collapse"><i class="mdi-communication-chat"></i></a>
+                                <a data-activates="chat-out" class="waves-effect waves-block waves-light chat-collapse"><i class="mdi-action-shopping-cart grey-text"></i></a>
                             </li>
                         </ul>
                     </div>
@@ -102,11 +102,13 @@
                             </div>  
                             <div id='display_points' class="center white-text blue darken-3">
                                 <span class='cart_bigNumber'>0<small>point</small>
-                                    <p>93 points left</p>
+                                    <!-- <p>93 points left</p> -->
                                 </span>
                             </div>
                             <div id='display_productInCart' class="white" style='overflow-y: scroll;'>
-                                <ul class='collection' style='border: none;border-radius: 0px;margin: 0px;'></ul>
+                                <ul class='collection' style='border: none;border-radius: 0px;margin: 0px;'>
+                                    <h6 class='grey-text center'>No products in cart</h6>
+                                </ul>
                             </div>
                             <div id='display_total' class="white-text">
                                 <div class='col s12'><br/>
@@ -118,11 +120,9 @@
                     </li>
                     </ul>
                 </aside>
-                <section id="subcontent" class='row rightside-navigation right-aligned ps-container ps-active-y'>
-                    <!-- <div class="col s12 grey lighten-2" style='top:-1px; position:relative; margin-bottom: 20px;'>
-                        <br/>Categories Here<br/>
-                    </div> -->
-                    <div class="col s12" id='products'></div>
+                <section id="subcontent" class='row rightside-navigation right-aligned ps-container ps-active-y' style='margin-bottom: 20px;'>
+                    <!-- <div class="col s3">d</div> -->
+                    <div class="col s12 right" id='products' style="margin-top: 20px;"></div>
                 </section>
            </div>
         </div>
