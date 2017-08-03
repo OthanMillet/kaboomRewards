@@ -57,7 +57,6 @@ var App = function () {
                     });
                 })
 
-
                 $('html, body').animate({
                     scrollTop: $("body").offset().top
                 }, 250);

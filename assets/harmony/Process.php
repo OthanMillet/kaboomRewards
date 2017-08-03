@@ -19,30 +19,6 @@ $function = new DatabaseClasses;
 			print_r("0");
 	}
 
-	if(isset($_GET['createDB'])){
-		$data = $function->createDB('db_k12');
-		if($data == 1){
-			echo 1;
-		}
-	}
-
-	if(isset($_GET['createTables'])){
-		$fileDir = '../db/k12.sql';
-		if(file_exists($fileDir)){
-			$query = file_get_contents($fileDir);
-			$query = $function->PDO(false,$query);
-			if($query->execute()){
-				echo 1;
-			}
-			else{
-				echo 0;
-			}
-		}
-		else{
-			echo 0;
-		}
-	}
-
 	if(isset($_GET['restoreTablesFromFile'])){
 		$data = $_POST['data'];
 		print_r($data);
