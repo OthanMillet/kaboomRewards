@@ -106,13 +106,7 @@ var system = function(){
 		    }
 		    return objects;
 		},
-		froala:function(element){
-			$(element).froalaEditor({
-				toolbarButtons:['fullscreen', 'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 'fontFamily', 'fontSize', 'color', 'inlineStyle', 'paragraphStyle', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', 'quote', '-', 'insertLink', 'insertTable', '|', 'emoticons', 'specialCharacters', 'insertHR', 'selectAll', 'clearFormatting', '|', 'spellChecker', 'help', 'html', '|', 'undo', 'redo'],
-				quickInsertButtons: ['table', 'ol', 'ul', 'hr']
-			});
-		},
-		forceLogout:function(_function){ //300000
+ 		forceLogout:function(_function){ //300000
 			$(document).idle({
 				onIdle: function(){
 					Materialize.toast('Force log out initiated.',1000,'',function(){

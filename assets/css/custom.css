@@ -237,4 +237,14 @@ body, #chat-out{
 .input-field.search label:not(.label-icon).active {
     -webkit-transform: translateX(-30px) !important;
     transform: translateX(-30px) !important;
+    top:1px !important;
+}
+
+.search input{
+    border-bottom: none !important;
+    margin:0px !important; 
+}
+
+.search label{
+    top:-10px !important;
 }
