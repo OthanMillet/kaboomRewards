@@ -229,3 +229,12 @@ body, #chat-out{
 #products{
     padding-bottom: 200px;
 }
+
+.carousel .carousel-item {
+    width: 100%;
+}
+
+.input-field.search label:not(.label-icon).active {
+    -webkit-transform: translateX(-30px) !important;
+    transform: translateX(-30px) !important;
+}

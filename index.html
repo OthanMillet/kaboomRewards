@@ -10,14 +10,12 @@
         <link rel="icon" href="assets/images/logo.png" sizes="32x32">
         <meta name="msapplication-TileColor" content="#00bcd4">
         <link href="assets/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection">
-        <link href="assets/css/mdl.min.css" type="text/css" rel="stylesheet" media="screen,projection">
+        <!-- <link href="assets/css/mdl.min.css" type="text/css" rel="stylesheet" media="screen,projection"> -->
         <link href="assets/css/style.css" type="text/css" rel="stylesheet" media="screen,projection">
         <link href="assets/css/custom.css" type="text/css" rel="stylesheet" media="screen,projection">
         <link href="assets/css/animate.css" type="text/css" rel="stylesheet" media="screen,projection">
         <link href="assets/css/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
-        <link href="assets/css/plugins/dataTables/dataTables.responsive.css" type="text/css" rel="stylesheet" media="screen,projection">
-        <link href="assets/css/plugins/dataTables/dataTables.tableTools.min.css" type="text/css" rel="stylesheet" media="screen,projection">
-        <link href="assets/css/plugins/dataTables/dataTables.material.min.css" type="text/css" rel="stylesheet" media="screen,projection">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/css/materialize.min.css">
     </head>
     <body>
         <div id="loader-wrapper">
@@ -25,107 +23,197 @@
             <div class="loader-section section-left"></div>
             <div class="loader-section section-right"></div>
         </div>
-        <header id="header" class="page-topbar">
-            <div class="navbar-fixed">
-                <nav class="navbar-color white">
-                    <div class="nav-wrapper">
-                        <ul class="left ">
-                            <li>
-                                <h1 class="logo-wrapper">
-                                    <a href="#" class="left brand-logo darken-1">
-                                        <img src="assets/images/logo.png" draggable='false' alt="" width='50px' class="circle responsive-img valign profile-image" style='width: 80px;'>
-                                    </a>
-                                    <span class="logo-text">Materialize</span>
-                                </h1>
-                            </li>
-                        </ul>
-                        <ul class="right ">
-                            <li>
-                                <a data-activates="chat-out" class="waves-effect waves-block waves-light chat-collapse"><i class="mdi-action-shopping-cart grey-text"></i></a>
-                            </li>
-                        </ul>
-                    </div>
-                </nav>
-            </div>
-        </header>
-        <div >
-            <div class="wrapper">
-                <aside id="right-sidebar-nav overlap-gradient">
-                    <ul id="chat-out" class="side-nav">
-                    <li class="">
-                        <div id='display_login' class="animated row margin">
-                            <div class='login-gradient' style="overflow: hidden;">
-                                <div class='col-s12 m12 l12' style='margin-top:20%; padding:10px;'>
-                                    <form id="form_login" method="get" action="" novalidate="novalidate">
-                                        <div class="input-field col s12 m12 l12">
-                                            <h5>Log in and get started</h5>
-                                        </div>
-                                        <div class="input-field col s12 m12 l12">
-                                            <input id="field_empID" name="field_empID" type="text" data-error=".error_field_empID">
-                                            <label for="field_empID" class="center-align">Employee ID</label>  
-                                            <div class="error_field_empID"></div>  
-                                        </div>
-                                        <div class="input-field col s12 m12 l12">
-                                            <input id="field_password" name="field_password" type="password" data-error=".error_field_password">
-                                            <label for="field_password" class="">Password</label>
-                                            <div class="error_field_password"></div>  
-                                        </div>
-                                        <div class="input-field col s12 m12 l12">
-                                            <button class="btn waves-effect waves-light col s12" type='submit'>Login</button>
-                                        </div>
-                                        <div class="input-field col s12 m12 l12 hidden">
-                                            <p class="margin right-align medium-small"><a href="page-forgot-password.html">Forgot password?</a></p>
-                                        </div>          
-                                    </form>
-                                </div>
-                            </div>
-                        </div>                        
-                    </li>
-                    <li>
-                        <div id='display_cart' class="animated bounceOutUp row margin blue lighten-2">
-                            <div id='display_account' class="white-text">
-                                <div class="row center">
-                                    <div class="col s12 m12 l12 settings-button">
-                                        <button class="btn-floating no-shadow blue lighten-2 waves-effect right dropdown-button" data-activates="dropdown1">
-                                            <i class="mdi-navigation-more-vert"></i>
-                                        </button>
-                                        <ul id="dropdown1" class="dropdown-content">
-                                        <li><a data-cmd="account">Account</a></li>
-                                        <li><a data-cmd="logout">Log out</a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="col col s12 m12 l12">
-                                        <img src="assets/images/avatar.jpg" draggable='false' alt="" class="circle responsive-img valign profile-image">
-                                        <p>Name Here</p>
-                                    </div>
-                                </div>
-                            </div>  
-                            <div id='display_points' class="center white-text blue darken-3">
-                                <span class='cart_bigNumber'>0<small>point</small>
-                                    <!-- <p>93 points left</p> -->
-                                </span>
-                            </div>
-                            <div id='display_productInCart' class="white" style='overflow-y: scroll;'>
-                                <ul class='collection' style='border: none;border-radius: 0px;margin: 0px;'>
-                                    <h6 class='grey-text center'>No products in cart</h6>
+
+        <div class="rightside-navigation right-aligned ps-container ps-active-y">
+            <header id="header" class="page-topbar">
+                <div class="navbar-fixed">
+                    <nav class="navbar-color white">
+                        <div class="nav-wrapper">
+                            <ul class="left ">
+                                <li>
+                                    <h1 class="logo-wrapper">
+                                        <a href="#" class="left brand-logo darken-1">
+                                            <img src="assets/images/logo.png" draggable='false' alt="" width='50px' class="circle responsive-img valign profile-image" style='width: 80px;'>
+                                        </a>
+                                    </h1>
+                                </li>
+                            </ul>
+                            <ul class="right ">
+                                <li>
+                                    <a href="#" class="pink-text darken-2">Sign In <i class="mdi-action-account-circle right"></i></a>
+                                </li>
+                                <li class="pink darken-2 chat-collapse" data-activates="chat-out">
+                                    <a class="waves-effect waves-block waves-light white-text"><i class="mdi-action-shopping-cart"></i></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+                <div class="col-s8">
+                    <div class="navbar-fixed">
+                        <nav class="navbar-color cyan darken-1">
+                            <div class="nav-wrapper">
+                                <ul class="left">
+                                    <li><a href='#'>Categories</a></li>
+                                    <li><a href='#'>What's New</a></li>
+                                </ul>
+                                <ul class="right">
+                                    <li>
+                                        <form>
+                                            <div class="input-field search">
+                                                <input id="search" required="" type="text"><label class="right" for="search"><i class="mdi-action-search"></i></label>
+                                            </div>
+                                        </form>
+                                    </li>
                                 </ul>
                             </div>
-                            <div id='display_total' class="white-text">
-                                <div class='col s12'><br/>
-                                    <!-- <h5>TOTAL:<span class="right"> 0.00</span></h5> -->
-                                    <button data-cmd='checkOut' class="btn waves-effect waves-light col s12" type="submit">Check Out</button>
-                                </div>
+                        </nav>
+                    </div>
+                </div>
+            </header>
+            <div class="wrapper">
+                <section class='row pink accent-4 white-text center' style='margin-bottom: 0px;'>
+                    <div class="carousel carousel-slider" data-indicators="true">
+                        <a class="carousel-item" href="#one!"><img src="assets/images/slide1.png"></a>
+                        <a class="carousel-item" href="#two!"><img src="assets/images/slide2.png"></a>
+                        <a class="carousel-item" href="#three!"><img src="assets/images/slide1.png"></a>
+                        <a class="carousel-item" href="#four!"><img src="assets/images/slide2.png"></a>
+                    </div>
+                    <h5 style="margin: 50px;">Exciting rewards at your fingertips</h5>
+                </section>
+                <section class="row black" style='margin-bottom: 0px;'>
+                    <div class="col s12 m4 l4 red center white-text" style="background: url('assets/images/kaboom1.png'); background-size: cover; background-position:top;  min-height: 250px;">
+                        <div class="row">
+                            <div class="col s8 offset-s2">
+                                <h3>NEW IN STORE</h3>
                             </div>
                         </div>
-                    </li>
+                    </div>
+                    <div class="col s12 m4 l4 green center white-text" style="background: url('assets/images/kaboom2.png'); background-size: cover; background-position:top;  min-height: 250px;">
+                        <div class="row">
+                            <div class="col s8 offset-s2">
+                                <h3>BEST SELLERS</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col s12 m4 l4 blue center white-text" style="background: url('assets/images/kaboom3.png'); background-size: cover; background-position:bottom;  min-height: 250px;">
+                        <div class="row">
+                            <div class="col s8 offset-s2">
+                                <h3>TOP BRANDS</h3>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="row grey darken-3" style='margin-bottom: 0px;padding-bottom: 40px;'><br/><br/>
+                    <h4 class="center white-text">WE WOULD LOVE TO HEAR FROM YOU</h4>
+                    <div class="col s12 m4 l4 center white-text">
+                        <h5 class="pink-text">employee support</h5>
+                        <p>
+                            Contact your HR team at<br/>
+                            <a class="white-text" href="mailto:employeerewards@company.com">employeerewards@company.com</a> or <br/>
+                            (02) 222 1234<br/>
+                            Mondays to Fridays<br/>
+                            08:00am to 06:00pm
+                        </p>
+                    </div>
+                    <div class="col s12 m4 l4 center white-text">
+                        <h5 class="pink-text">admin support</h5>
+                        <p>
+                            Reach the Kaboom team at<br/>
+                            <a class="white-text" href="mailto:employeesupports@kaboom.com.ph">employeesupports@kaboom.com.ph</a> or <br/>
+                            (02) 222 1234<br/>
+                            Mondays to Fridays<br/>
+                            08:00am to 06:00pm
+                        </p>
+                    </div>
+                    <div class="col s12 m4 l4 center white-text">
+                        <h5 class="pink-text">new business</h5>
+                        <p>
+                            Reach the Kaboom team at<br/>
+                            <a class="white-text" href="mailto:newbusiness@kaboom.com.ph">newbusiness@kaboom.com.ph</a> or <br/>
+                            (02) 222 1234<br/>
+                            Mondays to Fridays<br/>
+                            08:00am to 06:00pm
+                        </p>
+                    </div>
+                </section>
+                <section class="row cyan darken-1" style='margin-bottom: 0px;padding-bottom: 40px;'><br/><br/>
+                    <h5 class="center white-text">Kaboom Rewards Philippines</h4>
+                    <h5 class="center black-text">All rights reserved 2017</h4>
+                </section>
+                <aside id="right-sidebar-nav overlap-gradient">
+                    <ul id="chat-out" class="side-nav">
+                        <li class="">
+                            <div id='display_login' class="animated row margin">
+                                <div class='login-gradient' style="overflow: hidden;">
+                                    <div class='col-s12 m12 l12' style='margin-top:20%; padding:10px;'>
+                                        <form id="form_login" method="get" action="" novalidate="novalidate">
+                                            <div class="input-field col s12 m12 l12">
+                                                <h5>Log in and get started</h5>
+                                            </div>
+                                            <div class="input-field col s12 m12 l12">
+                                                <input id="field_empID" name="field_empID" type="text" data-error=".error_field_empID">
+                                                <label for="field_empID" class="center-align">Employee ID</label>  
+                                                <div class="error_field_empID"></div>  
+                                            </div>
+                                            <div class="input-field col s12 m12 l12">
+                                                <input id="field_password" name="field_password" type="password" data-error=".error_field_password">
+                                                <label for="field_password" class="">Password</label>
+                                                <div class="error_field_password"></div>  
+                                            </div>
+                                            <div class="input-field col s12 m12 l12">
+                                                <button class="btn waves-effect waves-light col s12" type='submit'>Login</button>
+                                            </div>
+                                            <div class="input-field col s12 m12 l12 hidden">
+                                                <p class="margin right-align medium-small"><a href="page-forgot-password.html">Forgot password?</a></p>
+                                            </div>          
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>                        
+                        </li>
+                        <li>
+                            <div id='display_cart' class="animated bounceOutUp row margin blue lighten-2">
+                                <div id='display_account' class="white-text">
+                                    <div class="row center">
+                                        <div class="col s12 m12 l12 settings-button">
+                                            <button class="btn-floating no-shadow blue lighten-2 waves-effect right dropdown-button" data-activates="dropdown1">
+                                                <i class="mdi-navigation-more-vert"></i>
+                                            </button>
+                                            <ul id="dropdown1" class="dropdown-content">
+                                            <li><a data-cmd="account">Account</a></li>
+                                            <li><a data-cmd="logout">Log out</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="col col s12 m12 l12">
+                                            <img src="assets/images/avatar.jpg" draggable='false' alt="" class="circle responsive-img valign profile-image">
+                                            <p>Name Here</p>
+                                        </div>
+                                    </div>
+                                </div>  
+                                <div id='display_points' class="center white-text blue darken-3">
+                                    <span class='cart_bigNumber'>0<small>point</small>
+                                        <!-- <p>93 points left</p> -->
+                                    </span>
+                                </div>
+                                <div id='display_productInCart' class="white" style='overflow-y: scroll;'>
+                                    <ul class='collection' style='border: none;border-radius: 0px;margin: 0px;'>
+                                        <h6 class='grey-text center'>No products in cart</h6>
+                                    </ul>
+                                </div>
+                                <div id='display_total' class="white-text">
+                                    <div class='col s12'><br/>
+                                        <!-- <h5>TOTAL:<span class="right"> 0.00</span></h5> -->
+                                        <button data-cmd='checkOut' class="btn waves-effect waves-light col s12" type="submit">Check Out</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
                     </ul>
                 </aside>
-                <section id="subcontent" class='row rightside-navigation right-aligned ps-container ps-active-y' style='margin-bottom: 20px;'>
-                    <!-- <div class="col s3">d</div> -->
-                    <div class="col s12 right" id='products' style="margin-top: 20px;"></div>
-                </section>
-           </div>
+            </div>
         </div>
+
         <script type="text/javascript" src="assets/js/jquery.js"></script>    
         <script type="text/javascript" src="assets/js/materialize.min.js"></script>
         <script type="text/javascript" src="assets/js/plugins.js"></script>
@@ -141,7 +229,13 @@
         <script type="text/javascript" src="assets/js/dataTables/dataTables.material.min.js"></script>
         <script type="text/javascript" src="assets/js/process.js"></script>
         <script type="text/javascript" src="assets/js/market.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/js/materialize.min.js"></script>
         <script type="text/javascript">
+
+            $(document).ready(function(){
+                $('.carousel').carousel({fullWidth: true,indicators:true});
+            });
+
             $(".dropdown-button").dropdown();
             market.ini();
             login.market();
