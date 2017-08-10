@@ -152,7 +152,7 @@ login = {
 					}
 					else if(data[0] == 'Active'){
 						localStorage.setItem("hash",data[1]);
-						Materialize.toast('Success.',1000,'',function(){
+						Materialize.toast('Success. Please wait.',4000,'',function(){
 					    	$(location).attr('href','account/');
 						});
 					}

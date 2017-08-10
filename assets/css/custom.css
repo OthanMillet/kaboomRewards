@@ -114,14 +114,14 @@ i.icon:before{
 	width:initial;
 }
 #display_account .row .col img.profile-image{
-	width:30%;
+	width:85%;
 }
 
 .cart_bigNumber{
-	font-size: 56px;
+	/*font-size: 56px;
 	line-height: 1.35;
 	letter-spacing: -.02em;
-	margin: 24px 0;
+	margin: 24px 0;*/
 }
 .cart_bigNumber small{
     font-size: 16px;
@@ -251,4 +251,20 @@ body, #chat-out{
 
 .slider{
     height: inherit !important;
+}
+
+#sidebar_menu .collection{
+    border: 0px solid #e0e0e0 !important;
+}
+
+#sidebar_menu .collection .collection-item{
+    background-color: transparent !important; 
+    border-bottom: 0px solid #e0e0e0 !important; 
+    line-height: 1.5rem; 
+    /*padding: 10px 20px; */
+    /*margin: 0; */
+}
+
+#sidebar_menu .collection .collection-item.avatar {
+    min-height: 60px;
 }

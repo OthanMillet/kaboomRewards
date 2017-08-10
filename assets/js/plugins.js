@@ -116,12 +116,9 @@ $(function() {
 	});
 
 	document.addEventListener('ps-scroll-y', function (e) {
-		console.log(e.target.scrollTop);
 	    if((150-e.target.scrollTop)>=0){
-	    	console.log();
 	    	$("#secondNav").attr({"style":"top:"+(150-e.target.scrollTop)+"px;"});
 	    }
-	    
     	if(e.target.scrollTop>150){
 	    	$("#secondNav").attr({"style":"top:0px;"});	    		
     	}

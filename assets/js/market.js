@@ -56,7 +56,6 @@ product = {
 		$(data.responseText).find("product").each(function(i,content){
 			for(x=0;x<=100;x++){
 				_content += content.innerHTML;
-
 			}
 			$("#products").html(_content);
 		});
@@ -143,16 +142,19 @@ market = {
 				disabled = "disabled";
 			else
 				disabled = "";
-			content += "<div class='product col s6 m3 l3' style='margin-bottom:30px;'>"+
+			content += "<div class='product col s12 m4 l3' style='margin-bottom:30px;'>"+
 						"    <div class='card'>"+
 						"        <div class='card-image waves-effect waves-block waves-light'>"+
 						"            <img class='activator' draggable='false' src='assets/images/products/"+v[10]+"' alt='product-img'>"+
 						"        </div>"+
 						"        <ul class='card-action-buttons'>"+
 						"            <li>"+
-						"				<button class= btn-floating waves-effect black-text blue' "+disabled+" data-cmd='addCart' data-node='"+v[0]+"' data-price='"+v[3]+"' data-qty='"+v[2]+"'>"+
+						"				<a class='btn-floating waves-effect' "+disabled+" data-cmd='addCart' data-node='"+v[0]+"' data-price='"+v[3]+"' data-qty='"+v[2]+"'>"+
+						"					<i class='mdi-action-favorite'></i>"+
+						"				</a>"+
+						"				<a class='btn-floating waves-effect cyan' "+disabled+" href='product.html?id="+v[0]+"'>"+
 						"					<i class='mdi-action-shopping-cart'></i>"+
-						"				</button>"+
+						"				</a>"+
 						"			</li>"+
 						"        </ul>"+
 						"        <div class='card-content'>"+
@@ -165,31 +167,31 @@ market = {
 						"                </div>"+
 						"            </div>"+
 						"        </div>"+
-						"        <div class='card-reveal'>"+
-						"            <span class='card-title grey-text text-darken-4'><i class='mdi-navigation-close right'></i> "+v[1]+"</span>"+
-						"            <p>"+v[5]+"</p>"+
+						"        <div class='card-reveal grey darken-4'>"+
+						"	         <p class='card-title'><a href='#' class='white-text'>"+v[1]+"</a><i class='mdi-navigation-close right white-text'></i></p>"+
+						"            <p class='white-text'>"+v[5]+"</p>"+
 						"        </div>"+
 						"    </div>"+
 						"</div>";
 		});
 		$("#products").html(content);
 
-		$("button[data-cmd='addCart']").on('click',function(){
-			var data = [$(this).data('node'),Number($(this).data('price')),Number($(this).data('qty'))];
-			var points = Number(localStorage.getItem('points'));
-			if(points>data[1]){
-				$( ".tooltipped" ).tooltip({
-				  hide: { effect: "explode", duration: 1000 }
-				})
-				$(this).attr({"disabled":"true"});
-				$(this).removeClass("tooltipped");
+		// $("button[data-cmd='addCart']").on('click',function(){
+		// 	var data = [$(this).data('node'),Number($(this).data('price')),Number($(this).data('qty'))];
+		// 	var points = Number(localStorage.getItem('points'));
+		// 	if(points>data[1]){
+		// 		$( ".tooltipped" ).tooltip({
+		// 		  hide: { effect: "explode", duration: 1000 }
+		// 		})
+		// 		$(this).attr({"disabled":"true"});
+		// 		$(this).removeClass("tooltipped");
 
-				market.addToCart(points,[data[0],1]);
-			}
-			else{
-				Materialize.toast('Insufficient points',4000);
-			}
-		});
+		// 		market.addToCart(points,[data[0],1]);
+		// 	}
+		// 	else{
+		// 		Materialize.toast('Insufficient points',4000);
+		// 	}
+		// });
 	},
 	addProduct:function(points,data){
 		var currentCount = ((localStorage.getItem('cartCount')=="") || (localStorage.getItem('cartCount')==null))?0:Number(localStorage.getItem('cartCount'));
@@ -402,7 +404,7 @@ profile = {
 		data.done(function(data){
 			data = JSON.parse(data);
 			if(data.length>0){
-				$("#display_account p").html("<strong>"+data[0][4]+" "+data[0][5].substring(0,1)+". "+data[0][3]+"</strong>");
+				$("#display_account h5").html("<strong>WELCOME,<br/> <i class='pink-text'>"+data[0][4]+" "+data[0][5].substring(0,1)+". "+data[0][3]+"</i></strong>");
 				profile.getPoints(data[0][0]);
 			}
 			else{

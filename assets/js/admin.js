@@ -3240,7 +3240,7 @@ product = {
 
 			            var $image = $(".image-crop > img")
 			            $($image).cropper({
-			            	aspectRatio: 2/3,
+			            	aspectRatio: 1/1,
 						    autoCropArea: 0.80,
 						    preview: ".avatar-preview",
 						    built: function () {
