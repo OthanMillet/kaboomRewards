@@ -4,7 +4,7 @@ product = {
 		this.list();
 	},
 	get:function(){
-		var data = system.html('assets/harmony/Process.php?get-products');
+		var data = system.html('assets/harmony/Process.php?get-availableProducts');
 		return data.responseText;
 	},
 	getByID:function(id){
@@ -20,55 +20,51 @@ product = {
 		var data = system.ajax('assets/harmony/Process.php?get-suggestionsByID',id);
 		data.done(function(data){
 			ret = JSON.parse(data);
-			// ret = data;
 		});
 		return ret;
 	},
 	suggestionsByProduct(id){
 		var suggestions = product.getSuggestions(id);
 		var bag = [], number = 0, content = "";
-		for(x=0;x<suggestions.length;x++){
-			number = system.random(0,suggestions.length);
-			if($.inArray(number,bag) == -1){
-				bag.push(number);
-			}
-		};
+		var data_wishlist = wishlist.get();
+		console.log(data_wishlist);
+		$.each(suggestions,function(i,v){
+			var search = system.searchJSON(data_wishlist,1,v[0]);
+			content = "<div class='row'>"+
+						"    <div class='card'>"+
+						"        <div class='card-image waves-effect waves-block waves-light'><img alt='product-img' class='activator' draggable='false' src='assets/images/products/"+v[10]+"'></div>"+
+						"        <ul class='card-action-buttons'>"+
+						"            <li>"+
+						"				<button class='btn-floating waves-effect shopping' data-cmd='addWishlist' data-wishlist='"+v[0]+"' data-node='"+v[0]+"'>"+
+						"					<i class='mdi-action-favorite'></i>"+
+						"				</button>"+
+						"				<button class='btn-floating waves-effect shopping cyan' data-cmd='addCart' data-node='"+v[0]+"'>"+
+						"					<i class='mdi-action-shopping-cart'></i>"+
+						"				</button>"+
+						"            </li>"+
+						"        </ul>"+
+						"        <div class='card-content'>"+
+						"            <div class='row'>"+
+						"                <div class='col s8'>"+
+						"                    <p class='card-title grey-text text-darken-4'><a class='grey-text text-darken-4' href='#'>"+v[1]+"</a></p>"+
+						"                </div>"+
+						"                <div class='col s4'>"+
+						"                    <p class='right' style='font-size: 24px;line-height: 32px;'>"+v[3]+"</p>"+
+						"                </div>"+
+						"            </div>"+
+						"        </div>"+
+						"        <div class='card-reveal grey darken-4'>"+
+						"            <p class='card-title'><a class='white-text' href='#'>"+v[1]+"</a><i class='mdi-navigation-close right white-text'></i></p>"+
+						"            <p class='white-text'>"+v[5]+"</p>"+
+						"        </div>"+
+						"    </div>"+
+						"</div>";
+			$(".product").append(content);
 
-		$.each(bag,function(i,v){
-			if(i<3){
-				if(typeof suggestions[v] != 'undefined'){
-					content += "<div class='row'>"+
-								"    <div class='card'>"+
-								"        <div class='card-image waves-effect waves-block waves-light'><img alt='product-img' class='activator' draggable='false' src="+
-								"        'assets/images/products/"+suggestions[v][10]+"'></div>"+
-								"        <ul class='card-action-buttons'>"+
-								"            <li>"+
-								"                <a class='btn-floating waves-effect' data-cmd='addCart' data-node='"+suggestions[v][0]+"' data-price='"+suggestions[v][3]+"' data-qty='"+suggestions[v][2]+"'><i class='mdi-action-favorite'></i></a>"+
-								"                <a class='btn-floating waves-effect cyan' href='product.html?id="+suggestions[v][0]+"'><i class='mdi-action-shopping-cart'></i></a>"+
-								"            </li>"+
-								"        </ul>"+
-								"        <div class='card-content'>"+
-								"            <div class='row'>"+
-								"                <div class='col s8'>"+
-								"                    <p class='card-title grey-text text-darken-4'><a class='grey-text text-darken-4' href='#'>"+suggestions[v][1]+"</a></p>"+
-								"                </div>"+
-								"                <div class='col s4'>"+
-								"                    <p class='right' style='font-size: 24px;line-height: 32px;'>"+suggestions[v][3]+"</p>"+
-								"                </div>"+
-								"            </div>"+
-								"        </div>"+
-								"        <div class='card-reveal grey darken-4'>"+
-								"            <p class='card-title'><a class='white-text' href='#'>"+suggestions[v][1]+"</a><i class='mdi-navigation-close right white-text'></i></p>"+
-								"            <p class='white-text'>"+suggestions[v][5]+"</p>"+
-								"        </div>"+
-								"    </div>"+
-								"</div>";
-
-					console.log(suggestions[v]);
-				}
+			if(search.length>0){
+				$("button[data-wishlist='"+search[1]+"']").attr({"disabled":"true"});
 			}
 
-			$(".product").html(content);
 		});
 	},
 	list:function(){
@@ -184,12 +180,17 @@ market = {
 		var data = system.ajax('assets/harmony/Process.php?chkUserLogin',"");
 		data.done(function(data){
 			if(data == 0){
+				$("button.shopping").attr({'disabled':"true"});
 			}
 			else{
+				$("button.shopping").removeAttr('disabled');
 				$("a[data-activates='signIn']").addClass("hidden");
 				$("a[data-activates='account']").removeClass("hidden");
 				$("#display_headerAccount").removeClass("hidden");
 				profile.ini();
+				wishlist.ini();
+
+				wishlist.disableButton();
 			}
 		});
 	},
@@ -205,6 +206,7 @@ market = {
 				disabled = "disabled";
 			else
 				disabled = "";
+
 			content += "<div class='product col s12 m4 l3' style='margin-bottom:30px;'>"+
 						"    <div class='card'>"+
 						"        <div class='card-image waves-effect waves-block waves-light'>"+
@@ -212,12 +214,12 @@ market = {
 						"        </div>"+
 						"        <ul class='card-action-buttons'>"+
 						"            <li>"+
-						"				<a class='btn-floating waves-effect' "+disabled+" data-cmd='addCart' data-node='"+v[0]+"' data-price='"+v[3]+"' data-qty='"+v[2]+"'>"+
+						"				<button class='btn-floating waves-effect shopping' data-cmd='addWishlist' data-wishlist='"+v[0]+"' data-node='"+v[0]+"'>"+
 						"					<i class='mdi-action-favorite'></i>"+
-						"				</a>"+
-						"				<a class='btn-floating waves-effect cyan' "+disabled+" href='product.html?id="+v[0]+"'>"+
+						"				</button>"+
+						"				<button class='btn-floating waves-effect shopping cyan' data-cmd='addCart' "+disabled+" data-node='"+v[0]+"'>"+
 						"					<i class='mdi-action-shopping-cart'></i>"+
-						"				</a>"+
+						"				</button>"+
 						"			</li>"+
 						"        </ul>"+
 						"        <div class='card-content'>"+
@@ -239,22 +241,10 @@ market = {
 		});
 		$("#products").html(content);
 
-		// $("button[data-cmd='addCart']").on('click',function(){
-		// 	var data = [$(this).data('node'),Number($(this).data('price')),Number($(this).data('qty'))];
-		// 	var points = Number(localStorage.getItem('points'));
-		// 	if(points>data[1]){
-		// 		$( ".tooltipped" ).tooltip({
-		// 		  hide: { effect: "explode", duration: 1000 }
-		// 		})
-		// 		$(this).attr({"disabled":"true"});
-		// 		$(this).removeClass("tooltipped");
-
-		// 		market.addToCart(points,[data[0],1]);
-		// 	}
-		// 	else{
-		// 		Materialize.toast('Insufficient points',4000);
-		// 	}
-		// });
+		$("button[data-cmd='addCart']").on('click',function(){
+			var data = $(this).data();
+	    	$(location).attr('href',"product.html?id="+data.node);
+		});
 	},
 	addProduct:function(points,data){
 		var currentCount = ((localStorage.getItem('cartCount')=="") || (localStorage.getItem('cartCount')==null))?0:Number(localStorage.getItem('cartCount'));
@@ -446,27 +436,33 @@ market = {
 	getProduct:function(id){
 		var data = product.getByID(id);
 		var suggestions = product.suggestionsByProduct(id);
+		var data_wishlist = wishlist.get();
+		var search = system.searchJSON(data_wishlist,1,id);
 
 		var content = "<div class='row'>"+
-		"	<div class='col s12 m6 l6'>"+
-		"		<div class='card'>"+
-		"			<div class='card-image'>"+
-		"			<img alt='' class='responsive-img valign' draggable='false' src='assets/images/products/"+data[10]+"'>"+
-		"			</div>"+
-		"		</div>"+
-		"	</div>"+
-		"	<div class='col s12 m6 l6'>"+
-		"		<h4>"+data[1]+"</h4>"+
-		"		<h2 class='pink-text'>K "+data[3]+"</h2>"+
-		"		<a class='btn-floating waves-effect' data-cmd='addCart' data-node='' data-price='' data-qty=''><i class='mdi-action-favorite'></i></a>"+
-		"		<a class='btn-floating waves-effect cyan'><i class='mdi-action-shopping-cart'></i></a>"+
-		"	</div>"+
-		"</div>"+
-		"<div class='row'>"+
-		"	<p>"+data[5]+"</p>"+
-		"</div>";
+						"	<div class='col s12 m6 l6'>"+
+						"		<div class='card'>"+
+						"			<div class='card-image'>"+
+						"			<img alt='' class='responsive-img valign' draggable='false' src='assets/images/products/"+data[10]+"'>"+
+						"			</div>"+
+						"		</div>"+
+						"	</div>"+
+						"	<div class='col s12 m6 l6'>"+
+						"		<h4>"+data[1]+"</h4>"+
+						"		<h2 class='pink-text'>K "+data[3]+"</h2>"+
+						"		<button class='btn waves-effect' data-cmd='addCart'  data-cmd='addWishlist' data-wishlist='"+data[0]+"' data-node='"+data[0]+"'><i class='mdi-action-favorite'></i></button>"+
+						"		<button class='btn waves-effect cyan'>Add to cart</button>"+
+						"	</div>"+
+						"</div>"+
+						"<div class='row'>"+
+						"	<p>"+data[5]+"</p>"+
+						"</div>";
 		$("#display_product").html(content);
-	}
+
+		if(search.length>0){
+			wishlist.disableButton();
+		}
+	},
 };
 
 profile = {
@@ -477,6 +473,14 @@ profile = {
         system.forceLogout(function(){
         	profile.logout();
         });
+	},
+	get:function(){
+		var ret = [];
+		var data = system.html('assets/harmony/Process.php?get-employeeAccount');
+		data.done(function(data){
+			ret = data = JSON.parse(data);
+		});
+		return ret;
 	},
 	getPoints:function(id){
 		var data = system.ajax('assets/harmony/Process.php?get-employeePoints',id);
@@ -489,28 +493,25 @@ profile = {
 	},
 	getAccount:function(){
 		var content = "";
-		var data = system.html('assets/harmony/Process.php?get-employeeAccount');
-		data.done(function(data){
-			data = JSON.parse(data);
-			if(data.length>0){
-				$("#display_account h5").html("<strong>WELCOME,<br/> <i class='pink-text'>"+data[0][4]+" "+data[0][5].substring(0,1)+". "+data[0][3]+"</i></strong>");
-				$(".display_accountName").html("WELCOME, "+data[0][4]+" "+data[0][5].substring(0,1)+". "+data[0][3]+"");
-				profile.getPoints(data[0][0]);
-			}
-			else{
-		    	$("#display_cart").removeClass('bounceInUp').addClass("bounceOutUp");
-		    	$("#display_login").removeClass("bounceOutUp").addClass('bounceInUp');
-			}
+		var data = this.get();
+		if(data.length>0){
+			$("#display_account h5").html("<strong>WELCOME,<br/> <i class='pink-text'>"+data[0][4]+" "+data[0][5].substring(0,1)+". "+data[0][3]+"</i></strong>");
+			$(".display_accountName").html("WELCOME, "+data[0][4]+" "+data[0][5].substring(0,1)+". "+data[0][3]+"");
+			profile.getPoints(data[0][0]);
+		}
+		else{
+	    	$("#display_cart").removeClass('bounceInUp').addClass("bounceOutUp");
+	    	$("#display_login").removeClass("bounceOutUp").addClass('bounceInUp');
+		}
 
-			$("a[data-cmd='logout']").on("click",function(){
-	        	profile.logout();
-			});
-
-			$("a[data-cmd='account']").on("click",function(){
-				localStorage.setItem("hash",'employee');
-		    	$(location).attr('href','account/');
-			});			
+		$("a[data-cmd='logout']").on("click",function(){
+        	profile.logout();
 		});
+
+		$("a[data-cmd='account']").on("click",function(){
+			localStorage.setItem("hash",'employee');
+	    	$(location).attr('href','account/');
+		});			
 	},
 	logout:function(){
 		var data = system.ajax('assets/harmony/Process.php?kill-session',"");
@@ -519,5 +520,61 @@ profile = {
 				$(location)[0].reload()	
 			}
 		});	
+	}
+}
+
+wishlist = {
+	ini:function(){
+		this.add();
+		this.get();
+	},
+	get:function(){
+		var id = profile.get()[0][0];
+		var ret = [];
+		var data = system.ajax('assets/harmony/Process.php?get-wishlist',id);
+		data.done(function(data){
+			ret = JSON.parse(data);
+		});
+		return ret;
+	},
+	add:function(){
+		var profileID = "";
+		profileID = profile.get()[0][0];
+		$("button[data-cmd='addWishlist']").on('click',function(){
+			var data = $(this).data();
+			$(this).attr({'disabled':"true"});
+			wishlist.save(profileID,data.node);
+		});
+	},
+	save:function(employee,product){
+		var data = system.ajax('assets/harmony/Process.php?set-wishlist',[employee,product]);
+		data.done(function(data){
+			if(data == 1){
+				Materialize.toast('Success. This product has been added to your wishlist.',4000);
+			} 
+			else{
+				Materialize.toast('Cannot process. Try some other time.',4000);
+				$("button[data-node='"+product+"']").removeAttr('disabled');
+			}
+		});
+	},	
+	remove:function(employee,product){
+		var data = system.ajax('assets/harmony/Process.php?remove-wishlist',[employee,product]);
+		data.done(function(data){
+			if(data == 1){
+				Materialize.toast('This product has been removed to your wishlist.',4000);
+				$("button[data-node='"+product+"']").removeAttr('disabled');
+			} 
+			else{
+				Materialize.toast('Cannot process. Try some other time.',4000);
+				$("button[data-node='"+product+"']").attr({'disabled':"true"});
+			}
+		});
+	},
+	disableButton:function(){
+		var data = wishlist.get();
+		$.each(data,function(i,v){
+			$("button[data-wishlist='"+v[1]+"']").attr({"disabled":"true"});
+		});
 	}
 }

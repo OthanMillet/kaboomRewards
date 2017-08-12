@@ -179,6 +179,12 @@ $function = new DatabaseClasses;
 			print_r(json_encode($query));
 		}
 
+		if(isset($_GET['get-wishlist'])){
+			$data = $_POST['data'];
+			$query = $function->PDO(true,"SELECT * FROM tbl_wishlist WHERE employee_id = '{$data}'");
+			print_r(json_encode($query));
+		}
+
 		if(isset($_GET['get-employerAccount'])){
 			$query = $function->PDO(true,"SELECT * FROM tbl_employer WHERE username = '{$_SESSION['kaboom'][0]}' AND password = '{$_SESSION['kaboom'][1]}'");
 			print_r(json_encode($query));
@@ -187,14 +193,27 @@ $function = new DatabaseClasses;
 		if(isset($_GET['get-suggestionsByID'])){
 			$data = $_POST['data'];
 			$query = $function->PDO(true,"SELECT * FROM tbl_product WHERE id = '{$data}'");
+			$search = "";
+			$value = json_decode($query[0][4]);
 
-			$suggestions = $function->PDO(true,"SELECT * FROM tbl_product WHERE category LIKE '%{$query[0][4]}%'");
+			foreach($value as $i => $v) {
+				$search .= "category LIKE '%{$v}%'";
+				if(($i+1)<count($value)){
+					$search .= " OR ";
+				}
+			}
+
+			$suggestions = $function->PDO(true,"SELECT * FROM tbl_product WHERE (id != '{$data}') AND ({$search}) AND (qty>0) AND (status = 1) LIMIT 0,3");
 			print_r(json_encode($suggestions));
 		}
 
 		if(isset($_GET['get-products'])){
-			// $query = $function->PDO(true,"SELECT * FROM tbl_product WHERE qty>0 AND status = 1 ORDER BY `date` DESC");
 			$query = $function->PDO(true,"SELECT * FROM tbl_product ORDER BY `date` DESC");
+			print_r(json_encode($query));
+		}
+
+		if(isset($_GET['get-availableProducts'])){
+			$query = $function->PDO(true,"SELECT * FROM tbl_product WHERE qty>0 AND status = 1 ORDER BY `date` DESC");
 			print_r(json_encode($query));
 		}
 
@@ -611,7 +630,23 @@ $function = new DatabaseClasses;
 				$Data = $query->errorInfo();
 				print_r($Data);
 			}
-		}	
+		}
+
+		if(isset($_GET['set-wishlist'])){
+			$data = $_POST['data'];
+			$date = $function->PDO_DateAndTime();
+	        $id = $function->PDO_IDGenerator('tbl_wishlist','id');
+
+			$query = $function->PDO(false,"INSERT INTO tbl_wishlist(id,product_id,employee_id,date,status) VALUES ('{$id}','{$data[1]}','{$data[0]}','{$date}',1);");
+			if($query->execute()){
+				$log = $function->log2($data[1],"Added  wishlist","Wishlist");
+				echo 1;
+			}
+			else{
+				$Data = $query->errorInfo();
+				print_r($Data);
+			}
+		}
 
 		if(isset($_GET['set-orders'])){
 			$q1 = ""; $q2 = ""; $q3 = ""; $points = 0; $spent = 0;
@@ -1379,8 +1414,6 @@ $function = new DatabaseClasses;
 			$data = $_POST['data'];
 			$id = $data[0];
 
-			// print_r($data);
-
 			$picture = $function->saveProductImage($id,$data[1]);
 			$query = $function->PDO(false,"UPDATE tbl_product SET picture = '{$picture}' WHERE id = '{$id}';");
 			if($query->execute()){
@@ -1389,6 +1422,21 @@ $function = new DatabaseClasses;
 			}
 			else{
 				unlink('../images/products/'.$picture);
+				$Data = $query->errorInfo();
+				print_r($Data);
+			}
+		}
+
+		if(isset($_GET['update-wishlist'])){
+			$data = $_POST['data'];
+			$date = $function->PDO_DateAndTime();
+
+			$query = $function->PDO(false,"UPDATE tbl_product SET status = '0' WHERE id = '{$id}';");
+			if($query->execute()){
+				$log = $function->log2($id,"Removed wishlist with an id of '{$id}","Wishlist");
+				echo 1;
+			}
+			else{
 				$Data = $query->errorInfo();
 				print_r($Data);
 			}
