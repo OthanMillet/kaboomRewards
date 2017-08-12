@@ -184,8 +184,23 @@ $function = new DatabaseClasses;
 			print_r(json_encode($query));
 		}
 
+		if(isset($_GET['get-suggestionsByID'])){
+			$data = $_POST['data'];
+			$query = $function->PDO(true,"SELECT * FROM tbl_product WHERE id = '{$data}'");
+
+			$suggestions = $function->PDO(true,"SELECT * FROM tbl_product WHERE category LIKE '%{$query[0][4]}%'");
+			print_r(json_encode($suggestions));
+		}
+
 		if(isset($_GET['get-products'])){
-			$query = $function->PDO(true,"SELECT * FROM tbl_product WHERE qty>0 AND status = 1 ORDER BY `date` DESC");
+			// $query = $function->PDO(true,"SELECT * FROM tbl_product WHERE qty>0 AND status = 1 ORDER BY `date` DESC");
+			$query = $function->PDO(true,"SELECT * FROM tbl_product ORDER BY `date` DESC");
+			print_r(json_encode($query));
+		}
+
+		if(isset($_GET['get-productsByID'])){
+			$data = $_POST['data'];
+			$query = $function->PDO(true,"SELECT * FROM tbl_product WHERE id = '{$data}'");
 			print_r(json_encode($query));
 		}
 

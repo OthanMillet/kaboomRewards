@@ -115,6 +115,9 @@ var system = function(){
 				},
 				idle: 300000
 			});
+		},
+		random:function(min,max){
+			return Math.floor(Math.random() * (max - min + 1) + min);
 		}
 	}
 }();
@@ -216,11 +219,13 @@ login = {
 					if(data == "Active"){
 						localStorage.setItem("hash",data);
 						Materialize.toast('Success.',4000);
-				    	$("#display_cart").removeClass("bounceOutUp");
-				    	$("#display_login").addClass("bounceOutUp");
-				    	$("#display_cart").addClass("bounceInUp");
-				    	$("#display_login").parent().addClass('hidden');
+
+						$("a[data-activates='signIn']").addClass("hidden");
+						$("a[data-activates='account']").removeClass("hidden");
+						$("#display_headerAccount").removeClass("hidden");
 				    	market.ini();
+
+		                $(".chat-collapse").sideNav("hide");
 					}
 					else if(data == "Deactivated"){
 						Materialize.toast('Account is deactivated.',4000);
