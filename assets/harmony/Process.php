@@ -143,8 +143,13 @@ $function = new DatabaseClasses;
 		}
 
 		if(isset($_GET['get-employeeAccount'])){
-			$query = $function->PDO(true,"SELECT * FROM tbl_employee WHERE employee_id = '{$_SESSION['kaboom'][0]}' AND password = '{$_SESSION['kaboom'][1]}'");
-			print_r(json_encode($query));
+			if(count($_SESSION)>0){
+				$query = $function->PDO(true,"SELECT * FROM tbl_employee WHERE employee_id = '{$_SESSION['kaboom'][0]}' AND password = '{$_SESSION['kaboom'][1]}'");
+				print_r(json_encode($query));				
+			}
+			else{
+				echo 0;
+			}
 		}
 
 		if(isset($_GET['get-employeePoints'])){
@@ -181,7 +186,7 @@ $function = new DatabaseClasses;
 
 		if(isset($_GET['get-wishlist'])){
 			$data = $_POST['data'];
-			$query = $function->PDO(true,"SELECT * FROM tbl_wishlist WHERE employee_id = '{$data}'");
+			$query = $function->PDO(true,"SELECT * FROM tbl_wishlist WHERE employee_id = '{$data}' AND status = 1");
 			print_r(json_encode($query));
 		}
 

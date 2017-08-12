@@ -9,8 +9,8 @@
 
         <link rel="icon" href="assets/images/logo.png" sizes="32x32">
         <meta name="msapplication-TileColor" content="#00bcd4">
-        <!-- <link href="assets/css/mdl.min.css" type="text/css" rel="stylesheet" media="screen,projection"> -->
         <link href="assets/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection">
+        <!-- <link href="assets/css/mdl.min.css" type="text/css" rel="stylesheet" media="screen,projection"> -->
         <link href="assets/css/style.css" type="text/css" rel="stylesheet" media="screen,projection">
         <link href="assets/css/custom.css" type="text/css" rel="stylesheet" media="screen,projection">
         <link href="assets/css/animate.css" type="text/css" rel="stylesheet" media="screen,projection">
@@ -46,7 +46,7 @@
                                         <a href="#" class="pink-text darken-2 hidden chat-collapse" data-activates="account">My Account <i class="mdi-action-account-circle right"></i></a>
                                     </li>
                                     <li class="pink darken-2">
-                                        <a href="cart.html" class="waves-effect waves-block waves-light white-text"><i class="mdi-action-shopping-cart"><small class="notification-badge" id="display_cartTotal"></small></i></a>
+                                        <a href="cart.html" class="waves-effect waves-block waves-light white-text"><i class="mdi-action-shopping-cart"><small class="notification-badge" id="display_cartTotal">5</small></i></a>
                                     </li>
                                 </ul>
                             </div>
@@ -195,9 +195,16 @@
                     </ul>
                 </aside>
                 <section class='row' style='margin-bottom: 20px;'>
-                    <div class="col s12 m9 l9" id='display_product'></div>
-                    <div class="col s12 m3 l3">
-                        <div class="product" style="width:100%;"></div>
+                    <div class="col s12">
+                        <div class="card">
+                            <div class="card-header pink white-text" style="padding:10px;">
+                                Order Summary
+                            </div>                            
+                            <div class="card-content" id="display_productInCart"><table class="table bordered stripped"></table></div>
+                        </div>
+                    </div>
+                    <div class="col s12">
+                        <button class='btn waves-effect cyan' >Checkout</button>
                     </div>
                 </section>
                 <section class="row cyan darken-1" style='margin-bottom: 0px;padding-bottom: 40px;'><br/><br/>
@@ -206,16 +213,11 @@
                 </section>
             </div>
         </div>
-        <div id="modal" class="modal grey darken-4">
-            <h5 class='center cyan white-text' style='padding: 10px;'><i class='mdi-toggle-check-box'></i> This item has been to your cart </h5>
-            <div class="modal-content" style="padding-left: 80px; padding-right: 80px;"></div>
-        </div>
-
         <script type="text/javascript" src="assets/js/jquery.js"></script>    
         <script type="text/javascript" src="assets/js/materialize.min.js"></script>
-        <script type="text/javascript" src="assets/js/perfect-scrollbar.min.js"></script>
         <script type="text/javascript" src="assets/js/plugins.js"></script>
         <script type="text/javascript" src="assets/js/app.js"></script>
+        <script type="text/javascript" src="assets/js/perfect-scrollbar.min.js"></script>
         <script type="text/javascript" src="assets/js/jquery.idle.min.js"></script>
         <script type="text/javascript" src="assets/js/validation/jquery.validate.min.js"></script>
         <script type="text/javascript" src="assets/js/validation/additional-methods.min.js"></script>
@@ -229,9 +231,8 @@
         <script type="text/javascript">
             $(".dropdown-button").dropdown();
             market.ini();
+            market.showCart();
             login.market();
-            var id = window.location.search.split('=')[1];
-            market.getProduct(id);
         </script>
     </body>
 </html>

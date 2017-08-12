@@ -189,10 +189,10 @@ market = {
 				$("#display_headerAccount").removeClass("hidden");
 				profile.ini();
 				wishlist.ini();
-
-				wishlist.disableButton();
 			}
 		});
+
+		$("#display_cartTotal").html(market.getCart().length);
 	},
 	products:function(){
 		var content = "",search = [], disabled = "";
@@ -246,39 +246,13 @@ market = {
 	    	$(location).attr('href',"product.html?id="+data.node);
 		});
 	},
-	addProduct:function(points,data){
+	addToCart:function(data){
 		var currentCount = ((localStorage.getItem('cartCount')=="") || (localStorage.getItem('cartCount')==null))?0:Number(localStorage.getItem('cartCount'));
 		localStorage.setItem('cartCount',currentCount+1);
-		localStorage.setItem('points',points-data[1]);
 		localStorage.setItem('cart-'+currentCount,JSON.stringify(data));
-
-		return 'cart-'+currentCount;
-	},
-	addToCart:function(points,data){
-		var products = product.get();
-		var  cart = market.getCart();
-		var total = 0;
-		var cart = market.addProduct(points,data);
-		products = JSON.parse(products);
-		search = system.searchJSON(products,0,data[0]);
-		$("#display_productInCart ul h6").remove();
-		content = "<li class='animated slideInLeft collection-item avatar'>"+
-				"	<img src='assets/images/products/"+search[0][10]+"' alt='' class='circle'>"+
-				"	<span class='title'>"+search[0][1]+"  <span class='grey-text'>"+search[0][3]+"pts<span><br/>"+
-				"		<button data-cmd='lessQuantity' style='border-radius: 0%;' class='btn-floating btn-flat blue waves-effect waves-light white-text'><i class='mdi-content-remove white-text'></i></button>"+
-				"		<input data-cart='"+cart+"' data-cmd='input' data-limit='"+search[0][2]+"' data-cost='"+search[0][3]+"' type='number' pattern='[1-9]*' class='validate valid' value='1' style='width: 40px;height: 35px;text-align: center;'>"+
-				"		<button data-cmd='addQuantity' style='border-radius: 0%;' class='btn-floating btn-flat purple darken-4 waves-effect waves-light white-text'><i class='mdi-content-add white-text'></i></button>"+
-				"	</span>"+
-				"	<a data-count='"+search[0][3]+"' class='secondary-content' style='font-size: 20px;'>"+search[0][3]+"</a>"+
-				"	<span data-cmd='removeCart' data-cart='"+cart+"' style='cursor: pointer;font-size: 12px;display: inline-block;'>Remove Item</span>"+
-				"</li>";
-
-		$("#display_productInCart ul").append(content);
-		$("button[data-cmd='checkOut']").removeAttr('disabled');
-		market.options();
 	},
 	showCart:function(){
-		var count = 0, total = 0, content = "";
+		var count = 0, total = 0, content = "xx";
 		var search = [], cart = [];
 		var products = product.get();
 		var cart = market.getCart(), _cart = "";
@@ -286,25 +260,25 @@ market = {
 		products = JSON.parse(products);
 
 		if(cart.length > 0){
-			$("#display_productInCart ul").html("");
 			$.each(cart,function(i,v){
 				search = system.searchJSON(products,0,v[1][0]);
 				if(search.length>0){
 					total = total+Number(search[0][3]);
-					content += "<li class='animated slideInLeft collection-item avatar'>"+
-							"	<img src='assets/images/products/"+search[0][10]+"' alt='' class='circle' />"+
-							"	<span class='title'>"+search[0][1]+"  <span class='grey-text'>"+search[0][3]+"pts<span><br/>"+
-							"		<button data-cmd='lessQuantity' style='border-radius: 0%;' class='btn-floating btn-flat blue waves-effect waves-light white-text'><i class='mdi-content-remove white-text'></i></button>"+
-							"		<input data-cmd='input' data-cart='"+v[0]+"' data-limit='"+search[0][2]+"' data-cost='"+search[0][3]+"' value='"+v[1][1]+"' type='number' pattern='[1-9]*' class='validate valid' style='width: 40px;height: 35px;text-align: center;'/>"+
-							"		<button data-cmd='addQuantity' style='border-radius: 0%;' class='btn-floating btn-flat purple darken-4 waves-effect waves-light white-text'><i class='mdi-content-add white-text'></i></button>"+
-							"	</span>"+
-							"	<a class='secondary-content count' style='font-size: 20px;'>"+(Number(search[0][3])*Number(v[1][1]))+"</a>"+
-							"	<span data-cmd='removeCart' data-cart='"+v[0]+"' style='cursor: pointer;font-size: 12px;display: inline-block;'>Remove Item</span>"+
-							"</li>";					
+					content += "<tr class=''>"+
+							"	<td><img src='assets/images/products/"+search[0][10]+"' alt='' class='circle' /></td>"+
+							"	<td><span class='title'>"+search[0][1]+"  <span class='grey-text'>"+search[0][3]+"pts<span></span></td>"+
+							"	<td>"+
+							"			<button data-cmd='lessQuantity' style='border-radius: 0%;' class='btn-floating btn-flat blue waves-effect waves-light white-text'><i class='mdi-content-remove white-text'></i></button>"+
+							"			<input data-cmd='input' data-cart='"+v[0]+"' data-limit='"+search[0][2]+"' data-cost='"+search[0][3]+"' value='"+v[1][1]+"' type='number' pattern='[1-9]*' class='validate valid' style='width: 40px;height: 35px;text-align: center;'/>"+
+							"			<button data-cmd='addQuantity' style='border-radius: 0%;' class='btn-floating btn-flat purple darken-4 waves-effect waves-light white-text'><i class='mdi-content-add white-text'></i></button>"+
+							"	</td>"+
+							"	<td><a class='secondary-content count' style='font-size: 20px;'>"+(Number(search[0][3])*Number(v[1][1]))+"</a></td>"+
+							"	<td><span data-cmd='removeCart' data-cart='"+v[0]+"' style='cursor: pointer;font-size: 12px;display: inline-block;'>Remove Item</span></td>"+
+							"</tr>";					
 				}
 			});
+			$("#display_productInCart table").html(content);
 			$("#display_total span").html(total);
-			$("#display_productInCart ul").append(content);
 			market.options();
 			market.checkCart(cart);			
 			$("button[data-cmd='checkOut']").removeAttr('disabled');
@@ -437,7 +411,8 @@ market = {
 		var data = product.getByID(id);
 		var suggestions = product.suggestionsByProduct(id);
 		var data_wishlist = wishlist.get();
-		var search = system.searchJSON(data_wishlist,1,id);
+		var search_wihlist = system.searchJSON(data_wishlist,1,id);
+		var search_cart = system.searchJSON(data_wishlist,1,id);
 
 		var content = "<div class='row'>"+
 						"	<div class='col s12 m6 l6'>"+
@@ -450,8 +425,8 @@ market = {
 						"	<div class='col s12 m6 l6'>"+
 						"		<h4>"+data[1]+"</h4>"+
 						"		<h2 class='pink-text'>K "+data[3]+"</h2>"+
-						"		<button class='btn waves-effect' data-cmd='addCart'  data-cmd='addWishlist' data-wishlist='"+data[0]+"' data-node='"+data[0]+"'><i class='mdi-action-favorite'></i></button>"+
-						"		<button class='btn waves-effect cyan'>Add to cart</button>"+
+						"		<button class='btn-floating waves-effect' data-cmd='addWishlist' data-wishlist='"+data[0]+"' data-node='"+data[0]+"'><i class='mdi-action-favorite'></i></button>"+
+						"		<button class='btn waves-effect cyan' data-cmd='addCart' data-node='"+data[0]+"' data-price='"+data[3]+"' data-qty='"+data[2]+"'>Add to cart</button>"+
 						"	</div>"+
 						"</div>"+
 						"<div class='row'>"+
@@ -459,17 +434,44 @@ market = {
 						"</div>";
 		$("#display_product").html(content);
 
-		if(search.length>0){
+		if(search_wihlist.length>0){
 			wishlist.disableButton();
 		}
+
+		$("button[data-cmd='addCart']").on('click',function(){
+			$(this).attr({"disabled":"true"});
+			var product = [$(this).data('node'),Number($(this).data('price')),Number($(this).data('qty'))];
+			market.addToCart(product);
+
+			var content = "<div class='row'>"+
+							"	<div class='col s12 m4 l4'>"+
+							"		<div class='card'>"+
+							"			<div class='card-image'>"+
+							"			<img alt='' class='responsive-img valign' draggable='false' src='assets/images/products/"+data[10]+"'>"+
+							"			</div>"+
+							"		</div>"+
+							"	</div>"+
+							"	<div class='col s12 m8 l8'>"+
+							"		<h4 class='white-text'>"+data[1]+"</h4>"+
+							"		<h2 class='cyan-text'>K "+data[3]+"</h2>"+
+							"	</div>"+
+							"</div>"+
+							"<div class='row'>"+
+							"	<div class='col s12'>"+
+							"		<a class='btn waves-effect pink' href='cart.html'>View my cart</a>"+
+							"		<a class='right' href='sale.html'>Continue shoping</a>"+
+							"	<div>"+
+							"</div>";
+
+			$("#modal .modal-content").html(content);
+			$('#modal').openModal('show');			
+		});
 	},
 };
 
 profile = {
 	ini:function(){
 		profile.getAccount();
-		market.showCart();
-
         system.forceLogout(function(){
         	profile.logout();
         });
@@ -478,7 +480,12 @@ profile = {
 		var ret = [];
 		var data = system.html('assets/harmony/Process.php?get-employeeAccount');
 		data.done(function(data){
-			ret = data = JSON.parse(data);
+			if(data == 0){
+				$(location).attr('href','index.html');
+			}
+			else{
+				ret = JSON.parse(data);			
+			}
 		});
 		return ret;
 	},
@@ -486,7 +493,7 @@ profile = {
 		var data = system.ajax('assets/harmony/Process.php?get-employeePoints',id);
 		data.done(function(data){
 			data = JSON.parse(data);
-			localStorage.setItem('points',data[0][2]);
+			// localStorage.setItem('points',data[0][2]);
 			$("#display_points .cart_bigNumber").html(data[0][2]+"<small> points<span style='display: block;'></span></small>");
 			$(".display_points").html(data[0][2]);
 		});
@@ -527,6 +534,7 @@ wishlist = {
 	ini:function(){
 		this.add();
 		this.get();
+		this.disableButton();
 	},
 	get:function(){
 		var id = profile.get()[0][0];
