@@ -99,7 +99,7 @@ $(function() {
 	$(".leftside-navigation").height(g).perfectScrollbar({
 		suppressScrollX: !0
 	});
-	var h = $("#chat-out").height();
+	var h = $(window).height();
 	$(".rightside-navigation").height(h).perfectScrollbar({
 		suppressScrollX: true,
 		wheelPropagation:true
