@@ -261,23 +261,22 @@ market = {
 
 		if(cart.length > 0){
 			$.each(cart,function(i,v){
+				console.log(v);
 				search = system.searchJSON(products,0,v[1][0]);
 				if(search.length>0){
 					total = total+Number(search[0][3]);
-					content += "<tr class=''>"+
-							"	<td><img src='assets/images/products/"+search[0][10]+"' alt='' class='circle' /></td>"+
-							"	<td><span class='title'>"+search[0][1]+"  <span class='grey-text'>"+search[0][3]+"pts<span></span></td>"+
-							"	<td>"+
-							"			<button data-cmd='lessQuantity' style='border-radius: 0%;' class='btn-floating btn-flat blue waves-effect waves-light white-text'><i class='mdi-content-remove white-text'></i></button>"+
-							"			<input data-cmd='input' data-cart='"+v[0]+"' data-limit='"+search[0][2]+"' data-cost='"+search[0][3]+"' value='"+v[1][1]+"' type='number' pattern='[1-9]*' class='validate valid' style='width: 40px;height: 35px;text-align: center;'/>"+
-							"			<button data-cmd='addQuantity' style='border-radius: 0%;' class='btn-floating btn-flat purple darken-4 waves-effect waves-light white-text'><i class='mdi-content-add white-text'></i></button>"+
+					content += "<tr class='animated'>"+
+							"	<td class='center'><img src='assets/images/products/"+search[0][10]+"' alt='' class='circle' style='width: 100px;' /></td>"+
+							"	<td class='center'><span class='title'>"+search[0][1]+"  <span class='grey-text'>"+search[0][3]+"pts<span></span></td>"+
+							"	<td class='center'>"+
+							"		<input data-cmd='input' data-cart='"+v[0]+"' data-limit='"+search[0][2]+"' data-cost='"+search[0][3]+"' value='1' type='number' pattern='[1-9]*' class='validate valid' style='width: 40px;height: 35px;text-align: center;'/>"+
 							"	</td>"+
-							"	<td><a class='secondary-content count' style='font-size: 20px;'>"+(Number(search[0][3])*Number(v[1][1]))+"</a></td>"+
-							"	<td><span data-cmd='removeCart' data-cart='"+v[0]+"' style='cursor: pointer;font-size: 12px;display: inline-block;'>Remove Item</span></td>"+
+							"	<td class='center'><p class='count' style='font-size: 20px;'>"+(Number(search[0][3])*1)+"</p></td>"+
+							"	<td class='center'><button data-cmd='removeCart' data-cart='"+v[0]+"' class='btn-floating grey'><i class='mdi-navigation-close'></i></button></td>"+
 							"</tr>";					
 				}
 			});
-			$("#display_productInCart table").html(content);
+			$("#display_productInCart table tbody").html(content);
 			$("#display_total span").html(total);
 			market.options();
 			market.checkCart(cart);			
@@ -289,43 +288,7 @@ market = {
 	},
 	options:function(){
 		var points = localStorage.getItem('points');
-		$("li button[data-cmd='addQuantity']").on('click',function(){
-			var data = $(this).parent().find('input').data();
-			count = Number($(this).parent().find('input').val()) + 1;
-			if(($(this).parent().find('input').val() <= data.limit) && (points-(count*data.cost) >= 0)){
-				var cart = JSON.parse(localStorage.getItem(data.cart));
-				cart = JSON.stringify([cart[0],cart[1]+1]);
-				localStorage.setItem(data.cart,cart);
-				$(this).parent().find("button[data-cmd='lessQuantity']").removeAttr("disabled");
-				$(this).parent().find('input').val(count);				
-				$(this).parent().find('a.secondary-content').html(count*data.cost);
-
-				market.checkCart(cart);
-			}
-			else{
-				$(this).attr({'disabled':true});
-			}
-		});
-
-		$("li button[data-cmd='lessQuantity']").on('click',function(){
-			var data = $(this).parent().find('input').data();
-			if($(this).parent().find('input').val() > 1){
-				var cart = JSON.parse(localStorage.getItem(data.cart));
-				cart = JSON.stringify([cart[0],cart[1]-1]);
-				localStorage.setItem(data.cart,cart);
-				$(this).parent().find("button[data-cmd='addQuantity']").removeAttr("disabled");
-				count = Number($(this).parent().find('input').val()) - 1;
-				$(this).parent().find('input').val(count);
-				$(this).parent().find('a.secondary-content').html(count*data.cost);	
-
-				market.checkCart(cart);
-			}
-			else{
-				$(this).attr({'disabled':true});
-			}
-		});
-
-		$("li input[data-cmd='input']").on('change',function(){
+		$("input[data-cmd='input']").on('change',function(){
 			var data = $(this).data();
 			count = Number($(this).val()) + 1;
 			var cart = JSON.parse(localStorage.getItem(data.cart));
@@ -334,24 +297,27 @@ market = {
 				cart = JSON.stringify([cart[0],Number($(this).val())]);
 				localStorage.setItem(data.cart,cart);
 
-				$(this).parent().find("button[data-cmd='lessQuantity']").removeClass("disabled");
-
 				$(this).parent().find('input').val(count);				
 				$(this).parent().find('a.secondary-content').html(count*data.cost);
 
 				market.checkCart(cart);
 			}
 			else{
-				console.log('x');
 				$(this).val(cart[1]);
 				Materialize.toast('Quantity is invalid',4000);
 			}
 		});
 
-		$("span[data-cmd='removeCart']").on('click',function(){
-			var data = $(this).data();
-			localStorage.removeItem(data.cart);
-	    	window.location.reload(true);
+		$("button[data-cmd='removeCart']").on('click',function(){
+			var _this = this;
+			$(_this).parents('tr').addClass('fadeOutUpBig');
+			setTimeout(function(){
+				$(_this).parents('tr').remove();
+				var data = $(_this).data();
+				localStorage.removeItem(data.cart);
+				Materialize.toast('Product has been removed.',4000);
+				$("#display_cartTotal").html(market.getCart().length);
+			},100);
 		});
 
 		$("button[data-cmd='checkOut']").on('click',function(){
@@ -426,7 +392,7 @@ market = {
 						"		<h4>"+data[1]+"</h4>"+
 						"		<h2 class='pink-text'>K "+data[3]+"</h2>"+
 						"		<button class='btn-floating waves-effect' data-cmd='addWishlist' data-wishlist='"+data[0]+"' data-node='"+data[0]+"'><i class='mdi-action-favorite'></i></button>"+
-						"		<button class='btn waves-effect cyan' data-cmd='addCart' data-node='"+data[0]+"' data-price='"+data[3]+"' data-qty='"+data[2]+"'>Add to cart</button>"+
+						"		<button class='btn waves-effect cyan' data-cmd='addCart' data-node='"+data[0]+"' data-price='"+data[3]+"' data-qty='1'>Add to cart</button>"+
 						"	</div>"+
 						"</div>"+
 						"<div class='row'>"+
@@ -465,6 +431,7 @@ market = {
 
 			$("#modal .modal-content").html(content);
 			$('#modal').openModal('show');			
+			$("#display_cartTotal").html(market.getCart().length);
 		});
 	},
 };

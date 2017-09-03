@@ -194,17 +194,30 @@
                         </li>
                     </ul>
                 </aside>
-                <section class='row' style='margin-bottom: 20px;'>
+                <section class='row' style='margin-bottom: 20px;min-height: 300px;'>
                     <div class="col s12">
                         <div class="card">
                             <div class="card-header pink white-text" style="padding:10px;">
                                 Order Summary
                             </div>                            
-                            <div class="card-content" id="display_productInCart"><table class="table bordered stripped"></table></div>
+                            <div class="card-content" id="display_productInCart">
+                                <table class="table bordered stripped">
+                                    <thead>
+                                        <tr>
+                                            <th class='center'>Product Picture</th>
+                                            <th class='center'>Product Name</th>
+                                            <th class='center'>Quantity</th>
+                                            <th class='center'>Total Points</th>
+                                            <th class='center'></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                     <div class="col s12">
-                        <button class='btn waves-effect cyan' >Checkout</button>
+                        <button class='btn waves-effect cyan' data-cmd='checkOut'>Checkout</button>
                     </div>
                 </section>
                 <section class="row cyan darken-1" style='margin-bottom: 0px;padding-bottom: 40px;'><br/><br/>

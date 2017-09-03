@@ -663,13 +663,13 @@ $function = new DatabaseClasses;
 			$count = $numProd[0][0];
 
 			foreach ($data as $key => $value) {
-				$qty = $value[1][1];
+				$qty = $value[1][2];
 				$points = $points + $qty;
 		        $id = $user.'-'.($count++);
 				$prodQty = $function->PDO(true,"SELECT * FROM tbl_product WHERE id = '{$value[1][0]}';");
 				$_prodQty = $prodQty[0][2]-$qty;
 
-				$spent = $spent + $prodQty[0][3] * $qty;
+				$spent = $spent + ($prodQty[0][3] * $qty);
 
 		        if((count($data)-1) <= $key){
 					$q1 .= "('{$id}',{$qty},'{$value[1][0]}','{$orderID}','{$date}','',1)";
@@ -683,6 +683,7 @@ $function = new DatabaseClasses;
 
 			$currentPoints = $function->PDO(true,"SELECT * FROM tbl_points WHERE id = '{$user}';");
 			$newpoints = $currentPoints[0][2]-$spent;
+
 			if($newpoints>=0){
 				$query = $function->PDO(false,"INSERT INTO tbl_orders(id,employee_id,order_date,date_delivered,status) VALUES ('{$orderID}','{$user}','{$date}','',1); INSERT INTO tbl_orderdetails(id,qty,product_id,order_id,order_date,order_delivered,status) VALUES ".$q1.";".$q2.";");
 				if($query->execute()){
