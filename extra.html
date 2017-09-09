@@ -5,13 +5,9 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="description" content="A front-end template that helps you build fast, modern mobile web apps.">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-        <title>Material Design Lite</title>
-
-        <!-- Add to homescreen for Chrome on Android -->
+        <title>Kaboom Rewards</title>
         <meta name="mobile-web-app-capable" content="yes">
         <link rel="icon" sizes="192x192" href="images/android-desktop.png">
-
-        <!-- Add to homescreen for Safari on iOS -->
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="black">
         <meta name="apple-mobile-web-app-title" content="Material Design Lite">
@@ -19,12 +15,11 @@
 
         <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
         <meta name="msapplication-TileColor" content="#3372DF">
-
         <link rel="shortcut icon" href="images/favicon.png">
-
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
         <link rel="stylesheet" href="assets/css/mdl.min.css">
+        <link rel="stylesheet" href="assets/css/original.materialize.min.css">
         <link rel="stylesheet" href="assets/css/mdl.style.css">
         <style>
             #view-source {
@@ -39,88 +34,116 @@
         </style>
     </head>
     <body>
-        <div class="demo-layout mdl-layout mdl-layout--fixed-header mdl-js-layout mdl-color--grey-100">
-            <header class="demo-header mdl-layout__header mdl-layout__header--scroll mdl-color--grey-100 mdl-color-text--grey-800">
+        <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+            <div class="android-header mdl-layout__header mdl-layout__header--waterfall">
                 <div class="mdl-layout__header-row">
-                    <span class="mdl-layout-title">Material Design Lite</span>
+                    <span class="mdl-layout-title" style="color:#757575;">Kaboom Rewards</span>
                     <div class="mdl-layout-spacer"></div>
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
                         <label class="mdl-button mdl-js-button mdl-button--icon" for="search"><i class="material-icons">search</i></label>
                         <div class="mdl-textfield__expandable-holder">
-                            <input class="mdl-textfield__input" id="search" type="text"> <label class="mdl-textfield__label" for="search">Enter your query...</label>
+                            <input class="mdl-textfield__input" id="search" type="text"> <label class="mdl-textfield__label" for="search">Looking for products</label>
                         </div>
                     </div>
+                    <div class="android-navigation-container">
+                        <nav class="android-navigation mdl-navigation">
+                            <a class="mdl-navigation__link mdl-typography--text-uppercase" href=""><i class="material-icons">shopping_cart</i><span class="top-badge">12</span></a> 
+                        </nav>
+                    </div>
                 </div>
-            </header>
-            <div class="demo-ribbon"></div>
-            <main class="demo-main mdl-layout__content">
-                <div class="demo-container mdl-grid">
-                    <div class="mdl-cell mdl-cell--2-col mdl-cell--hide-tablet mdl-cell--hide-phone"></div>
-                    <div class="demo-content mdl-color--white mdl-shadow--4dp content mdl-color-text--grey-800 mdl-cell mdl-cell--8-col">
-                        <div class="demo-crumbs mdl-color-text--grey-500">
-                            Google &gt; Material Design Lite &gt; How to install MDL
+            </div>
+            <div class="android-drawer mdl-layout__drawer">
+                <span class="mdl-layout-title">
+                    Kaboom Rewards
+                </span>
+                <nav class="mdl-navigation">
+                    <a class="mdl-navigation__link" href="">Content</a> 
+                    <div class="android-drawer-separator"></div>
+                    <span class="mdl-navigation__link">Versions</span> 
+                    <a class="mdl-navigation__link" href="">Another Content</a> 
+                </nav>
+            </div>
+            <div class="android-content mdl-layout__content">
+                <div class="demo-layout mdl-layout mdl-layout--fixed-header mdl-js-layout mdl-color--grey-100">
+                    <header class="demo-header mdl-layout__header mdl-layout__header--scroll mdl-color--grey-100 mdl-color-text--grey-800">
+                        <div class="mdl-layout__header-row">
+                            <div class="android-header-spacer mdl-layout-spacer"></div>
+                            <div class="android-navigation-container">
+                                <nav class="android-navigation mdl-navigation">
+                                    <a class="mdl-navigation__link mdl-typography--text-uppercase" href="">Sign In</a> 
+                                </nav>
+                            </div>
                         </div>
-                        <h3>How to install MDL</h3>
-                        <p>Cillum dolor esse sit incididunt velit eiusmod magna ad nostrud officia aute dolor dolor. Magna esse ullamco pariatur adipisicing consectetur eu commodo officia. Ex cillum consequat mollit
-                        minim elit est deserunt occaecat nisi amet. Quis aliqua nostrud Lorem occaecat sunt. Eiusmod quis amet ullamco aliquip dolore ut incididunt duis adipisicing. Elit consequat nisi eiusmod aute
-                        ipsum sunt veniam do est. Occaecat mollit aliquip ut proident consectetur amet ex dolore consectetur aliqua elit.</p>
-                        <p>Commodo nisi non consectetur voluptate incididunt mollit duis dolore amet amet tempor exercitation. Qui amet aute ea aute id ad aliquip proident. Irure duis qui labore deserunt enim in quis
-                        nisi sint consequat aliqua. Ex proident labore et laborum tempor fugiat sint magna veniam minim. Nulla dolor labore adipisicing in enim mollit laboris fugiat eu. Aliquip minim cillum ullamco
-                        voluptate non dolore non ex duis fugiat duis ad. Deserunt cillum ad et nisi amet non voluptate culpa qui do. Labore ullamco et minim proident est laborum mollit ad labore deserunt ut irure
-                        dolore. Reprehenderit ad ad irure ut irure qui est eu velit eu excepteur adipisicing culpa. Laborum cupidatat ullamco eu duis anim reprehenderit proident aute ad consectetur eiusmod.</p>
-                        <p>Tempor tempor aliqua in commodo cillum Lorem magna dolore proident Lorem. Esse ad consequat est excepteur irure eu irure quis aliqua qui. Do mollit esse veniam excepteur ut veniam anim minim
-                        dolore sit commodo consequat duis commodo. Sunt dolor reprehenderit ipsum minim eiusmod eu consectetur anim excepteur eiusmod. Duis excepteur anim dolor sit enim veniam deserunt anim adipisicing
-                        Lorem elit. Cillum sunt do consequat elit laboris nisi consectetur.</p>
-                        <h3>Basic MDL Usage</h3>
-                        <p>Cillum dolor esse sit incididunt velit eiusmod magna ad nostrud officia aute dolor dolor. Magna esse ullamco pariatur adipisicing consectetur eu commodo officia. Ex cillum consequat mollit
-                        minim elit est deserunt occaecat nisi amet. Quis aliqua nostrud Lorem occaecat sunt. Eiusmod quis amet ullamco aliquip dolore ut incididunt duis adipisicing. Elit consequat nisi eiusmod aute
-                        ipsum sunt veniam do est. Occaecat mollit aliquip ut proident consectetur amet ex dolore consectetur aliqua elit.</p>
-                        <p>Commodo nisi non consectetur voluptate incididunt mollit duis dolore amet amet tempor exercitation. Qui amet aute ea aute id ad aliquip proident. Irure duis qui labore deserunt enim in quis
-                        nisi sint consequat aliqua. Ex proident labore et laborum tempor fugiat sint magna veniam minim. Nulla dolor labore adipisicing in enim mollit laboris fugiat eu. Aliquip minim cillum ullamco
-                        voluptate non dolore non ex duis fugiat duis ad. Deserunt cillum ad et nisi amet non voluptate culpa qui do. Labore ullamco et minim proident est laborum mollit ad labore deserunt ut irure
-                        dolore. Reprehenderit ad ad irure ut irure qui est eu velit eu excepteur adipisicing culpa. Laborum cupidatat ullamco eu duis anim reprehenderit proident aute ad consectetur eiusmod.</p>
-                        <p>Cillum dolor esse sit incididunt velit eiusmod magna ad nostrud officia aute dolor dolor. Magna esse ullamco pariatur adipisicing consectetur eu commodo officia. Ex cillum consequat mollit
-                        minim elit est deserunt occaecat nisi amet. Quis aliqua nostrud Lorem occaecat sunt. Eiusmod quis amet ullamco aliquip dolore ut incididunt duis adipisicing. Elit consequat nisi eiusmod aute
-                        ipsum sunt veniam do est. Occaecat mollit aliquip ut proident consectetur amet ex dolore consectetur aliqua elit.</p>
-                        <p>Commodo nisi non consectetur voluptate incididunt mollit duis dolore amet amet tempor exercitation. Qui amet aute ea aute id ad aliquip proident. Irure duis qui labore deserunt enim in quis
-                        nisi sint consequat aliqua. Ex proident labore et laborum tempor fugiat sint magna veniam minim. Nulla dolor labore adipisicing in enim mollit laboris fugiat eu. Aliquip minim cillum ullamco
-                        voluptate non dolore non ex duis fugiat duis ad. Deserunt cillum ad et nisi amet non voluptate culpa qui do. Labore ullamco et minim proident est laborum mollit ad labore deserunt ut irure
-                        dolore. Reprehenderit ad ad irure ut irure qui est eu velit eu excepteur adipisicing culpa. Laborum cupidatat ullamco eu duis anim reprehenderit proident aute ad consectetur eiusmod.</p>
-                        <p>Cillum dolor esse sit incididunt velit eiusmod magna ad nostrud officia aute dolor dolor. Magna esse ullamco pariatur adipisicing consectetur eu commodo officia. Ex cillum consequat mollit
-                        minim elit est deserunt occaecat nisi amet. Quis aliqua nostrud Lorem occaecat sunt. Eiusmod quis amet ullamco aliquip dolore ut incididunt duis adipisicing. Elit consequat nisi eiusmod aute
-                        ipsum sunt veniam do est. Occaecat mollit aliquip ut proident consectetur amet ex dolore consectetur aliqua elit.</p>
-                        <p>Commodo nisi non consectetur voluptate incididunt mollit duis dolore amet amet tempor exercitation. Qui amet aute ea aute id ad aliquip proident. Irure duis qui labore deserunt enim in quis
-                        nisi sint consequat aliqua. Ex proident labore et laborum tempor fugiat sint magna veniam minim. Nulla dolor labore adipisicing in enim mollit laboris fugiat eu. Aliquip minim cillum ullamco
-                        voluptate non dolore non ex duis fugiat duis ad. Deserunt cillum ad et nisi amet non voluptate culpa qui do. Labore ullamco et minim proident est laborum mollit ad labore deserunt ut irure
-                        dolore. Reprehenderit ad ad irure ut irure qui est eu velit eu excepteur adipisicing culpa. Laborum cupidatat ullamco eu duis anim reprehenderit proident aute ad consectetur eiusmod.</p>
-                        <p>Cillum dolor esse sit incididunt velit eiusmod magna ad nostrud officia aute dolor dolor. Magna esse ullamco pariatur adipisicing consectetur eu commodo officia. Ex cillum consequat mollit
-                        minim elit est deserunt occaecat nisi amet. Quis aliqua nostrud Lorem occaecat sunt. Eiusmod quis amet ullamco aliquip dolore ut incididunt duis adipisicing. Elit consequat nisi eiusmod aute
-                        ipsum sunt veniam do est. Occaecat mollit aliquip ut proident consectetur amet ex dolore consectetur aliqua elit.</p>
-                        <p>Commodo nisi non consectetur voluptate incididunt mollit duis dolore amet amet tempor exercitation. Qui amet aute ea aute id ad aliquip proident. Irure duis qui labore deserunt enim in quis
-                        nisi sint consequat aliqua. Ex proident labore et laborum tempor fugiat sint magna veniam minim. Nulla dolor labore adipisicing in enim mollit laboris fugiat eu. Aliquip minim cillum ullamco
-                        voluptate non dolore non ex duis fugiat duis ad. Deserunt cillum ad et nisi amet non voluptate culpa qui do. Labore ullamco et minim proident est laborum mollit ad labore deserunt ut irure
-                        dolore. Reprehenderit ad ad irure ut irure qui est eu velit eu excepteur adipisicing culpa. Laborum cupidatat ullamco eu duis anim reprehenderit proident aute ad consectetur eiusmod.</p>
-                    </div>
+                    </header>
+                    <div class="demo-ribbon"></div>
+                    <main class="demo-main mdl-layout__content">
+                        <div class="demo-container mdl-grid">
+                            <div class="mdl-cell mdl-cell--1-col mdl-cell--hide-tablet mdl-cell--hide-phone"></div>
+                            <div class="demo-content mdl-color--white mdl-shadow--4dp content mdl-color-text--grey-800 mdl-cell mdl-cell--10-col" style="min-height: 500px;">
+                                <!-- <h3>Kaboom Rewards</h3> -->
+                                <section class='row pink accent-4 white-text center' style='margin-bottom: 0px;'>
+                                    <div class="slider">
+                                        <ul class="slides">
+                                            <li class="">
+                                                <img src="assets/images/slide1.png">
+                                                <div class="caption center-align">
+                                                    <!-- <h3>This is our big Tagline!</h3> -->
+                                                    <!-- <h5 class="light grey-text text-lighten-3">Here's our small slogan.</h5> -->
+                                                </div>
+                                            </li>
+                                            <li class="active" style="opacity: 1; transform: translateX(0px) translateY(0px);">
+                                                <img src="assets/images/slide2.png">
+                                                <div class="caption left-align">
+                                                    <!-- <h3>Left Aligned Caption</h3> -->
+                                                    <!-- <h5 class="light grey-text text-lighten-3">Here's our small slogan.</h5> -->
+                                                </div>
+                                            </li>
+                                            <li class="" style="opacity: 0; transform: translateX(0px) translateY(0px);">
+                                                <img src="assets/images/slide1.png">
+                                                <div class="caption right-align">
+                                                    <!-- <h3>Right Aligned Caption</h3> -->
+                                                    <!-- <h5 class="light grey-text text-lighten-3">Here's our small slogan.</h5> -->
+                                                </div>
+                                            </li>
+                                            <li class="" style="opacity: 0; transform: translateX(0px) translateY(0px);">
+                                                <img src="assets/images/slide2.png">
+                                                <div class="caption center-align">
+                                                    <!-- <h3>This is our big Tagline!</h3> -->
+                                                    <!-- <h5 class="light grey-text text-lighten-3">Here's our small slogan.</h5> -->
+                                                </div>
+                                            </li>
+                                        </ul>
+                                        <div class="row"><ul class="indicators"></ul></div>
+                                    </div>
+                                    <h5 style="margin: 50px;">Exciting rewards at your fingertips</h5>
+                                </section>
+                            </div>
+                        </div>
+                        <footer class="demo-footer mdl-mini-footer">
+                            <div class="mdl-mini-footer--left-section">
+                                <ul class="mdl-mini-footer--link-list">
+                                    <li>
+                                        <a href="#">Help</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Privacy and Terms</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">User Agreement</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </footer>
+                    </main>
                 </div>
-                <footer class="demo-footer mdl-mini-footer">
-                    <div class="mdl-mini-footer--left-section">
-                        <ul class="mdl-mini-footer--link-list">
-                            <li>
-                                <a href="#">Help</a>
-                            </li>
-                            <li>
-                                <a href="#">Privacy and Terms</a>
-                            </li>
-                            <li>
-                                <a href="#">User Agreement</a>
-                            </li>
-                        </ul>
-                    </div>
-                </footer>
-            </main>
+            </div>
         </div>
-        <a class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--accent mdl-color-text--accent-contrast" href="https://github.com/google/material-design-lite/blob/mdl-1.x/templates/article/" id="view-source" target="_blank">View Source</a> 
-        <script src="$$hosted_libs_prefix$$/$$version$$/material.min.js"></script>
 
+        <script src="assets/js/jquery.js"></script>    
+        <script src="assets/js/materialize.min.js"></script>
+        <script src="assets/js/mdl.min.js"></script>
+        <script src="assets/js/perfect-scrollbar.min.js"></script>
+        <script src="assets/js/jquery.idle.min.js"></script>
+        <script src="assets/js/plugins.js"></script>
     </body>
 </html>
