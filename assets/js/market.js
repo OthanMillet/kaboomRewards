@@ -172,6 +172,7 @@ market = {
 		$(document).ready(function(){
 		    $('.tooltipped').tooltip({delay: 1});
 		});
+
 		setTimeout(function(){
 			system.loading(true);
 			$('#content-login').addClass('animated slideInUp');
@@ -186,7 +187,7 @@ market = {
 				$("button.shopping").removeAttr('disabled');
 				$("a[data-activates='signIn']").addClass("hidden");
 				$("a[data-activates='account']").removeClass("hidden");
-				$("#display_headerAccount").removeClass("hidden");
+				$("#display_headerAccount").removeClass("invisible");
 				profile.ini();
 				wishlist.ini();
 			}
@@ -207,37 +208,43 @@ market = {
 			else
 				disabled = "";
 
-			content += "<div class='product col s12 m4 l3' style='margin-bottom:30px;'>"+
-						"    <div class='card'>"+
-						"        <div class='card-image waves-effect waves-block waves-light'>"+
-						"            <img class='activator' draggable='false' src='assets/images/products/"+v[10]+"' alt='product-img'>"+
-						"        </div>"+
-						"        <ul class='card-action-buttons'>"+
-						"            <li>"+
-						"				<button class='btn-floating waves-effect shopping' data-cmd='addWishlist' data-wishlist='"+v[0]+"' data-node='"+v[0]+"'>"+
-						"					<i class='mdi-action-favorite'></i>"+
-						"				</button>"+
-						"				<button class='btn-floating waves-effect shopping cyan' data-cmd='addCart' "+disabled+" data-node='"+v[0]+"'>"+
-						"					<i class='mdi-action-shopping-cart'></i>"+
-						"				</button>"+
-						"			</li>"+
-						"        </ul>"+
-						"        <div class='card-content'>"+
-						"            <div class='row'>"+
-						"                <div class='col s8'>"+
-						"                    <p class='card-title grey-text text-darken-4'><a href='#' class='grey-text text-darken-4'>"+v[1]+"</a></p>"+
-						"                </div>"+
-						"                <div class='col s4'>"+
-						"                    <p class='right' style='font-size: 24px;line-height: 32px;'>"+v[3]+"</p>"+
-						"                </div>"+
-						"            </div>"+
-						"        </div>"+
-						"        <div class='card-reveal grey darken-4'>"+
-						"	         <p class='card-title'><a href='#' class='white-text'>"+v[1]+"</a><i class='mdi-navigation-close right white-text'></i></p>"+
-						"            <p class='white-text'>"+v[5]+"</p>"+
-						"        </div>"+
-						"    </div>"+
-						"</div>";
+				content += "<div class='d hx hf gu gallery-item gallery-expand ce polygon'>"+
+				            "    <div class='placeholder'>"+
+				            "        <div class='gallery-curve-wrapper'>"+
+				            "            <a class='gallery-cover gray'>"+
+				            "                <img alt='placeholder' src='assets/images/products/"+v[10]+"'>"+
+				            "            </a>"+
+				            "            <div class='gallery-header'>"+
+				            "                <span>"+v[1]+"</span>"+
+				            "                <span class='gj right' style='font-size: 24px;line-height: 32px;'>"+v[3]+"</span>"+
+				            "            </div>"+
+				            "            <div class='gallery-body'>"+
+				            "                <div class='title-wrapper'>"+
+				            "                    <h3>"+v[1]+"</h3>"+
+				            "                    <span class='gj'>"+v[3]+"</span>"+
+				            "                </div>"+
+				            "                <p class='fi'>"+v[5]+"</p>"+
+				            "                <div class='carousel-wrapper'>"+
+				            "                    <div class='t carousel initialized'>"+
+				            "                        <a class='carousel-item active' href='#one!'>"+
+				            "                            <img src='//cdn.shopify.com/s/files/1/1775/8583/t/1/assets/geometric-sun.jpg?3602604866228935180'>"+
+				            "                        </a>"+
+				            "                        <a class='carousel-item' href='#two!'>"+
+				            "                            <img src='//cdn.shopify.com/s/files/1/1775/8583/t/1/assets/geometric-maze.jpg?3602604866228935180'>"+
+				            "                        </a> "+
+				            "                        <a class='carousel-item' href='#three!'>"+
+				            "                            <img src='//cdn.shopify.com/s/files/1/1775/8583/t/1/assets/geometric-ice.jpg?3602604866228935180'>"+
+				            "                        </a> "+
+				            "                    </div>"+
+				            "                </div>"+
+				            "            </div>"+
+				            "            <div class='gallery-action'>"+
+				            "                <a class='btn-floating btn-large waves-effect waves-light shopping' data-cmd='addWishlist' data-wishlist='"+v[0]+"' data-node='"+v[0]+"'><i class='material-icons'>favorite</i></a>"+
+				            "                <a class='btn-floating btn-large waves-effect waves-light shopping cyan' data-cmd='addCart' "+disabled+" data-node='"+v[0]+"'><i class='material-icons'>shopping_cart</i></a>"+
+				            "            </div>"+
+				            "        </div>"+
+				            "    </div>"+
+				            "</div>";
 		});
 		$("#products").html(content);
 
@@ -439,9 +446,18 @@ market = {
 profile = {
 	ini:function(){
 		profile.getAccount();
+
         system.forceLogout(function(){
         	profile.logout();
         });
+	},
+	check:function(){
+		var retData;
+		var data = system.ajax('assets/harmony/Process.php?chkUserLogin',"");
+		data.done(function(data){
+			retData = data;
+		});
+		return retData;
 	},
 	get:function(){
 		var ret = [];

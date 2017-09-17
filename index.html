@@ -1,20 +1,27 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+        <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="description" content="A front-end template that helps you build fast, modern mobile web apps.">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
         <title>Kaboom Rewards</title>
+        <meta name="mobile-web-app-capable" content="yes">
+        <link rel="icon" sizes="192x192" href="images/android-desktop.png">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="apple-mobile-web-app-title" content="Material Design Lite">
+        <link rel="apple-touch-icon-precomposed" href="images/ios-desktop.png">
 
-        <link rel="icon" href="assets/images/logo.png" sizes="32x32">
-        <meta name="msapplication-TileColor" content="#00bcd4">
-        <!-- <link href="assets/css/mdl.min.css" type="text/css" rel="stylesheet" media="screen,projection"> -->
-        <link href="assets/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection">
-        <link href="assets/css/style.css" type="text/css" rel="stylesheet" media="screen,projection">
-        <link href="assets/css/custom.css" type="text/css" rel="stylesheet" media="screen,projection">
-        <link href="assets/css/animate.css" type="text/css" rel="stylesheet" media="screen,projection">
-        <link href="assets/css/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
+        <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
+        <meta name="msapplication-TileColor" content="#3372DF">
+        <link rel="shortcut icon" href="images/favicon.png">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+        <link rel="stylesheet" href="assets/css/original.materialize.min.css">
+        <link rel="stylesheet" href="assets/css/mdl.style.css">
+        <link rel="stylesheet" href="assets/css/style.css">
+        <link rel="stylesheet" href="assets/css/gallery.css">
+        <link rel="stylesheet" href="assets/css/animate.css">
     </head>
     <body>
         <div id="loader-wrapper">
@@ -22,293 +29,252 @@
             <div class="loader-section section-left"></div>
             <div class="loader-section section-right"></div>
         </div>
-        <div class="rightside-navigation">
-            <header id="header" class="page-topbar">
-                <div class="navbar">
-                    <nav class="navbar-color white" style="height: 150px;">
-                        <div class="nav-wrapper" style="height: 150px;">
-                            <div class="row" style="margin-bottom: 0px;">
-                                <a href="#" data-activates="mobile" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
-                                <ul class="left ">
-                                    <li>
-                                        <h1 class="logo-wrapper">
-                                            <a href="index.html" class="left brand-logo darken-1">
-                                                <img src="assets/images/logo.png" draggable='false' alt="" class="circle responsive-img valign profile-image">
-                                            </a>
-                                        </h1>
-                                    </li>
-                                </ul>
-                                <ul class="right">
-                                    <li>
-                                        <a href="#" class="pink-text darken-2 chat-collapse" data-activates="signIn">Sign In <i class="mdi-action-account-circle right"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#" class="pink-text darken-2 hidden chat-collapse" data-activates="account">My Account <i class="mdi-action-account-circle right"></i></a>
-                                    </li>
-                                    <li class="pink darken-2">
-                                        <a href="cart.html" class="waves-effect waves-block waves-light white-text"><i class="mdi-action-shopping-cart"><small class="notification-badge" id="display_cartTotal">0</small></i></a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="row hidden" id="display_headerAccount">
-                                <div class="right" style="padding-right: 20px;">
-                                    <h5>
-                                        <span class="cyan-text darken-1 display_accountName">Welcome, Rufo Gabrillo<br/></span><br/>
-                                        <small class="pink-text accent-4">You have <span class="display_points"></span> points</small>
-                                    </h5>
-                                </div>
-                            </div>
-                        </div>
-                    </nav>
-                </div>
-                <div class="navbar-fixed">
-                    <nav class="navbar-color cyan darken-1" id="secondNav">
-                        <div class="nav-wrapper">
-                            <ul class="left">
-                                <li>
-                                    <a class="dropdown-button active" data-activates="menu_category">CATEGORIES<i class="mdi-navigation-arrow-drop-down right"></i></a>
-                                    <ul class="dropdown-content active" id="menu_category">
-                                        <li>
-                                            <a>Electronics</a>
-                                        </li>
-                                        <li class="divider"></li>
-                                        <li>
-                                            <a>Home</a>
-                                        </li>
-                                        <li class="divider"></li>
-                                        <li>
-                                            <a>Lifestyle</a>
-                                        </li>
-                                        <li class="divider"></li>
-                                        <li>
-                                            <a>Fashion</a>
-                                        </li>
-                                        <li class="divider"></li>
-                                        <li>
-                                            <a href="">Travel and leisure</a>
-                                        </li>
-                                        <li class="divider"></li>
-                                        <li>
-                                            <a href="">Shopping experiences</a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li><a href='#'>What's New</a></li>
-                            </ul>
-                            <ul class="right cyan darken-1">
-                                <li>
-                                    <form class="">
-                                        <div class="input-field">
-                                            <input id="search" required="" type="text"> <label class="" for="search"><i class="mdi-action-search"></i></label>
-                                        </div>
-                                    </form>
-                                </li>
-                            </ul>
-                        </div>
-                    </nav>
-                </div>
-            </header>
-            <div class="wrapper">
-                <aside id="overlap-gradient">
-                    <ul id="signIn" class="side-nav">
-                        <li class="grey darken-4">
-                            <div id='display_login' class="animated row margin">
-                                <div class='login-gradient' style="overflow: hidden;">
-                                    <div class='col-s12 m12 l12' style='margin-top:20%; padding:10px;'>
-                                        <form id="form_login" method="get" action="" novalidate="novalidate">
-                                            <div class="input-field col s12 m12 l12">
-                                                <h5>Log in and get started</h5>
-                                            </div>
-                                            <div class="input-field col s12 m12 l12">
-                                                <input id="field_empID" name="field_empID" type="text" data-error=".error_field_empID">
-                                                <label for="field_empID" class="center-align">Employee ID</label>  
-                                                <div class="error_field_empID"></div>  
-                                            </div>
-                                            <div class="input-field col s12 m12 l12">
-                                                <input id="field_password" name="field_password" type="password" data-error=".error_field_password">
-                                                <label for="field_password" class="">Password</label>
-                                                <div class="error_field_password"></div>  
-                                            </div>
-                                            <div class="input-field col s12 m12 l12">
-                                                <button class="btn waves-effect waves-light col s12" type='submit'>Login</button>
-                                            </div>
-                                            <div class="input-field col s12 m12 l12 hidden">
-                                                <p class="margin right-align medium-small"><a href="page-forgot-password.html">Forgot password?</a></p>
-                                            </div>          
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>                        
-                        </li>
-                    </ul>
-                    <ul id="account" class="side-nav">
-                        <li class="grey darken-4">
-                            <div id='display_cart' class="animated row margin ">
-                                <div id='display_account' class="white-text">
-                                    <div class="row">
-                                        <div class="col s12 m12 l12 settings-button">
-                                            <button class="btn-floating no-shadow waves-effect right dropdown-button grey darken-4" data-activates="dropdown1">
-                                                <i class="mdi-navigation-more-vert"></i>
-                                            </button>
-                                            <ul id="dropdown1" class="dropdown-content">
-                                                <li><a data-cmd="account">Account</a></li>
-                                                <li><a data-cmd="logout">Log out</a></li>
-                                            </ul>
-                                        </div>
-                                        <div class="col s12 m12 l12">
-                                            <div class="center">
-                                                <img src="assets/images/company/startek.png" draggable='false' alt="" class="responsive-img valign profile-image">
-                                            </div>
-                                            <h5>Name Here</h5>
-                                            <p><span class="pink-text">Position: </span><br/>Call Center<br/>
-                                            <span class="pink-text">Address: </span><br/>Philippines</p>
-                                        </div>
-                                    </div>
-                                </div>  
-                                <div id='display_points' class="white-text cyan darken-1 row">
-                                    <div class="col s12 m12 l12">
-                                        Available points: 
-                                        <span class='cart_bigNumber'>0<small>point</small>/span>
-                                    </div>
-                                </div>
-                                <div class="white-text row" id='sidebar_menu'>
-                                    <ul class="collection">
-                                        <li class="collection-item avatar">
-                                            <i class="mdi-action-shopping-basket circle pink"></i> <a class="white-text title" href="sale.html">Shop Now</a>
-                                        </li>
-                                        <li class="collection-item avatar">
-                                            <i class="mdi-content-mail circle pink"></i> <a class="white-text title">Inbox</a>
-                                        </li>
-                                        <li class="collection-item avatar">
-                                            <i class="mdi-action-bookmark circle pink"></i> <a class="white-text title" href="account/#cmd=index;content=list_points">My Reward History</a>
-                                        </li>
-                                        <li class="collection-item avatar">
-                                            <i class="mdi-action-trending-up circle pink"></i> <a class="white-text title" href="account/#cmd=index;content=list_points">Order Tracker</a>
-                                        </li>
-                                        <li class="collection-item avatar">
-                                            <i class="mdi-hardware-headset-mic circle pink"></i> <a class="white-text title" href="account/">Contact Support</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                </aside>
-                <section class='row pink accent-4 white-text center' style='margin-bottom: 0px;'>
-                    <div class="slider">
-                        <ul class="slides">
-                            <li class="">
-                                <img src="assets/images/slide1.png">
-                                <div class="caption center-align">
-                                    <!-- <h3>This is our big Tagline!</h3> -->
-                                    <!-- <h5 class="light grey-text text-lighten-3">Here's our small slogan.</h5> -->
-                                </div>
-                            </li>
-                            <li class="active" style="opacity: 1; transform: translateX(0px) translateY(0px);">
-                                <img src="assets/images/slide2.png">
-                                <div class="caption left-align">
-                                    <!-- <h3>Left Aligned Caption</h3> -->
-                                    <!-- <h5 class="light grey-text text-lighten-3">Here's our small slogan.</h5> -->
-                                </div>
-                            </li>
-                            <li class="" style="opacity: 0; transform: translateX(0px) translateY(0px);">
-                                <img src="assets/images/slide1.png">
-                                <div class="caption right-align">
-                                    <!-- <h3>Right Aligned Caption</h3> -->
-                                    <!-- <h5 class="light grey-text text-lighten-3">Here's our small slogan.</h5> -->
-                                </div>
-                            </li>
-                            <li class="" style="opacity: 0; transform: translateX(0px) translateY(0px);">
-                                <img src="assets/images/slide2.png">
-                                <div class="caption center-align">
-                                    <!-- <h3>This is our big Tagline!</h3> -->
-                                    <!-- <h5 class="light grey-text text-lighten-3">Here's our small slogan.</h5> -->
-                                </div>
-                            </li>
-                        </ul>
-                        <div class="row"><ul class="indicators"></ul></div>
-                    </div>
-                    <h5 style="margin: 50px;">Exciting rewards at your fingertips</h5>
-                </section>
-                <section class="row black" style='margin-bottom: 0px;'>
-                    <div class="col s12 m4 l4 red center white-text" style="background: url('assets/images/kaboom1.png'); background-size: cover; background-position:top;  min-height: 250px;">
-                        <div class="row">
-                            <div class="col s8 offset-s2">
-                                <h3>NEW IN STORE</h3>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col s12 m4 l4 green center white-text" style="background: url('assets/images/kaboom2.png'); background-size: cover; background-position:top;  min-height: 250px;">
-                        <div class="row">
-                            <div class="col s8 offset-s2">
-                                <h3>BEST SELLERS</h3>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col s12 m4 l4 blue center white-text" style="background: url('assets/images/kaboom3.png'); background-size: cover; background-position:bottom;  min-height: 250px;">
-                        <div class="row">
-                            <div class="col s8 offset-s2">
-                                <h3>TOP BRANDS</h3>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-                <section class="row grey darken-3" style='margin-bottom: 0px;padding-bottom: 40px;'><br/><br/>
-                    <h4 class="center white-text">WE WOULD LOVE TO HEAR FROM YOU</h4>
-                    <div class="col s12 m4 l4 center white-text">
-                        <h5 class="pink-text">employee support</h5>
-                        <p>
-                            Contact your HR team at<br/>
-                            <a class="white-text" href="mailto:employeerewards@company.com">employeerewards@company.com</a> or <br/>
-                            (02) 222 1234<br/>
-                            Mondays to Fridays<br/>
-                            08:00am to 06:00pm
-                        </p>
-                    </div>
-                    <div class="col s12 m4 l4 center white-text">
-                        <h5 class="pink-text">admin support</h5>
-                        <p>
-                            Reach the Kaboom team at<br/>
-                            <a class="white-text" href="mailto:employeesupports@kaboom.com.ph">employeesupports@kaboom.com.ph</a> or <br/>
-                            (02) 222 1234<br/>
-                            Mondays to Fridays<br/>
-                            08:00am to 06:00pm
-                        </p>
-                    </div>
-                    <div class="col s12 m4 l4 center white-text">
-                        <h5 class="pink-text">new business</h5>
-                        <p>
-                            Reach the Kaboom team at<br/>
-                            <a class="white-text" href="mailto:newbusiness@kaboom.com.ph">newbusiness@kaboom.com.ph</a> or <br/>
-                            (02) 222 1234<br/>
-                            Mondays to Fridays<br/>
-                            08:00am to 06:00pm
-                        </p>
-                    </div>
-                </section>
-                <section class="row cyan darken-1" style='margin-bottom: 0px;padding-bottom: 40px;'><br/><br/>
-                    <h5 class="center white-text">Kaboom Rewards Philippines</h4>
-                    <h5 class="center black-text">All rights reserved 2017</h4>
-                </section>
+        <nav class="nav-extended">
+            <div class="nav-background">
+                <div class="ea k" style="background-image: url('assets/images/icon-seamless.png');"></div>
             </div>
+            <div class="nav-wrapper db">
+                <a class="brand-logo" href="index.html"><img src="assets/images/logo.png" draggable='false' alt="" class="circle responsive-img valign profile-image" style="width:150px;"></a>
+                <a class="button-collapse" data-activates="nav-mobile" href="#"><i class="material-icons">menu</i></a>
+                <ul class="right hide-on-small-only">
+                    <li>
+                        <a href="#" data-activates="signIn" class="btn-sideNav grey-text darken-4">Sign In</a>
+                    </li>
+                    <li>
+                        <a href="#" class="hidden pink-text darken-2 chat-collapse" data-activates="account">My Account <i class="mdi-action-account-circle right"></i></a>
+                    </li>
+                    <li class="pink darken-2">
+                        <a href="cart.html"><i class="material-icons white-text">shopping_cart</i><small class="notification-badge white-text" id="display_cartTotal">100</small></a>
+                    </li>
+                </ul>
+                <div class="nav-content" style='overflow: hidden;'>
+                    <div class="container">
+                        <div class="row invisible" id="display_headerAccount">
+                            <div class="right" style="padding-right: 20px;">
+                                <h5>
+                                    <span class="cyan-text darken-1 display_accountName">Welcome, Rufo Gabrillo<br/></span><br/>
+                                    <small class="pink-text accent-4">You have <span class="display_points"></span> points</small>
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="categories-wrapper pink darken-3 z-depth-3">
+                <div class="categories-container pin-top">
+                    <ul class="categories db" style="overflow:hidden;">
+                        <li class="no-border">
+                            <a href="#all">
+                                <div class="input-field inline">
+                                    <input class="validate" id="email" type="email"> 
+                                    <label data-error="wrong" data-success="right" for="email">Search</label>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <section class='row' style='margin-bottom: 0px;'>
+            <div class="slider">
+                <ul class="slides">
+                    <li class="">
+                        <img src="assets/images/slide3.png">
+                        <div class="caption center-align">
+                            <div class="container">
+                                <img src="assets/images/company/startek.png">
+                            </div>
+                        </div>
+                    </li>
+                    <li class="">
+                        <img src="assets/images/slide2.png">
+                        <div class="caption left-align">
+                            <div class="container">
+                                <div class="col s12 m6 l5 offset-m6 offset-l7" style='margin-top: 10%;position: relative;'>
+                                    <h3>Convenience and style</h3>
+                                    <h5 class="light grey-text text-lighten-3">Get your own stylish Herschel backpack from the store and choose form various.</h5>
+                                    <a class="btn cyan darken-1" href="sale.html">SHOP NOW</a>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="">
+                        <img src="assets/images/slide3.png">
+                        <div class="caption center-align">
+                            <div class="container">
+                                <img src="assets/images/company/startek.png">
+                            </div>
+                        </div>
+                    <li class="">
+                        <img src="assets/images/slide2.png">
+                        <div class="caption left-align">
+                            <div class="container">
+                                <div class="col s12 m6 l5 offset-m6 offset-l7" style='margin-top: 10%;position: relative;'>
+                                    <h3>Convenience and style</h3>
+                                    <h5 class="light grey-text text-lighten-3">Get your own stylish Herschel backpack from the store and choose form various.</h5>
+                                    <a class="btn cyan darken-1" href="sale.html">SHOP NOW</a>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    </li>
+                </ul>
+            </div>
+        </section>
+        <div id='main' class="container" style="margin-bottom: 50px;">
+            <section class="row center pink accent-4 white-text z-depth-3" style='margin-bottom: 0px;padding:50px;'>
+                <h5 class="">Exciting rewards at your fingertips</h5>
+            </section>
+            <section class="row black z-depth-3" style='margin-bottom: 0px;'>
+                <div class="col s12 m4 l4 red center white-text" style="background: url('assets/images/kaboom1.png'); background-size: cover; background-position:top;  min-height: 250px;">
+                    <h3 style="margin-top: 40%; border: solid 2px #fff;">NEW IN STORE</h3>
+                </div>
+                <div class="col s12 m4 l4 green center white-text" style="background: url('assets/images/kaboom2.png'); background-size: cover; background-position:top;  min-height: 250px;">
+                    <h3 style="margin-top: 40%; border: solid 2px #fff;">BEST SELLERS</h3>
+                </div>
+                <div class="col s12 m4 l4 blue center white-text" style="background: url('assets/images/kaboom3.png'); background-size: cover; background-position:bottom;  min-height: 250px;">
+                    <h3 style="margin-top: 40%; border: solid 2px #fff;">TOP BRANDS</h3>
+                </div>
+            </section>
+            <section class="row grey darken-3 z-depth-3" style='margin-bottom: 0px;padding-bottom: 40px;'><br/><br/>
+                <h4 class="center white-text">WE WOULD LOVE TO HEAR FROM YOU</h4>
+                <div class="col s12 m4 l4 center white-text">
+                    <h5 class="pink-text">employee support</h5>
+                    <p>
+                        Contact your HR team at<br/>
+                        <a class="white-text" href="mailto:employeerewards@company.com">employeerewards@company.com</a> or <br/>
+                        (02) 222 1234<br/>
+                        Mondays to Fridays<br/>
+                        08:00am to 06:00pm
+                    </p>
+                </div>
+                <div class="col s12 m4 l4 center white-text">
+                    <h5 class="pink-text">admin support</h5>
+                    <p>
+                        Reach the Kaboom team at<br/>
+                        <a class="white-text" href="mailto:employeesupports@kaboom.com.ph">employeesupports@kaboom.com.ph</a> or <br/>
+                        (02) 222 1234<br/>
+                        Mondays to Fridays<br/>
+                        08:00am to 06:00pm
+                    </p>
+                </div>
+                <div class="col s12 m4 l4 center white-text">
+                    <h5 class="pink-text">new business</h5>
+                    <p>
+                        Reach the Kaboom team at<br/>
+                        <a class="white-text" href="mailto:newbusiness@kaboom.com.ph">newbusiness@kaboom.com.ph</a> or <br/>
+                        (02) 222 1234<br/>
+                        Mondays to Fridays<br/>
+                        08:00am to 06:00pm
+                    </p>
+                </div>
+            </section>
+            <section class="row cyan darken-1 z-depth-3" style='margin-bottom: 0px;padding-bottom: 40px;'><br/><br/>
+                <h5 class="center white-text">Kaboom Rewards Philippines</h4>
+                <h5 class="center black-text">All rights reserved 2017</h4>
+            </section>
         </div>
-        <script type="text/javascript" src="assets/js/jquery.js"></script>    
-        <script type="text/javascript" src="assets/js/materialize.min.js"></script>
-        <script type="text/javascript" src="assets/js/perfect-scrollbar.min.js"></script>
-        <script type="text/javascript" src="assets/js/jquery.idle.min.js"></script>
-        <script type="text/javascript" src="assets/js/plugins.js"></script>
-        <script type="text/javascript" src="assets/js/validation/jquery.validate.min.js"></script>
-        <script type="text/javascript" src="assets/js/validation/additional-methods.min.js"></script>
-        <script type="text/javascript" src="assets/js/dataTables/jquery.dataTables.js"></script>
-        <script type="text/javascript" src="assets/js/dataTables/dataTables.fixedcolumns.js"></script>
-        <script type="text/javascript" src="assets/js/dataTables/dataTables.responsive.js"></script>
-        <script type="text/javascript" src="assets/js/dataTables/dataTables.tableTools.min.js"></script>
-        <script type="text/javascript" src="assets/js/dataTables/dataTables.material.min.js"></script>
-        <!-- <script type="text/javascript" src="assets/js/app.js"></script> -->
-        <script type="text/javascript" src="assets/js/process.js"></script>
-        <script type="text/javascript" src="assets/js/market.js"></script>
-        <script type="text/javascript">
-            $(".dropdown-button").dropdown();
+        <footer class="page-footer grey darken-3" style="padding-bottom:20px; ">
+            <div class="container">
+                Copyright Kaboom Rewards @ 2017
+            </div>
+        </footer>
+        <aside id="overlap-gradient">
+            <ul id="signIn" class="side-nav">
+                <li class="grey darken-4">
+                    <div id='display_login' class="animated row margin">
+                        <div class='login-gradient' style="overflow: hidden;">
+                            <div class='col-s12 m12 l12' style='margin-top:20%; padding:10px;'>
+                                <form id="form_login" method="get" action="" novalidate="novalidate">
+                                    <div class="input-field col s12 m12 l12">
+                                        <h5>Log in and get started</h5>
+                                    </div>
+                                    <div class="input-field col s12 m12 l12">
+                                        <input id="field_empID" name="field_empID" type="text" data-error=".error_field_empID">
+                                        <label for="field_empID" class="center-align">Employee ID</label>  
+                                        <div class="error_field_empID"></div>  
+                                    </div>
+                                    <div class="input-field col s12 m12 l12">
+                                        <input id="field_password" name="field_password" type="password" data-error=".error_field_password">
+                                        <label for="field_password" class="">Password</label>
+                                        <div class="error_field_password"></div>  
+                                    </div>
+                                    <div class="input-field col s12 m12 l12">
+                                        <button class="btn waves-effect waves-light col s12" type='submit'>Login</button>
+                                    </div>
+                                    <div class="input-field col s12 m12 l12 hidden">
+                                        <p class="margin right-align medium-small"><a href="page-forgot-password.html">Forgot password?</a></p>
+                                    </div>          
+                                </form>
+                            </div>
+                        </div>
+                    </div>                        
+                </li>
+            </ul>
+            <ul id="account" class="side-nav grey darken-4">
+                <li>
+                    <div id='display_cart' class="animated row margin ">
+                        <div id='display_account' class="white-text">
+                            <div class="row">
+                                <div class="col s12 m12 l12 settings-button">
+                                    <button class="btn-floating no-shadow waves-effect right dropdown-button grey darken-4" data-activates="dropdown1">
+                                        <i class="mdi-navigation-more-vert"></i>
+                                    </button>
+                                    <ul id="dropdown1" class="dropdown-content">
+                                        <li><a data-cmd="account">Account</a></li>
+                                        <li><a data-cmd="logout">Log out</a></li>
+                                    </ul>
+                                </div>
+                                <div class="col s12 m12 l12">
+                                    <div class="center">
+                                        <img src="assets/images/company/startek.png" draggable='false' alt="" class="responsive-img valign profile-image">
+                                    </div>
+                                    <h5>Name Here</h5>
+                                    <p><span class="pink-text">Position: </span><br/>Call Center<br/>
+                                    <span class="pink-text">Address: </span><br/>Philippines</p>
+                                </div>
+                            </div>
+                        </div>  
+                        <div id='display_points' class="white-text cyan darken-1 row">
+                            <div class="col s12 m12 l12">
+                                Available points: 
+                                <span class='cart_bigNumber'>0<small>point</small>/span>
+                            </div>
+                        </div>
+                        <div class="white-text row" id='sidebar_menu'>
+                            <ul class="collection">
+                                <li class="collection-item avatar">
+                                    <i class="material-icons circle pink">shopping_basket</i> <a class="white-text title" href="sale.html">Shop Now</a>
+                                </li>
+                                <li class="collection-item avatar">
+                                    <i class="material-icons circle pink">mail</i> <a class="white-text title">Inbox</a>
+                                </li>
+                                <li class="collection-item avatar">
+                                    <i class="material-icons circle pink">bookmark</i> <a class="white-text title" href="account/#cmd=index;content=list_points">My Reward History</a>
+                                </li>
+                                <li class="collection-item avatar">
+                                    <i class="material-icons circle pink">trending_up</i> <a class="white-text title" href="account/#cmd=index;content=list_points">Order Tracker</a>
+                                </li>
+                                <li class="collection-item avatar">
+                                    <i class="material-icons circle pink">headset_mic</i> <a class="white-text title" href="account/">Contact Support</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </aside>
+        <script src="assets/js/jquery.js"></script>    
+        <script src="assets/js/materialize.min.js"></script>
+        <script src="assets/js/perfect-scrollbar.min.js"></script>
+        <script src="assets/js/validation/jquery.validate.min.js"></script>
+        <script src="assets/js/validation/additional-methods.min.js"></script>
+        <script src="assets/js/jquery.idle.min.js"></script>
+        <script src="assets/js/plugins.js"></script>
+        <script src="assets/js/process.js"></script>
+        <script src="assets/js/market.js"></script>
+        <script src="assets/js/gallery.js"></script> 
+        <script>
             market.ini();
             login.market();
         </script>

@@ -12,9 +12,9 @@ class DatabaseClasses extends DataClasses{
 
 	function DBCon(){
 		$host = "localhost";
-		$dataBase = "db_newkaboomrewards";
-		$user = "user_newkaboom";
-		$password = "user_newkaboom7836";
+		$dataBase = "db_kaboomrewards";
+		$user = "user_kaboom";
+		$password = "user_kaboom7836";
 		try{
 			$PDO = new PDO('mysql:host='.$host.';dbname='.$dataBase, $user, $password);
 			return $PDO; $PDO = null;
