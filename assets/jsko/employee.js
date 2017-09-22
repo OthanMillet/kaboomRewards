@@ -1,10 +1,10 @@
-// console.log("xx");
+console.log("xx");
 account = {
 	ini:function(){
 		var data = system.ajax('../assets/harmony/Process.php?get-employeeAccount',"");
 		data.done(function(data){
 			data = JSON.parse(data);
-			// console.log(data);
+			console.log(data);
 			var profile = ((data[0][12] == "") || data[0][12] == null)?"avatar.jpg":data[0][12];
 
 			$(".profile-image").attr({"src":"../assets/images/profile/"+profile});
@@ -884,46 +884,5 @@ points = {
 		account.getPoints(id);
 		account.getPointsActivity(id);
 		account.getBuysActivity(id);
-	},
-}
-wishlist = {
-	ini:function(){
-		var data = system.ajax('../assets/harmony/Process.php?get-employeeAccount',"");
-		data = JSON.parse(data.responseText);
-		var id = data[0][0];
-		wishlist.getPointsActivity(id);
-	},
-	getPointsActivity:function(id){
-		var content = "";
-		var data = system.ajax('../assets/harmony/Process.php?get-wishlist',id);
-		data.done(function(data){
-			console.log(data);
-			data = JSON.parse(data);
-
-			if(data.length<=0){
-				$("#pointsActivity").html("<h4 class='center'>No points activity</h4>");
-			}
-			else{
-				$.each(data,function(i,v){
-					var productPicture = ((v[6] == "") || (v[6] == null))?'default.png':v[6];
-					content += "<tr>"+
-								"	<td width='1px'>"+(i+1)+". </td>"+
-								"	<td><img src='../assets/images/products/"+productPicture+"' alt='Thumbnail' class='responsive-img valign profile-image' style='width:50px;'></td>"+
-								"	<td>"+v[5]+"</td>"+
-								"	<td>"+v[3]+"</td>"+
-								"</tr>";
-				})					
-				$("#pointsActivity table tbody").html(content);
-
-				var table = $('#pointsActivity table').DataTable({
-			        "order": [[ 0, 'asc' ]],
-			        "drawCallback": function ( settings ) {
-			            var api = this.api();
-			            var rows = api.rows( {page:'current'} ).nodes();
-			            var last=null;
-			        }
-			    });
-			}
-		});
 	},
 }
