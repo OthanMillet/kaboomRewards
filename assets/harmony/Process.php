@@ -174,16 +174,6 @@ $function = new DatabaseClasses;
 			print_r(json_encode($query));
 		}
 
-		if(isset($_GET['get-employeeWishlist'])){
-			$data = $_POST['data'];
-			$info = $function->PDO(true,"SELECT * FROM tbl_employee WHERE id = '{$data}'");
-			$employer_id = $info[0][2];
-			$employee_id = $info[0][0];
-
-			$query = $function->PDO(true,"SELECT * FROM tbl_wishlist WHERE employee_id = '{$employee_id}' ORDER BY date DESC");
-			print_r(json_encode($query));
-		}
-
 		if(isset($_GET['get-employeeBuysActivityAdmin'])){
 			$data = $_POST['data'];
 			$info = $function->PDO(true,"SELECT * FROM tbl_employee WHERE id = '{$data}'");
@@ -651,12 +641,8 @@ $function = new DatabaseClasses;
 			$data = $_POST['data'];
 			$date = $function->PDO_DateAndTime();
 	        $id = $function->PDO_IDGenerator('tbl_wishlist','id');
-	        $product = $function->PDO(true,"SELECT * FROM tbl_product WHERE id = '{$data[1]}'");
-	        $product_name = $product[0][1];
-	        $product_pic = $product[0][10];
 
-			$query = $function->PDO(false,"INSERT INTO tbl_wishlist(id,product_id,employee_id,date,status,product_name,product_pic) VALUES ('{$id}','{$data[1]}','{$data[0]}','{$date}',1,'{$product_name}','{$product_pic}');");
-
+			$query = $function->PDO(false,"INSERT INTO tbl_wishlist(id,product_id,employee_id,date,status) VALUES ('{$id}','{$data[1]}','{$data[0]}','{$date}',1);");
 			if($query->execute()){
 				$log = $function->log2($data[1],"Added  wishlist","Wishlist");
 				echo 1;

@@ -2764,7 +2764,7 @@ product = {
 		var data = system.ajax('../assets/harmony/Process.php?get-productDetails',id);
 		data.done(function(data){
 			data = JSON.parse(data);
-			console.log(data[0][4]);
+
 			productImage = ((data[0][10] == "") || (data[0][10] == null))?"default.png":data[0][10];
 			if(data[0][4].length>0){
 				if(data[0][4][0] == "["){

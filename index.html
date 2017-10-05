@@ -24,7 +24,7 @@
                 <div class="ea k" style="background-image: url('assets/images/icon-seamless.png');"></div>
             </div>
             <div class="nav-wrapper db">
-                <a class="brand-logo" href="index.html"><img src="assets/images/logo.png" draggable='false' alt="" class="circle responsive-img valign profile-image" style="width:150px;"></a>
+                <a class="brand-logo" href="index.html"><img src="assets/images/logo.png" draggable='false' alt="" class="circle responsive-img valign profile-image" id='display_logo' style="width:80px;"></a>
                 <a class="button-collapse show-on-small hide-on-med-and-down" data-activates="nav-mobile" href="#"><i class="material-icons">menu</i></a>
                 <ul class="right hide-on-small-only">
                     <li>
@@ -37,15 +37,15 @@
                         <a href="cart.html"><i class="material-icons white-text">shopping_cart</i><small class="notification-badge white-text" id="display_cartTotal">100</small></a>
                     </li>
                 </ul>
-                <div class="nav-content" style='overflow: hidden;'>
-                    <div class="container">
-                        <div class="row invisible" id="display_headerAccount">
-                            <div class="right" style="padding-right: 20px;">
-                                <h5>
-                                    <span class="cyan-text darken-1 display_accountName">Welcome, Rufo Gabrillo<br/></span><br/>
-                                    <small class="pink-text accent-4">You have <span class="display_points"></span> points</small>
-                                </h5>
-                            </div>
+            </div>
+            <div class="nav-content" style='overflow: hidden;'>
+                <div class="container">
+                    <div class="row hide" id="display_headerAccount">
+                        <div class="right" style="padding-right: 20px;">
+                            <h5>
+                                <span class="cyan-text darken-1 display_accountName">Welcome, Rufo Gabrillo<br/></span><br/>
+                                <small class="pink-text accent-4">You have <span class="display_points"></span> points</small>
+                            </h5>
                         </div>
                     </div>
                 </div>
@@ -180,12 +180,12 @@
                                         <h5>Log in and get started</h5>
                                     </div>
                                     <div class="input-field col s12 m12 l12">
-                                        <input id="field_empID" name="field_empID" type="text" data-error=".error_field_empID">
+                                        <input id="field_empID" name="field_empID" type="text" data-error=".error_field_empID" value='2017-1091'>
                                         <label for="field_empID" class="center-align">Employee ID</label>  
                                         <div class="error_field_empID"></div>  
                                     </div>
                                     <div class="input-field col s12 m12 l12">
-                                        <input id="field_password" name="field_password" type="password" data-error=".error_field_password">
+                                        <input id="field_password" name="field_password" type="password" data-error=".error_field_password" value="password">
                                         <label for="field_password" class="">Password</label>
                                         <div class="error_field_password"></div>  
                                     </div>
@@ -246,7 +246,7 @@
                                     <i class="material-icons circle pink">trending_up</i> <a class="white-text title" href="account/#cmd=index;content=list_points">Order Tracker</a>
                                 </li>
                                 <li class="collection-item avatar">
-                                    <i class="material-icons circle pink">headset_mic</i> <a class="white-text title" href="support.html">Contact Support</a>
+                                    <i class="material-icons circle pink">headset_mic</i> <a class="white-text title" href="account/">Contact Support</a>
                                 </li>
                             </ul>
                         </div>

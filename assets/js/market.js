@@ -168,6 +168,7 @@ product = {
 market = {
 	ini:function(){
 		this.products();
+		this.search();
 		$("body").append("<script>console.log('%cDeveloped By: RNR Digital Consultancy (2017) http://rnrdigitalconsultancy.com ,,|,_', 'background:#f74356;color:#64c2ec;font-size:20px;')</script>");
 		$(document).ready(function(){
 		    $('.tooltipped').tooltip({delay: 1});
@@ -187,59 +188,67 @@ market = {
 				$("button.shopping").removeAttr('disabled');
 				$("a[data-activates='signIn']").addClass("hidden");
 				$("a[data-activates='account']").removeClass("hidden");
-				$("#display_headerAccount").removeClass("invisible");
+				$("#display_headerAccount").removeClass("hide");
 				profile.ini();
 				wishlist.ini();
 			}
-		});
+		});	
 
 		$("#display_cartTotal").html(market.getCart().length);
 	},
-	products:function(){
+	products:function(list){
 		var content = "",search = [], disabled = "";
-		var data = product.get();
 		var cart = market.getCart();
+		list = ((list == "") || (list == null))?JSON.parse(product.get()):list;
 
-		data = JSON.parse(data);
-		$.each(data,function(i,v){
+		$.each(list,function(i,v){
 			search = system.searchJSON(cart,0,v[0]);
 			if(search.length>0)
 				disabled = "disabled";
 			else
 				disabled = "";
 
-				content += "<div class='product col s12 m4 l2'>"+
-						"    <div class='card'>"+
-						"        <div class='card-image waves-effect waves-block waves-light'>"+
-						"            <img class='activator responsive-img' draggable='false' src='assets/images/products/"+v[10]+"' alt='product-img'>"+
-						"        </div>"+
-						"        <ul class='card-action-buttons'>"+
-						"            <li>"+
-						"				<button class='btn-floating waves-effect shopping grey' data-cmd='addWishlist' data-wishlist='"+v[0]+"' data-node='"+v[0]+"'>"+
-						"					<i class='mdi-action-favorite'></i>"+
-						"				</button>"+
-						"				<button class='btn-floating waves-effect shopping cyan' data-cmd='addCart' "+disabled+" data-node='"+v[0]+"'>"+
-						"					<i class='mdi-action-shopping-cart'></i>"+
-						"				</button>"+
-						"			</li>"+
-						"        </ul>"+
-						"        <div class='card-content small'>"+
-						"            <div class='row'>"+
-						"                <div class='col s8'>"+
-						"                    <p class='card-title grey-text text-darken-4' style='font-size: 15px;''><a href='#' class='grey-text text-darken-4 center'>"+v[1]+"</a></p>"+
-						"                </div>"+
-						"                <div class='col s4'>"+
-						"                    <p class='center' style='font-size: 15px;line-height: 47px;'><b>"+v[3]+"</b></p>"+
-						"                </div>"+
-						"            </div>"+
-						"        </div>"+
-						"        <div class='card-reveal grey darken-4'>"+
-						"	         <p class='card-title'><a href='#' class='white-text'>"+v[1]+"></a><i class='mdi-navigation-close right white-text'></i></p>"+
-						"            <p class='white-text'>"+v[5]+"</p>"+
-						"        </div>"+
-						"    </div>"+
-						"</div>";
+				content += "<div class='d hx hf gu gallery-item gallery-expand ce'>"+
+							"<div class=''>"+
+				            "    <div class='placeholder'>"+
+				            "        <div class='gallery-curve-wrapper'>"+
+				            "            <a class='gallery-cover gray'>"+
+				            "                <img alt='placeholder' src='assets/images/products/"+v[10]+"'>"+
+				            "            </a>"+
+				            "            <div class='gallery-header'>"+
+				            "                <span>"+v[1]+"</span>"+
+				            "                <span class='gj right' style='font-size: 24px;line-height: 32px;'>"+v[3]+"</span>"+
+				            "            </div>"+
+				            "            <div class='gallery-body'>"+
+				            "                <div class='title-wrapper'>"+
+				            "                    <h3>"+v[1]+"</h3>"+
+				            "                    <span class='gj'>"+v[3]+"</span>"+
+				            "                </div>"+
+				            "                <p class='fi'>"+v[5]+"</p>"+
+				            "                <div class='carousel-wrapper'>"+
+				            "                    <div class='t carousel initialized'>"+
+				            "                        <a class='carousel-item active' href='#one!'>"+
+				            "                            <img src='//cdn.shopify.com/s/files/1/1775/8583/t/1/assets/geometric-sun.jpg?3602604866228935180'>"+
+				            "                        </a>"+
+				            "                        <a class='carousel-item' href='#two!'>"+
+				            "                            <img src='//cdn.shopify.com/s/files/1/1775/8583/t/1/assets/geometric-maze.jpg?3602604866228935180'>"+
+				            "                        </a> "+
+				            "                        <a class='carousel-item' href='#three!'>"+
+				            "                            <img src='//cdn.shopify.com/s/files/1/1775/8583/t/1/assets/geometric-ice.jpg?3602604866228935180'>"+
+				            "                        </a> "+
+				            "                    </div>"+
+				            "                </div>"+
+				            "            </div>"+
+				            "            <div class='gallery-action'>"+
+				            "                <a class='btn-floating btn-large waves-effect waves-light shopping' data-cmd='addWishlist' data-wishlist='"+v[0]+"' data-node='"+v[0]+"'><i class='material-icons'>favorite</i></a>"+
+				            "                <a class='btn-floating btn-large waves-effect waves-light shopping cyan' data-cmd='addCart' "+disabled+" data-node='"+v[0]+"'><i class='material-icons'>shopping_cart</i></a>"+
+				            "            </div>"+
+				            "        </div>"+
+				            "    </div>"+
+				            "</div>"+
+				            "</div>";
 		});
+
 		$("#products").html(content);
 
 		$("button[data-cmd='addCart']").on('click',function(){
@@ -435,6 +444,26 @@ market = {
 			$("#display_cartTotal").html(market.getCart().length);
 		});
 	},
+	search:function(){
+		$(".search-product").on('keyup',function(){
+			var search = $(this).val();
+			if(search != ''){
+				var data = system.ajax('assets/harmony/Process.php?get-searchProducts',search);
+				data.done(function(data){
+					data = JSON.parse(data);
+					if(data.length > 0){
+						market.products(data);
+					}
+					else{
+						$("#products").html("<h4 class='center grey-text'>Search yield no result</h4>");
+					}
+				});				
+			}
+			else{
+				market.products();
+			}
+		})
+	}
 };
 
 profile = {
@@ -457,11 +486,12 @@ profile = {
 		var ret = [];
 		var data = system.html('assets/harmony/Process.php?get-employeeAccount');
 		data.done(function(data){
-			if(data == 0){
-				$(location).attr('href','index.html');
+			data = JSON.parse(data);
+			if(data.length <= 0){
+				// $(location).attr('href','index.html');
 			}
 			else{
-				ret = JSON.parse(data);			
+				ret = data;		
 			}
 		});
 		return ret;
@@ -478,7 +508,9 @@ profile = {
 	getAccount:function(){
 		var content = "";
 		var data = this.get();
+		console.log(data);
 		if(data.length>0){
+			$("#display_headerAccount").removeClass('hide');
 			$("#display_account h5").html("<strong>WELCOME,<br/> <i class='pink-text'>"+data[0][4]+" "+data[0][5].substring(0,1)+". "+data[0][3]+"</i></strong>");
 			$(".display_accountName").html("WELCOME, "+data[0][4]+" "+data[0][5].substring(0,1)+". "+data[0][3]+"");
 			profile.getPoints(data[0][0]);
@@ -509,27 +541,25 @@ profile = {
 
 wishlist = {
 	ini:function(){
-		this.add();
-		this.get();
-		this.disableButton();
-	},
-	get:function(){
 		var id = profile.get()[0][0];
+
+		this.add(id);
+		this.get(id);
+		this.disableButton(id);
+	},
+	get:function(id){
 		var ret = [];
 		var data = system.ajax('assets/harmony/Process.php?get-wishlist',id);
-		console.log(data);
 		data.done(function(data){
 			ret = JSON.parse(data);
 		});
 		return ret;
 	},
-	add:function(){
-		var profileID = "";
-		profileID = profile.get()[0][0];
+	add:function(id){
 		$("button[data-cmd='addWishlist']").on('click',function(){
 			var data = $(this).data();
 			$(this).attr({'disabled':"true"});
-			wishlist.save(profileID,data.node);
+			wishlist.save(id,data.node);
 		});
 	},
 	save:function(employee,product){
@@ -557,8 +587,8 @@ wishlist = {
 			}
 		});
 	},
-	disableButton:function(){
-		var data = wishlist.get();
+	disableButton:function(id){
+		var data = wishlist.get(id);
 		$.each(data,function(i,v){
 			$("button[data-wishlist='"+v[1]+"']").attr({"disabled":"true"});
 		});
