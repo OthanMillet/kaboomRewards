@@ -1905,6 +1905,7 @@ employee = {
 
 points = {
 	ini:function(){
+		console.log('cc');
 	},
 	add:function(id){
 		$("#add_points").on("click",function(){

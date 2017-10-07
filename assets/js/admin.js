@@ -2329,13 +2329,22 @@ employee = {
 				$("#buyingActivity").html("<h4 class='center'>No buying activity</h4>");
 			}
 			else{
+
 				$.each(data,function(i,v){
+					
 					content += "<tr>"+
 								"	<td width='1px'>"+(i+1)+". </td>"+
-								"	<td width='20%'>"+v[0].substring(0,6)+"...</td>"+
+								"	<td width='20%'>"+v[0].substring(0,8)+"...</td>"+
 								"	<td width='30%'>"+v[2]+"</td>"+
 								"	<td width='30%'>"+v[3]+"</td>"+
-								"	<td width='30%'>For Delivery</td>"+
+								"	<td width='30%'>"+
+									"<select>"+
+										"<option selected>Place Order</option>"+
+										"<option>For Deliveryelivery</option>"+
+										"<option>Closed</option>"+
+										"<option>Canceled</option>"+
+									"</select>"+
+								"</td>"+
 								"	<td width='9%'>"+
 								"		<a data-cmd='showOrder' data-node='"+v[0]+"' data-meta='"+JSON.stringify([v[0],v[2],v[3],"For Delivery"])+"' class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='0' data-tooltip='Show details'>"+
 								"			<i class='mdi-navigation-more-vert right black-text'></i>"+
