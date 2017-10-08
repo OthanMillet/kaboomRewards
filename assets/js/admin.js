@@ -2382,6 +2382,7 @@ employee = {
 								  "</tr></thead>";						
 
 						$.each(orders,function(i,v){
+							console.log(v);
 							var product = ((v[17] == "") || (v[17] == null))?"default.png":v[17];
 							subTotal = subTotal + (v[10]*v[1]);
 							content += "<tr>"+
@@ -3628,4 +3629,48 @@ request = {
 			}
 		});
 	}
+}
+
+sales = {
+	ini:function(){
+		sales.list();
+	},
+	list:function(){
+		var content = "", chips = [],chipsContent = "";
+		var data = system.ajax('../assets/harmony/Process.php?get-allOrders','');
+		data = JSON.parse(data.responseText);
+		console.log(data);
+		$.each(data,function(i,v){
+			var prodPicture = ((v[17] == "") || (v[17] == null))?"default.png":v[17];
+			content += "<tr>"+
+						"	<td width='1px'>"+(i+1)+". </td>"+
+						"	<td><img src='../assets/images/products/"+prodPicture+"' alt='"+v[1]+" Picture' class='valign profile-image' height='50px'></td>"+
+						"	<td width='300px'>"+v[8]+"</td>"+
+						"	<td>"+v[1]+"</td>"+
+						"	<td>"+v[10]+"</td>"+
+						"	<td>"+v[4]+"</td>"+
+						"</tr>";
+		});
+
+		content = "<table class='table bordered center' id='products'>"+
+					"<thead>"+
+					"	<tr>"+
+					"		<th>#</th><th>Thumbnail</th><th>Product</th><th>Qty</th><th>Price</th><th>Date</th>"+
+					"	</tr>"+
+					"</thead>"+
+					"</tbody>"+
+						content+
+					"</tbody>"+
+					"</table>";
+		$("#display_productList").html(content);
+
+		var table = $('#products').DataTable({
+	        "order": [[ 0, 'asc' ]],
+	        "drawCallback": function ( settings ) {
+	            var api = this.api();
+	            var rows = api.rows( {page:'current'} ).nodes();
+	            var last=null;
+	        }
+	    });
+	},
 }

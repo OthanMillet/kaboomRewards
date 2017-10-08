@@ -241,6 +241,12 @@ $function = new DatabaseClasses;
 			print_r(json_encode($query));
 		}
 
+		if(isset($_GET['get-allOrders'])){
+			$data = $_POST['data'];
+			$query = $function->PDO(true,"SELECT * FROM tbl_orderdetails LEFT JOIN tbl_product ON tbl_orderdetails.product_id = tbl_product.id ORDER BY `order_date` DESC");
+			print_r(json_encode($query));
+		}
+
 		if(isset($_GET['get-clients'])){
 			$query = $function->PDO(true,"SELECT * FROM tbl_company WHERE status = 1 ORDER BY `date` DESC");
 			print_r(json_encode($query));
