@@ -169,6 +169,7 @@ market = {
 	ini:function(){
 		this.products();
 		this.search();
+		this.sort();
 		$("body").append("<script>console.log('%cDeveloped By: RNR Digital Consultancy (2017) http://rnrdigitalconsultancy.com ,,|,_', 'background:#f74356;color:#64c2ec;font-size:20px;')</script>");
 		$(document).ready(function(){
 		    $('.tooltipped').tooltip({delay: 1});
@@ -197,7 +198,7 @@ market = {
 		$("#display_cartTotal").html(market.getCart().length);
 	},
 	products:function(list){
-		var content = "",search = [], disabled = "";
+		var content = "",search = [], disabled = "", category = "", categoryList = "";
 		var cart = market.getCart();
 		list = ((list == "") || (list == null))?JSON.parse(product.get()):list;
 
@@ -208,10 +209,15 @@ market = {
 			else
 				disabled = "";
 
-				content += "<div class='col l4 m6 s12 gallery-item gallery-expand gallery-filter bigbang'>"+
+				categoryList = "";
+				category = JSON.parse(v[4]);
+				$.each(category,function(i,v){
+					categoryList += v+" ";
+				});
+				content += "<div class='col l4 m6 s12 gallery-item gallery-expand gallery-filter product "+categoryList+"'>"+
 				            "	<div class='gallery-curve-wrapper'>"+
 				            "	    <a class='gallery-cover gray'>"+
-				            "	        <img alt='placeholder' src='assets/images/products/"+v[10]+"'>"+
+				            "	        <img alt='placeholder' src='assets/images/products/"+v[10]+"' style='width:100%'>"+
 				            "	    </a>"+
 				            "	    <div class='gallery-header'>"+
 				            "	        <span>"+v[1]+"</span>"+
@@ -226,13 +232,13 @@ market = {
 				            "	        <div class='carousel-wrapper'>"+
 				            "	            <div class='t carousel initialized'>"+
 				            "	                <a class='carousel-item active' href='#one!'>"+
-				            "	                    <img src='//cdn.shopify.com/s/files/1/1775/8583/t/1/assets/geometric-sun.jpg?3602604866228935180'>"+
+				            "	                    <img src='assets/images/logo.png'>"+
 				            "	                </a>"+
 				            "	                <a class='carousel-item' href='#two!'>"+
-				            "	                    <img src='//cdn.shopify.com/s/files/1/1775/8583/t/1/assets/geometric-maze.jpg?3602604866228935180'>"+
+				            "	                    <img src='assets/images/logo.png'>"+
 				            "	                </a> "+
 				            "	                <a class='carousel-item' href='#three!'>"+
-				            "	                    <img src='//cdn.shopify.com/s/files/1/1775/8583/t/1/assets/geometric-ice.jpg?3602604866228935180'>"+
+				            "	                    <img src='assets/images/logo.png'>"+
 				            "	                </a> "+
 				            "	            </div>"+
 				            "	        </div>"+
@@ -247,10 +253,63 @@ market = {
 
 		$("#products").html(content);
 
+		$(".product").on('click',function(e){
+			console.log(this);
+			$(this).galleryExpand('open');
+		})
+
+		$('.product').galleryExpand({
+			onShow: function(el) {
+				var carousel = el.find('.carousel.initialized');
+				carousel.carousel({
+					dist: 0,
+					padding: 10
+				});
+				$('ul.tabs').tabs();
+			}
+		});
+
 		$("button[data-cmd='addCart']").on('click',function(){
 			var data = $(this).data();
 	    	$(location).attr('href',"product.html?id="+data.node);
 		});
+	},
+	search:function(){
+		$(".search-product").on('keyup',function(){
+			var search = $(this).val();
+			if(search != ''){
+				var data = system.ajax('assets/harmony/Process.php?get-searchProducts',search);
+				data.done(function(data){
+					// console.log(data);
+					data = JSON.parse(data);
+					if(data.length > 0){
+						market.products(data);
+					}
+					else{
+						$("#products").html("<h4 class='center grey-text'>Search yield no result</h4>");
+					}
+				});				
+			}
+			else{
+				market.products();
+			}
+		})
+	},
+	sort:function(){
+		$("#field_sortProduct").on("change",function(){
+			var sort = $(this).val();
+			var data = system.ajax('assets/harmony/Process.php?get-searchProducts',sort);
+			data.done(function(data){
+				// console.log(data);
+				data = JSON.parse(data);
+				if(data.length > 0){
+					market.products(data);
+				}
+				else{
+					$("#products").html("<h4 class='center grey-text'>Search yield no result</h4>");
+				}
+			});				
+		})
 	},
 	addToCart:function(data){
 		var currentCount = ((localStorage.getItem('cartCount')=="") || (localStorage.getItem('cartCount')==null))?0:Number(localStorage.getItem('cartCount'));
@@ -440,26 +499,6 @@ market = {
 			$("#display_cartTotal").html(market.getCart().length);
 		});
 	},
-	search:function(){
-		$(".search-product").on('keyup',function(){
-			var search = $(this).val();
-			if(search != ''){
-				var data = system.ajax('assets/harmony/Process.php?get-searchProducts',search);
-				data.done(function(data){
-					data = JSON.parse(data);
-					if(data.length > 0){
-						market.products(data);
-					}
-					else{
-						$("#products").html("<h4 class='center grey-text'>Search yield no result</h4>");
-					}
-				});				
-			}
-			else{
-				market.products();
-			}
-		})
-	}
 };
 
 profile = {
@@ -504,8 +543,9 @@ profile = {
 	getAccount:function(){
 		var content = "";
 		var data = this.get();
-		console.log(data);
+
 		if(data.length>0){
+			$("#display_logo").attr({"style":"width:200px;"});
 			$("#display_headerAccount").removeClass('hide');
 			$("#display_account h5").html("<strong>WELCOME,<br/> <i class='pink-text'>"+data[0][4]+" "+data[0][5].substring(0,1)+". "+data[0][3]+"</i></strong>");
 			$(".display_accountName").html("WELCOME, "+data[0][4]+" "+data[0][5].substring(0,1)+". "+data[0][3]+"");

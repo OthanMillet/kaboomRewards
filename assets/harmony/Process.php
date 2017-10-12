@@ -213,12 +213,18 @@ $function = new DatabaseClasses;
 		}
 
 		if(isset($_GET['get-products'])){
-			$query = $function->PDO(true,"SELECT * FROM tbl_product ORDER BY `date` DESC");
+			$query = $function->PDO(true,"SELECT * FROM tbl_product ORDER BY `price` DESC");
 			print_r(json_encode($query));
 		}
 
 		if(isset($_GET['get-availableProducts'])){
-			$query = $function->PDO(true,"SELECT * FROM tbl_product WHERE qty>0 AND status = 1 ORDER BY `date` DESC");
+			$query = $function->PDO(true,"SELECT * FROM tbl_product WHERE qty>0 AND status = 1 ORDER BY `product_name`");
+			print_r(json_encode($query));
+		}
+
+		if(isset($_GET['get-searchProducts'])){
+			$data = $_POST['data'];
+			$query = $function->PDO(true,"SELECT * FROM tbl_product WHERE product_name LIKE '{$data}%' AND (qty>0 AND status = 1) ORDER BY `product_name`");
 			print_r(json_encode($query));
 		}
 

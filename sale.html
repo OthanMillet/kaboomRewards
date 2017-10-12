@@ -51,18 +51,8 @@
                     </div>
                 </div>
             </div>
-            <div class="categories-wrapper teal lighten-2">
+            <div class="categories-wrapper teal lighten-2" style="height: 4px;">
                 <div class="categories-container pin-top">
-                    <ul class="categories db" style="overflow:hidden;">
-                        <li class="no-border">
-                            <a href="#all">
-                                <div class="input-field inline">
-                                    <input class="validate white-text" id="email" type="email"> 
-                                    <label data-error="wrong" data-success="right" class="white-text" for="email">Search</label>
-                                </div>
-                            </a>
-                        </li>
-                    </ul>
                 </div>
             </div>
         </nav>
@@ -70,7 +60,7 @@
             <div class="cx gray">
                 <div class="db">
                     <div class="b e">
-                        <div class="col s4">
+                        <div class="col s3">
                             <div class="filter-container">
                                 <strong class="big-font">Filter for<br/></strong>
                                 <div class="row" style="margin-bottom: 30px; margin-top: 30px;">
@@ -82,26 +72,28 @@
                                 <div class="row">
                                     <ul>
                                         <li>
-                                            <input id="allergic" name="allergic" type="checkbox" value="1"> <label for="allergic">Allergiker (63)</label>
+                                            <input id="allergic" name="allergic" type="checkbox" value="1">
+                                            <label for="allergic">Brand A (100)</label>
                                         </li>
                                         <li>
-                                            <input id="pet" name="pet" type="checkbox" value="1"> <label for="pet">Tierbesitzer (74)</label>
+                                            <input id="pet" name="pet" type="checkbox" value="1">
+                                            <label for="pet">Brand B (74)</label>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
-                        <div class="col s8">
+                        <div class="col s9">
                             <div class="row">
                                 <div class="col m5 s12">
                                     <div class="input-field">
-                                        <input name="search" type="text">
+                                        <input name="search" type="text" class="search-product">
                                         <label for="search">Search</label>
                                     </div>
                                 </div>
                                 <div class="col m4 offset-m3 s12">
                                     <div class="input-field">
-                                        <select class="initialized" name="sort">
+                                        <select class="initialized" name="field_sortProduct" id='field_sortProduct'>
                                             <option disabled selected>Sort By</option>
                                             <option >Price Ascending</option>
                                             <option >Price descending</option>
@@ -218,17 +210,6 @@
         <script type="text/javascript">
             $(".dropdown-button").dropdown();
 
-            var $masonry = $('.gallery');
-            $masonry.masonry({
-              itemSelector: '.gallery-item',
-              columnWidth: '.gallery-item',
-              transitionDuration: 0
-            });
-
-            $masonry.imagesLoaded(function() {
-              $masonry.masonry('layout');
-            });
-
             var slider = document.getElementById('price-slider');
             noUiSlider.create(slider,{
                 start: [20, 80],
@@ -247,6 +228,8 @@
             else{
                 market.ini();
             }
+
+
         </script>
     </body>
 </html>
