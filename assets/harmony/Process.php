@@ -248,9 +248,21 @@ $function = new DatabaseClasses;
 					$query = $function->PDO(true,"SELECT * FROM tbl_product WHERE (qty>0 AND status = 1) ORDER BY `product_name`");
 			};
 
-			// print_r($query);/
-// 
 			print_r(json_encode($query));
+		}
+
+		if(isset($_GET['get-pricedProducts'])){
+			$data = $_POST['data'];
+			$min = $data[0];
+			$max = $data[1];
+			$query = $function->PDO(true,"SELECT * FROM tbl_product WHERE (price BETWEEN '{$min}' AND '{$max}') AND (qty>0 AND status = 1) ORDER BY `product_name`");
+			print_r(json_encode($query));
+		}
+
+		if(isset($_GET['get-minMaxPricedProducts'])){
+			$query = $function->PDO(true,"SELECT min(price),max(price) FROM tbl_product WHERE (qty>0 AND status = 1) ORDER BY `product_name`");
+
+			print_r(json_encode($query[0]));
 		}
 
 		if(isset($_GET['get-productsByID'])){

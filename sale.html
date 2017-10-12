@@ -52,8 +52,7 @@
                 </div>
             </div>
             <div class="categories-wrapper teal lighten-2" style="height: 4px;">
-                <div class="categories-container pin-top">
-                </div>
+                <div class="categories-container pin-top"></div>
             </div>
         </nav>
         <div class="row">
@@ -67,6 +66,8 @@
                                     <div class="input-field">
                                         <label for="price-slider" class="active">Price Range</label><br/>
                                         <div id="price-slider"></div>
+                                        <div class="col-s6 left" id='price-min'>0</div>
+                                        <div class="col-s6 right" id='price-max'>100</div>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -210,26 +211,12 @@
         <script type="text/javascript">
             $(".dropdown-button").dropdown();
 
-            var slider = document.getElementById('price-slider');
-            noUiSlider.create(slider,{
-                start: [20, 80],
-                connect: true,
-                step: 1,
-                orientation: 'horizontal',
-                range: {
-                    'min': 0,
-                    'max': 100
-                },
-            });
-
             if(profile.check() == 0){
                 $(location).attr('href','index.html');
             }
             else{
                 market.ini();
             }
-
-
         </script>
     </body>
 </html>

@@ -167,9 +167,6 @@ product = {
 
 market = {
 	ini:function(){
-		this.products();
-		this.search();
-		this.sort();
 		$("body").append("<script>console.log('%cDeveloped By: RNR Digital Consultancy (2017) http://rnrdigitalconsultancy.com ,,|,_', 'background:#f74356;color:#64c2ec;font-size:20px;')</script>");
 		$(document).ready(function(){
 		    $('.tooltipped').tooltip({delay: 1});
@@ -192,6 +189,9 @@ market = {
 				$("#display_headerAccount").removeClass("hide");
 				profile.ini();
 				wishlist.ini();
+				market.products();
+				market.search();
+				market.sort();
 			}
 		});	
 
@@ -296,6 +296,8 @@ market = {
 		})
 	},
 	sort:function(){
+		var priceRange = market.minMaxPricedProducts();
+		priceRange = JSON.parse(priceRange);
 		$("#field_sortProduct").on("change",function(){
 			var sort = $(this).val();
 			var data = system.ajax('assets/harmony/Process.php?get-sortProducts',sort);
@@ -309,7 +311,48 @@ market = {
 					$("#products").html("<h4 class='center grey-text'>Search yield no result</h4>");
 				}
 			});				
-		})
+		});
+
+        var price = document.getElementById('price-slider');
+        noUiSlider.create(price,{
+            start: priceRange,
+            connect: true,
+            step: 1,
+            margin: (Number(priceRange[1])*0.10),
+            orientation: 'horizontal',
+            range: {
+                'min': 0,
+                'max': Number(priceRange[1])
+            },
+        });
+
+        market.sortUpdatePriceRange(price);
+
+		price.noUiSlider.on('change', function(){
+			var priceRange = price.noUiSlider.get();
+			var data = system.ajax('assets/harmony/Process.php?get-pricedProducts',priceRange);
+			data.done(function(data){
+				data = JSON.parse(data);
+				if(data.length > 0){
+					market.products(data);
+				}
+				else{
+					$("#products").html("<h4 class='center grey-text'>Search yield no result</h4>");
+				}
+			});				
+		});
+		price.noUiSlider.on('slide', function(){
+	        market.sortUpdatePriceRange(price);
+		});
+	},
+	sortUpdatePriceRange:function(price){
+		var priceRange = price.noUiSlider.get();
+		$("#price-min").html(priceRange[0]);
+		$("#price-max").html(priceRange[1]);
+	},
+	minMaxPricedProducts:function(){
+		var data = system.html('assets/harmony/Process.php?get-minMaxPricedProducts');
+		return data.responseText;
 	},
 	addToCart:function(data){
 		var currentCount = ((localStorage.getItem('cartCount')=="") || (localStorage.getItem('cartCount')==null))?0:Number(localStorage.getItem('cartCount'));
