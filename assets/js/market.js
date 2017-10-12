@@ -298,7 +298,7 @@ market = {
 	sort:function(){
 		$("#field_sortProduct").on("change",function(){
 			var sort = $(this).val();
-			var data = system.ajax('assets/harmony/Process.php?get-searchProducts',sort);
+			var data = system.ajax('assets/harmony/Process.php?get-sortProducts',sort);
 			data.done(function(data){
 				// console.log(data);
 				data = JSON.parse(data);

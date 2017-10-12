@@ -228,6 +228,31 @@ $function = new DatabaseClasses;
 			print_r(json_encode($query));
 		}
 
+		if(isset($_GET['get-sortProducts'])){
+			$data = $_POST['data'];
+			// print_r($data);
+			switch($data){
+				case "Price ascending":
+					$query = $function->PDO(true,"SELECT * FROM tbl_product WHERE (qty>0 AND status = 1) ORDER BY `price` ASC");
+					break;
+				case "Price descending":
+					$query = $function->PDO(true,"SELECT * FROM tbl_product WHERE (qty>0 AND status = 1) ORDER BY `price` DESC");
+					break;
+				case "Newly arrived":
+					$query = $function->PDO(true,"SELECT * FROM tbl_product WHERE (qty>0 AND status = 1) ORDER BY `date` DESC");
+					break;
+				case "Popularity":
+					$query = $function->PDO(true,"SELECT * FROM tbl_product WHERE (qty>0 AND status = 1) ORDER BY `product_name`");
+					break;
+				default:
+					$query = $function->PDO(true,"SELECT * FROM tbl_product WHERE (qty>0 AND status = 1) ORDER BY `product_name`");
+			};
+
+			// print_r($query);/
+// 
+			print_r(json_encode($query));
+		}
+
 		if(isset($_GET['get-productsByID'])){
 			$data = $_POST['data'];
 			$query = $function->PDO(true,"SELECT * FROM tbl_product WHERE id = '{$data}'");
