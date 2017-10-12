@@ -208,44 +208,40 @@ market = {
 			else
 				disabled = "";
 
-				content += "<div class='d hx hf gu gallery-item gallery-expand ce'>"+
-							"<div class=''>"+
-				            "    <div class='placeholder'>"+
-				            "        <div class='gallery-curve-wrapper'>"+
-				            "            <a class='gallery-cover gray'>"+
-				            "                <img alt='placeholder' src='assets/images/products/"+v[10]+"'>"+
-				            "            </a>"+
-				            "            <div class='gallery-header'>"+
-				            "                <span>"+v[1]+"</span>"+
-				            "                <span class='gj right' style='font-size: 24px;line-height: 32px;'>"+v[3]+"</span>"+
-				            "            </div>"+
-				            "            <div class='gallery-body'>"+
-				            "                <div class='title-wrapper'>"+
-				            "                    <h3>"+v[1]+"</h3>"+
-				            "                    <span class='gj'>"+v[3]+"</span>"+
-				            "                </div>"+
-				            "                <p class='fi'>"+v[5]+"</p>"+
-				            "                <div class='carousel-wrapper'>"+
-				            "                    <div class='t carousel initialized'>"+
-				            "                        <a class='carousel-item active' href='#one!'>"+
-				            "                            <img src='//cdn.shopify.com/s/files/1/1775/8583/t/1/assets/geometric-sun.jpg?3602604866228935180'>"+
-				            "                        </a>"+
-				            "                        <a class='carousel-item' href='#two!'>"+
-				            "                            <img src='//cdn.shopify.com/s/files/1/1775/8583/t/1/assets/geometric-maze.jpg?3602604866228935180'>"+
-				            "                        </a> "+
-				            "                        <a class='carousel-item' href='#three!'>"+
-				            "                            <img src='//cdn.shopify.com/s/files/1/1775/8583/t/1/assets/geometric-ice.jpg?3602604866228935180'>"+
-				            "                        </a> "+
-				            "                    </div>"+
-				            "                </div>"+
-				            "            </div>"+
-				            "            <div class='gallery-action'>"+
-				            "                <a class='btn-floating btn-large waves-effect waves-light shopping' data-cmd='addWishlist' data-wishlist='"+v[0]+"' data-node='"+v[0]+"'><i class='material-icons'>favorite</i></a>"+
-				            "                <a class='btn-floating btn-large waves-effect waves-light shopping cyan' data-cmd='addCart' "+disabled+" data-node='"+v[0]+"'><i class='material-icons'>shopping_cart</i></a>"+
-				            "            </div>"+
-				            "        </div>"+
-				            "    </div>"+
-				            "</div>"+
+				content += "<div class='col l4 m6 s12 gallery-item gallery-expand gallery-filter bigbang'>"+
+				            "	<div class='gallery-curve-wrapper'>"+
+				            "	    <a class='gallery-cover gray'>"+
+				            "	        <img alt='placeholder' src='assets/images/products/"+v[10]+"'>"+
+				            "	    </a>"+
+				            "	    <div class='gallery-header'>"+
+				            "	        <span>"+v[1]+"</span>"+
+				            "	        <span class='gj right' style='font-size: 24px;line-height: 32px;'>"+v[3]+"</span>"+
+				            "	    </div>"+
+				            "	    <div class='gallery-body'>"+
+				            "	        <div class='title-wrapper'>"+
+				            "	            <h3>"+v[1]+"</h3>"+
+				            "	            <span class='gj'>"+v[3]+"</span>"+
+				            "	        </div>"+
+				            "	        <p class='fi'>"+v[5]+"</p>"+
+				            "	        <div class='carousel-wrapper'>"+
+				            "	            <div class='t carousel initialized'>"+
+				            "	                <a class='carousel-item active' href='#one!'>"+
+				            "	                    <img src='//cdn.shopify.com/s/files/1/1775/8583/t/1/assets/geometric-sun.jpg?3602604866228935180'>"+
+				            "	                </a>"+
+				            "	                <a class='carousel-item' href='#two!'>"+
+				            "	                    <img src='//cdn.shopify.com/s/files/1/1775/8583/t/1/assets/geometric-maze.jpg?3602604866228935180'>"+
+				            "	                </a> "+
+				            "	                <a class='carousel-item' href='#three!'>"+
+				            "	                    <img src='//cdn.shopify.com/s/files/1/1775/8583/t/1/assets/geometric-ice.jpg?3602604866228935180'>"+
+				            "	                </a> "+
+				            "	            </div>"+
+				            "	        </div>"+
+				            "	    </div>"+
+				            "	    <div class='gallery-action'>"+
+				            "	        <a class='btn-floating btn-large waves-effect waves-light shopping' data-cmd='addWishlist' data-wishlist='"+v[0]+"' data-node='"+v[0]+"'><i class='material-icons'>favorite</i></a>"+
+				            "	        <a class='btn-floating btn-large waves-effect waves-light shopping cyan' data-cmd='addCart' "+disabled+" data-node='"+v[0]+"'><i class='material-icons'>shopping_cart</i></a>"+
+				            "		</div>"+
+				            "	</div>"+
 				            "</div>";
 		});
 
