@@ -1,14 +1,22 @@
-console.log("xx");
+$(document).ready(function(){
+	$('.modal').modal();
+});
+
 account = {
 	ini:function(){
 		var data = system.ajax('../assets/harmony/Process.php?get-employeeAccount',"");
 		data.done(function(data){
 			data = JSON.parse(data);
-			console.log(data);
 			var profile = ((data[0][12] == "") || data[0][12] == null)?"avatar.jpg":data[0][12];
 
-			$(".profile-image").attr({"src":"../assets/images/profile/"+profile});
-			$(".profile-btn span").html(data[0][4]);
+			$("#user-account img.profile-image").attr({"src":"../assets/images/profile/"+profile});
+			$("#user-account div div a span.display_name").html(data[0][4]);
+
+			$("#log-out").on('click',function(){
+			    login.kill();
+			})
+
+
 		});
 	},
 	details:function(){
@@ -32,92 +40,123 @@ account = {
 
 				if(Number(data[0][15]) == 1){
 					status = "Active";
-					var actions = "<button disabled data-cmd='deactivateEmployee' data-name='"+data[0][4]+"' data-node='"+data[0][0]+"' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Deactivate account' data-cmd='update'>"+
-								  "	<i class='mdi-action-lock-open right grey-text'></i>"+
-								  "</button>";	
+					var actions = `<button disabled data-cmd='deactivateEmployee' data-name='${data[0][4]}' data-node='${data[0][0]}' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Deactivate account' data-cmd='update'>
+								  	<i class='mdi-action-lock-open right grey-text'></i>
+								  </button>`;	
 				}
 				else if(Number(data[0][15]) == 2){
 					status = "Pending";
-					var actions = "<button disabled data-cmd='activateEmployee' data-name='"+data[0][4]+"' data-node='"+data[0][0]+"' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Activate account' data-cmd='update'>"+
-								  "	<i class='mdi-action-lock right grey-text'></i>"+
-								  "</button>";	
+					var actions = `<button disabled data-cmd='activateEmployee' data-name='${data[0][4]}' data-node='${data[0][0]}' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Activate account' data-cmd='update'>
+								  	<i class='mdi-action-lock right grey-text'></i>
+								  </button>`;	
 				}
 				else{
 					status = "Deactivated";
-					var actions = "<button disabled data-cmd='activateEmployee' data-name='"+data[0][4]+"' data-node='"+data[0][0]+"' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Activate account' data-cmd='update'>"+
-								  "	<i class='mdi-action-lock right grey-text'></i>"+
-								  "</button>";	
+					var actions = `<button disabled data-cmd='activateEmployee' data-name='${data[0][4]}' data-node='${data[0][0]}' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Activate account' data-cmd='update'>
+								  	<i class='mdi-action-lock right grey-text'></i>
+								  </button>`;	
 				}
 
 				var profile = ((data[0][12] == "") || (data[0][12] == null))?"avatar.jpg":data[0][12];
-				content = "<div id='profile-card' class='card'>"+
-						"    <div class='card-image waves-effect waves-block waves-light'>"+
-						"        <img class='activator' src='../assets/images/user-bg.jpg' alt='user background'>"+
-						"    </div>"+
-						"    <div class='card-content'>"+
-						"        <div class=' responsive-img activator card-profile-image circle'>"+
-						"        	<img src='../assets/images/profile/"+profile+"' alt='' class='circle'>"+
-						"        	<a data-value='"+profile+"' data-cmd='updateEmployeePicture' data-name='"+data[0][4]+" "+data[0][5]+" "+data[0][3]+"' data-node='"+data[0][0]+"' data-prop='Picture' class='btn waves-effect white-text no-shadow black' style='font-size: 10px;z-index: 1;padding: 0 12px;top:40px;'>Change</a>"+
-						"		 </div>"+
-						"        <span class='card-title activator grey-text text-darken-4'>"+data[0][4]+" "+data[0][5]+" "+data[0][3]+" </span>"+
-						"			<a data-value='"+JSON.stringify([data[0][4],data[0][5],data[0][3]])+"' data-cmd='updateEmployee' data-name='"+data[0][4]+" "+data[0][5]+" "+data[0][3]+"' data-node='"+data[0][0]+"' data-prop='Name' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update account'>"+
-						"				<i class='mdi-editor-mode-edit right hover black-text'></i>"+
-						"			</a>"+
-						"		 <div class='divider'></div>"+
-						"        <p><i class='mdi-action-info-outline cyan-text text-darken-2'></i> Status: "+status+"</p>"+
-						"		 <div class='divider'></div>"+
-						"        <p><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-action-perm-identity cyan-text text-darken-2'></i> Nickname: "+data[0][6]+"</span>"+
-						"			<a data-value='"+data[0][6]+"' data-cmd='updateEmployee' data-name='"+data[0][4]+" "+data[0][5]+" "+data[0][3]+"' data-node='"+data[0][0]+"' data-prop='Nickname' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>"+
-						"				<i class='mdi-editor-mode-edit right hover black-text'></i>"+
-						"			</a>"+
-						"		 </p>"+
-						"		 <div class='divider'></div>"+
-						"        <p><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-action-work cyan-text text-darken-2'></i> Position: "+data[0][13]+"</span>"+
-						"			<a data-value='"+data[0][13]+"' data-cmd='updateEmployee' data-name='"+data[0][4]+" "+data[0][5]+" "+data[0][3]+"' data-node='"+data[0][0]+"' data-prop='Position' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>"+
-						"				<i class='mdi-editor-mode-edit right hover black-text'></i>"+
-						"			</a>"+
-						"		 </p>"+
-						"		 <div class='divider'></div>"+
-						"        <p><span style='width:80%;display: inline-block;' class='truncate'> <i class='mdi-action-perm-phone-msg cyan-text text-darken-2'></i> Phone: "+data[0][9]+"</span>"+
-						"			<a data-value='"+data[0][9]+"' data-cmd='updateEmployee' data-name='"+data[0][4]+" "+data[0][5]+" "+data[0][3]+"' data-node='"+data[0][0]+"' data-prop='Phone' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>"+
-						"				<i class='mdi-editor-mode-edit right hover black-text'></i>"+
-						"			</a>"+
-						"		 </p>"+
-						"		 <div class='divider'></div>"+
-						"        <p><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-communication-email cyan-text text-darken-2'></i> Email: "+data[0][10]+"</span>"+
-						"			<a data-value='"+data[0][10]+"' data-cmd='updateEmployee' data-name='"+data[0][4]+" "+data[0][5]+" "+data[0][3]+"' data-node='"+data[0][0]+"' data-prop='Email' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>"+
-						"				<i class='mdi-editor-mode-edit right hover black-text'></i>"+
-						"			</a>"+
-						"		 </p>"+
-						"		 <div class='divider'></div>"+
-						"        <p><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-maps-map cyan-text text-darken-2'></i> Address: "+data[0][11]+"</span>"+
-						"			<a data-value='"+data[0][11]+"' data-cmd='updateEmployee' data-name='"+data[0][4]+" "+data[0][5]+" "+data[0][3]+"' data-node='"+data[0][0]+"' data-prop='Address' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>"+
-						"				<i class='mdi-editor-mode-edit right hover black-text'></i>"+
-						"			</a>"+
-						"		 </p>"+
-						"		 <div class='divider'></div>"+
-						"        <p><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-action-cached cyan-text text-darken-2'></i> Gender: "+data[0][7]+"</span>"+
-						"			<a data-value='"+data[0][7]+"' data-cmd='updateEmployee' data-name='"+data[0][4]+" "+data[0][5]+" "+data[0][3]+"' data-node='"+data[0][0]+"' data-prop='Gender' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>"+
-						"				<i class='mdi-editor-mode-edit right hover black-text'></i>"+
-						"			</a>"+
-						"		 </p>"+
-						"		 <div class='divider'></div>"+
-						"        <p><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-action-event cyan-text text-darken-2'></i> Date of Birth: "+data[0][8]+"</span>"+
-						"			<a data-value='"+data[0][8]+"' data-cmd='updateEmployee' data-name='"+data[0][4]+" "+data[0][5]+" "+data[0][3]+"' data-node='"+data[0][0]+"' data-prop='Date of Birth' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>"+
-						"				<i class='mdi-editor-mode-edit right hover black-text'></i>"+
-						"			</a>"+
-						"		 </p>"+
-						"		 <div class='divider'></div>"+
-						"        <p><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-action-account-box cyan-text text-darken-2'></i> Employee ID: "+data[0][1]+"</span>"+
-						"		 </p>"+
-						"		 <div class='divider'></div>"+
-						"        <p><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-action-verified-user cyan-text text-darken-2'></i> Password"+"</span>"+
-						"			<a data-cmd='updateEmployee' data-name='"+data[0][4]+" "+data[0][5]+" "+data[0][3]+"' data-node='"+data[0][0]+"' data-prop='Password' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update password'>"+
-						"				<i class='mdi-editor-mode-edit right hover black-text'></i>"+
-						"			</a>"+
-						"		 </p>"+
-						"    </div>"+
-						"</div>";
+				content = `<div id='profile-card' class='card'>
+						    <div class='card-image waves-effect waves-block waves-light' style='max-height: 70px;'>
+						        <img class='activator' src='../assets/images/user-bg.jpg' alt='user background'>
+						    </div>
+						    <div class='card-stacked'>
+							    <div class='card-content'>
+							        <div class=' responsive-img activator card-profile-image circle' style='margin-top: -65px;'>
+							        	<img src='../assets/images/profile/${profile}' alt='' class='circle'>
+							        	<a data-value='${profile}' data-cmd='updateEmployeePicture' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-prop='Picture' class='btn waves-effect white-text no-shadow black' style='font-size: 10px;z-index: 1;padding: 0 12px;top:40px;'>Change</a>
+									</div>
+									<a data-value='${JSON.stringify([data[0][4],data[0][5],data[0][3]])}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-prop='Name' class='tooltipped waves-effect black-text no-shadow right' data-position='left' data-delay='50' data-tooltip='Update account'>
+										<i class='material-icons right hover black-text'>mode_edit</i>
+									</a>
+							        <span class='card-title activator grey-text text-darken-4 bold'>${data[0][4]} ${data[0][5]} ${data[0][3]} </span>
+									<div class='divider'></div>
+									<table>
+										<tr>
+											<td class='bold' width='120px'><i class='mdi-action-info-outline cyan-text text-darken-2'></i> Status: </td>
+											<td class='grey-text'>${status}</td>
+										</tr>
+										<tr>
+											<td class='bold'><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-action-perm-identity cyan-text text-darken-2'></i> Nickname: </span></td>
+											<td class='grey-text'>${data[0][6]}</td>
+											<td>
+												<a data-value='${data[0][6]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-prop='Nickname' class='tooltipped waves-effect black-text no-shadow right' data-position='left' data-delay='50' data-tooltip='Update Nickname'>
+													<i class='material-icons right hover black-text'>mode_edit</i>
+												</a>
+											</td>
+										</tr>
+										<tr>
+											<td class='bold'><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-action-work cyan-text text-darken-2'></i> Position: </span></td>
+											<td class='grey-text'>${data[0][13]}</td>
+											<td>
+												<a data-value='${data[0][13]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-prop='Position' class='tooltipped waves-effect black-text no-shadow right' data-position='left' data-delay='50' data-tooltip='Update Position'>
+													<i class='material-icons right hover black-text'>mode_edit</i>
+												</a>
+											</td>
+										</tr>
+										<tr>
+											<td class='bold'><span style='width:80%;display: inline-block;' class='truncate'> <i class='mdi-action-perm-phone-msg cyan-text text-darken-2'></i> Phone: </span></td>
+											<td class='grey-text'>${data[0][9]}</td>
+											<td>
+												<a data-value='${data[0][9]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-prop='Phone' class='tooltipped waves-effect black-text no-shadow right' data-position='left' data-delay='50' data-tooltip='Update phone'>
+													<i class='material-icons right hover black-text'>mode_edit</i>
+												</a>
+											</td>
+										</tr>
+										<tr>
+											<td class='bold'><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-communication-email cyan-text text-darken-2'></i> Email: </span></td>
+											<td class='grey-text'>${data[0][10]}</td>
+											<td>
+												<a data-value='${data[0][10]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-prop='Email' class='tooltipped waves-effect black-text no-shadow right' data-position='left' data-delay='50' data-tooltip='Update Email'>
+													<i class='material-icons right hover black-text'>mode_edit</i>
+												</a>
+											</td>
+										</tr>
+										<tr>
+											<td class='bold'><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-maps-map cyan-text text-darken-2'></i> Address: </span></td>
+											<td class='grey-text'>${data[0][11]}</td>
+											<td>
+												<a data-value='${data[0][11]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-prop='Address' class='tooltipped waves-effect black-text no-shadow right' data-position='left' data-delay='50' data-tooltip='Update Address'>
+													<i class='material-icons right hover black-text'>mode_edit</i>
+												</a>
+											</td>
+										</tr>
+										<tr>
+											<td class='bold'><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-action-cached cyan-text text-darken-2'></i> Gender: </span></td>
+											<td class='grey-text'>${data[0][7]}</td>
+											<td>
+												<a data-value='${data[0][7]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-prop='Gender' class='tooltipped waves-effect black-text no-shadow right' data-position='left' data-delay='50' data-tooltip='Update Gender'>
+													<i class='material-icons right hover black-text'>mode_edit</i>
+												</a>
+											</td>
+										</tr>
+										<tr>
+											<td class='bold'><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-action-event cyan-text text-darken-2'></i> Date of Birth: </span></td>
+											<td class='grey-text'>${data[0][8]}</td>
+											<td>
+												<a data-value='${data[0][8]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-prop='Date of Birth' class='tooltipped waves-effect black-text no-shadow right' data-position='left' data-delay='50' data-tooltip='Update Date of Birth'>
+													<i class='material-icons right hover black-text'>mode_edit</i>
+												</a>
+											</td>
+										</tr>
+										<tr>
+											<td class='bold'><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-action-account-box cyan-text text-darken-2'></i> Employee ID: </span></td>
+											<td colspan='2' class='grey-text'>${data[0][1]}</td>
+										</tr>
+										<tr>
+											<td class='bold'><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-action-verified-user cyan-text text-darken-2'></i> Password</span></td>
+											<td colspan='2'>
+												<a data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-prop='Password' class='tooltipped waves-effect black-text no-shadow right' data-position='left' data-delay='50' data-tooltip='Update password'>
+													<i class='material-icons right hover black-text'>mode_edit</i>
+												</a>
+											</td>
+										</tr>
+									</table>
+							    </div>
+						    </div>
+						</div>`;
 				$("#profile").html(content);
 
 				account.update();
@@ -130,40 +169,40 @@ account = {
 			var data = $(this).data();
 			var id = data.node;
 
-			var content = "<h4>Change "+data.prop+"</h4>"+
-						  "<form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>"+
-						  "		<label for='field_"+data.prop+"'>"+data.prop+": </label>"+
-						  "		<input id='field_"+data.prop+"' type='text' name='field_"+data.prop+"' data-error='.error_"+data.prop+"' value='"+data.value+"'>"+
-						  "		<div class='error_"+data.prop+"'></div>"+
-						  "		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>"+
-						  "		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>"+
-						  "</form>";
+			var content = `<h4>Change ${data.prop}</h4>
+						  	<form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>
+						  		<label for='field_${data.prop}'>${data.prop}: </label>
+						  		<input id='field_${data.prop}' type='text' name='field_${data.prop}' data-error='.error_${data.prop}' value='${data.value}'>
+						  		<div class='error_${data.prop}'></div>
+						  		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>
+						  		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>
+						  	</form>`;
 			$("#modal_confirm .modal-content").html(content);
 			$('#modal_confirm .modal-footer').html("");			
 
 			if(data.prop == "Name"){
-				var content = "<h4>Change "+data.prop+"</h4>"+
-							  "<form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>"+
-							  "		<div class='col s12'>"+
-							  "			<label for='field_gname'>Given Name: </label>"+
-							  "			<input id='field_gname' type='text' name='field_gname' data-error='.error_gname' value='"+data.value[0]+"'>"+
-							  "			<div class='error_gname'></div>"+
-							  "		</div>"+
-							  "		<div class='col s12'>"+
-							  "			<label for='field_mname'>Middle Name: </label>"+
-							  "			<input id='field_mname' type='text' name='field_mname' data-error='.error_mname' value='"+data.value[1]+"'>"+
-							  "			<div class='error_mname'></div>"+
-							  "		</div>"+
-							  "		<div class='col s12'>"+
-							  "			<label for='field_fname'>Family Name: </label>"+
-							  "			<input id='field_fname' type='text' name='field_fname' data-error='.error_fname' value='"+data.value[2]+"'>"+
-							  "			<div class='error_fname'></div>"+
-							  "		</div>"+
-							  "		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>"+
-							  "		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>"+
-							  "</form>";
+				var content = `<h4>Change ${data.prop}</h4>
+							  <form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>
+							  		<div class='col s12'>
+							  			<label for='field_gname'>Given Name: </label>
+							  			<input id='field_gname' type='text' name='field_gname' data-error='.error_gname' value='${data.value[0]}'>
+							  			<div class='error_gname'></div>
+							  		</div>
+							  		<div class='col s12'>
+							  			<label for='field_mname'>Middle Name: </label>
+							  			<input id='field_mname' type='text' name='field_mname' data-error='.error_mname' value='${data.value[1]}'>
+							  			<div class='error_mname'></div>
+							  		</div>
+							  		<div class='col s12'>
+							  			<label for='field_fname'>Family Name: </label>
+							  			<input id='field_fname' type='text' name='field_fname' data-error='.error_fname' value='${data.value[2]}'>
+							  			<div class='error_fname'></div>
+							  		</div>
+							  		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>
+							  		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>
+							  </form>`;
 				$("#modal_confirm .modal-content").html(content);
-				$('#modal_confirm').openModal('show');			
+				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
 				        field_gname: {required: true,maxlength: 50},
@@ -174,7 +213,7 @@ account = {
 				    errorPlacement: function(error, element) {
 						var placement = $(element).data('error');
 						if(placement){
-							$(placement).append(error)
+							$(placement).append(error);
 						} 
 						else{
 							error.insertAfter(element);
@@ -188,7 +227,7 @@ account = {
 							if(data == 1){
 								system.clearForm();
 								Materialize.toast('Request sent. Wait for admin\'s approval',4000);
-								$('#modal_confirm').closeModal();	
+								$('#modal_confirm').modal('close');	
 								App.handleLoadPage("#cmd=index;content=account");
 							}
 							else{
@@ -199,7 +238,7 @@ account = {
 				}); 
 			}			
 			else if(data.prop == "Nickname"){
-				$('#modal_confirm').openModal('show');			
+				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
 				        field_Nickname: {required: true,maxlength: 50},
@@ -222,7 +261,7 @@ account = {
 							if(data == 1){
 								system.clearForm();
 								Materialize.toast('Request sent. Wait for admin\'s approval',4000);
-								$('#modal_confirm').closeModal();	
+								$('#modal_confirm').modal('close');	
 								App.handleLoadPage("#cmd=index;content=account");
 							}
 							else{
@@ -233,7 +272,7 @@ account = {
 				}); 
 			}			
 			else if(data.prop == "Position"){
-				$('#modal_confirm').openModal('show');			
+				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
 				        field_Nickname: {required: true,maxlength: 50},
@@ -256,7 +295,7 @@ account = {
 							if(data == 1){
 								system.clearForm();
 								Materialize.toast('Request sent. Wait for admin\'s approval',4000);
-								$('#modal_confirm').closeModal();	
+								$('#modal_confirm').modal('close');	
 								App.handleLoadPage("#cmd=index;content=account");
 							}
 							else{
@@ -267,7 +306,7 @@ account = {
 				}); 
 			}			
 			else if(data.prop == "Phone"){
-				$('#modal_confirm').openModal('show');			
+				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
 				        field_Name: {required: true,maxlength: 50},
@@ -290,7 +329,7 @@ account = {
 							if(data == 1){
 								system.clearForm();
 								Materialize.toast('Request sent. Wait for admin\'s approval',4000);
-								$('#modal_confirm').closeModal();	
+								$('#modal_confirm').modal('close');	
 								App.handleLoadPage("#cmd=index;content=account");
 							}
 							else{
@@ -301,7 +340,7 @@ account = {
 				}); 
 			}			
 			else if(data.prop == "Email"){
-				$('#modal_confirm').openModal('show');			
+				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
 				        field_Email: {required: true,maxlength: 50,checkEmail:true},
@@ -324,7 +363,7 @@ account = {
 							if(data == 1){
 								system.clearForm();
 								Materialize.toast('Request sent. Wait for admin\'s approval',4000);
-								$('#modal_confirm').closeModal();	
+								$('#modal_confirm').modal('close');	
 								App.handleLoadPage("#cmd=index;content=account");
 							}
 							else{
@@ -335,7 +374,7 @@ account = {
 				}); 
 			}
 			else if(data.prop == "Address"){
-				$('#modal_confirm').openModal('show');			
+				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
 				        field_Email: {required: true,maxlength: 50,checkEmail:true},
@@ -358,7 +397,7 @@ account = {
 							if(data == 1){
 								system.clearForm();
 								Materialize.toast('Request sent. Wait for admin\'s approval',4000);
-								$('#modal_confirm').closeModal();	
+								$('#modal_confirm').modal('close');	
 								App.handleLoadPage("#cmd=index;content=account");
 							}
 							else{
@@ -369,20 +408,20 @@ account = {
 				}); 
 			}
 			else if(data.prop == "Gender"){
-				var content = "<h4>Change "+data.prop+"</h4>"+
-							  "<form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>"+
-							  "		<div class='col s12'>"+
-							  "		<label for='field_gender' class='active'>Gender: </label>"+
-							  "		<select name='field_Gender'>"+
-							  "			<option selected>Male</option>"+
-							  "			<option>Female</option>"+
-							  "		</select>"+
-							  "		</div>"+
-							  "		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>"+
-							  "		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>"+
-							  "</form>";
+				var content = `<h4>Change ${data.prop}</h4>
+							  <form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>
+							  		<div class='col s12'>
+							  		<label for='field_gender' class='active'>Gender: </label>
+							  		<select name='field_Gender'>
+							  			<option selected>Male</option>
+							  			<option>Female</option>
+							  		</select>
+							  		</div>
+							  		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>
+							  		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>
+							  </form>`;
 				$("#modal_confirm .modal-content").html(content);
-				$('#modal_confirm').openModal('show');			
+				$('#modal_confirm').modal('open');			
 			    $("select").material_select();
 				$("#form_update").validate({
 				    rules: {
@@ -406,7 +445,7 @@ account = {
 							if(data == 1){
 								system.clearForm();
 								Materialize.toast('Request sent. Wait for admin\'s approval',4000);
-								$('#modal_confirm').closeModal();	
+								$('#modal_confirm').modal('close');	
 								App.handleLoadPage("#cmd=index;content=account");
 							}
 							else{
@@ -417,16 +456,17 @@ account = {
 				}); 
 			}
 			else if(data.prop == "Date of Birth"){
-				var content = "<h4>Change "+data.prop+"</h4>"+
-							  "<form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>"+
-							  "		<label for='field_dob'>Date of birth: </label>"+
-							  "		<input id='field_dob' type='text' name='field_dob' data-error='.error_dob' value='"+data.value+"'>"+
-							  "		<div class='error_dob'></div>"+
-							  "		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>"+
-							  "		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>"+
-							  "</form>";
+				var content = `<h4>Change ${data.prop}</h4>
+							  <form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>
+							  		<label for='field_dob'>Date of birth: </label>
+							  		<input id='field_dob' type='text' name='field_dob' data-error='.error_dob' value='${data.value}'>
+							  		<div class='error_dob'></div>
+							  		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>
+							  		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>
+							  </form>`;
 				$("#modal_confirm .modal-content").html(content);
-				$('#modal_confirm').openModal('show');			
+
+				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
 				        field_dob: {required: true,maxlength: 50,checkDate:true},
@@ -449,7 +489,7 @@ account = {
 							if(data == 1){
 								system.clearForm();
 								Materialize.toast('Request sent. Wait for admin\'s approval',4000);
-								$('#modal_confirm').closeModal();	
+								$('#modal_confirm').modal('close');	
 								App.handleLoadPage("#cmd=index;content=account");
 							}
 							else{
@@ -460,7 +500,7 @@ account = {
 				}); 
 			}
 			else if(data.prop == "Password"){
-				$('#modal_confirm').openModal('show');			
+				$('#modal_confirm').modal('open');			
 				$("#field_Password").val("");
 				$("#field_Password").attr({"type":"password"});
 				$("#form_update").append("<p><input type='checkbox' id='showPassword'><label for='showPassword'>Show password</label></p>");
@@ -496,7 +536,7 @@ account = {
 							if(data == 1){
 								system.clearForm();
 								Materialize.toast('Password updated.',4000);
-								$('#modal_confirm').closeModal();	
+								$('#modal_confirm').modal('close');	
 								App.handleLoadPage("#cmd=index;content=account");
 							}
 							else{
@@ -513,32 +553,32 @@ account = {
 			var data = $(this).data();
 			var id = data.node;
 			var picture = "../assets/images/profile/avatar.jpg";
-			var content = "<h4>Change "+data.prop+"</h4>"+
-  							"	<div class='row'>"+
-  							"		<div class='col s12'>"+
-							"			<div id='profile_picture2' class='ibox-content no-padding border-left-right '></div>"+
-							"		</div>"+
-							"	</div>";
+			var content = `<h4>Change ${data.prop}</h4>
+  								<div class='row'>
+  									<div class='col s12'>
+										<div id='profile_picture2' class='ibox-content no-padding border-left-right '></div>
+									</div>
+								</div>`;
 			$("#modal_confirm .modal-content").html(content);
 			$('#modal_confirm').removeClass('modal-fixed-footer');			
 			$('#modal_confirm .modal-footer').remove();			
-			$('#modal_confirm').openModal('show');			
+			$('#modal_confirm').modal('open');			
 
-    		var content =   "<div class='image-crop col s12' style='margin-bottom:5px;'>"+
-							"	<img width='100%' src='"+picture+"'>"+
-							"</div>"+
-							"<div class='btn-group col s12'>"+
-							"	<label for='inputImage' class='btn blue btn-floating btn-flat tooltipped' data-tooltip='Load image' data-position='top'>"+
-							"		<input type='file' accept='image/*' name='file' id='inputImage' class='hide'>"+
-							"		<i class='large mdi-editor-publish'></i>"+
-							"	</label>"+
-							"	<button class='btn blue btn-floating btn-flat tooltipped' data-cmd='cancel' type='button' data-tooltip='Cancel' data-position='top'>"+
-							"		<i class='mdi-navigation-close'></i>"+
-							"	</button>"+
-							"	<button class='btn blue btn-floating btn-flat hidden tooltipped right' data-cmd='save' type='button' data-tooltip='Save' data-position='top'>"+
-							"		<i class='mdi-content-save'></i>"+
-							"	</button>"+
-							"</div>";
+    		var content =   `<div class='image-crop col s12' style='margin-bottom:5px;'>
+								<img width='100%' src='${picture}'>
+							</div>
+							<div class='btn-group col s12'>
+								<label for='inputImage' class='btn blue btn-floating btn-flat tooltipped' data-tooltip='Load image' data-position='top'>
+									<input type='file' accept='image/*' name='file' id='inputImage' class='hide'>
+									<i class='large mdi-editor-publish'></i>
+								</label>
+								<button class='btn blue btn-floating btn-flat tooltipped' data-cmd='cancel' type='button' data-tooltip='Cancel' data-position='top'>
+									<i class='mdi-navigation-close'></i>
+								</button>
+								<button class='btn blue btn-floating btn-flat hidden tooltipped right' data-cmd='save' type='button' data-tooltip='Save' data-position='top'>
+									<i class='mdi-content-save'></i>
+								</button>
+							</div>`;
     		$("#profile_picture2").html(content);
 			$('.tooltipped').tooltip({delay: 50});
 
@@ -575,7 +615,7 @@ account = {
 												Materialize.toast('Request sent. Wait for admin\'s approval',4000);
 												system.clearForm();
 												App.handleLoadPage("#cmd=index;content=account");
-												$('#modal_confirm').closeModal();	
+												$('#modal_confirm').modal('close');	
 											});
 								    		status = false;
 								    	}
@@ -601,7 +641,7 @@ account = {
                 $inputImage.addClass("hide");
             }	            
             $("button[data-cmd='cancel']").click(function(){
-				$('#modal_confirm').closeModal();	
+				$('#modal_confirm').modal('close');	
             });
 		});
 	},
@@ -623,13 +663,13 @@ account = {
 			}
 			else{
 				$.each(data,function(i,v){
-					content += "<tr>"+
-								"	<td width='1px'>"+(i+1)+". </td>"+
-								"	<td>"+v[1]+"</td>"+
-								"	<td>"+v[2]+"</td>"+
-								"	<td>"+v[5]+"</td>"+
-								"	<td>"+v[3]+"</td>"+
-								"</tr>";
+					content += `<tr>
+									<td width='1px'>${(i+1)}. </td>
+									<td>${v[1]}</td>
+									<td>${v[2]}</td>
+									<td>${v[5]}</td>
+									<td>${v[3]}</td>
+								</tr>`;
 				})					
 				$("#pointsActivity table tbody").html(content);
 
@@ -654,18 +694,18 @@ account = {
 			}
 			else{
 				$.each(data,function(i,v){
-					content += "<tr>"+
-								"	<td width='1px'>"+(i+1)+". </td>"+
-								"	<td width='20%'>"+v[0].substring(0,6)+"...</td>"+
-								"	<td width='30%'>"+v[2]+"</td>"+
-								"	<td width='30%'>"+v[3]+"</td>"+
-								"	<td width='30%'>For Delivery</td>"+
-								"	<td width='9%'>"+
-								"		<a data-cmd='showOrder' data-node='"+v[0]+"' data-meta='"+JSON.stringify([v[0],v[2],v[3],"For Delivery"])+"' class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='0' data-tooltip='Show details'>"+
-								"			<i class='mdi-navigation-more-vert right black-text'></i>"+
-								"		</a>"+
-								"	</td>"+
-								"</tr>";
+					content += `<tr>
+									<td width='1px'>${(i+1)}. </td>
+									<td width='20%'>${v[0].substring(0,6)}...</td>
+									<td width='30%'>${v[2]}</td>
+									<td width='30%'>${v[3]}</td>
+									<td width='30%'>For Delivery</td>
+									<td width='9%'>
+										<a data-cmd='showOrder' data-node='${v[0]}' data-meta='${JSON.stringify([v[0],v[2],v[3],"For Delivery"])}' class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='0' data-tooltip='Show details'>
+											<i class='mdi-navigation-more-vert right black-text'></i>
+										</a>
+									</td>
+								</tr>`;
 				})					
 				$("#buyingActivity table tbody").html(content);
 
@@ -688,29 +728,29 @@ account = {
 					var orders = system.ajax('../assets/harmony/Process.php?get-orders',data.node);
 					orders.done(function(orders){
 						var orders = JSON.parse(orders);
-						content = "<thead><tr>"+
-								  "<th class='center'></th>"+						
-								  "<th class='center'>Product</th>"+						
-								  "<th class='center'>Quantity</th>"+						
-								  "<th class='center'>Price</th>"+						
-								  "<th class='center'>Total</th>"+						
-								  "</tr></thead>";						
+						content = `<thead><tr>
+								  <th class='center'></th>						
+								  <th class='center'>Product</th>						
+								  <th class='center'>Quantity</th>						
+								  <th class='center'>Price</th>						
+								  <th class='center'>Total</th>						
+								  </tr></thead>`;						
 
 						$.each(orders,function(i,v){
 							var product = ((v[17] == "") || (v[17] == null))?"default.png":v[17];
 							subTotal = subTotal + (v[10]*v[1]);
-							content += "<tr>"+
-									  "<td class='center'><img src='../assets/images/products/"+product+"' alt='Thumbnail' class='valign profile-image' width='80px'></td>"+						
-									  "<td class='center'>"+v[8]+"</td>"+						
-									  "<td class='center'>"+v[1]+"</td>"+						
-									  "<td class='center'>"+v[10]+"</td>"+						
-									  "<td class='center'>"+(v[10]*v[1])+"</td>"+						
-									  "</tr>";						
+							content += `<tr>
+									  <td class='center'><img src='../assets/images/products/${product}' alt='Thumbnail' class='valign profile-image' width='80px'></td>
+									  <td class='center'>${v[8]}</td>
+									  <td class='center'>${v[1]}</td>
+									  <td class='center'>${v[10]}</td>
+									  <td class='center'>${(v[10]*v[1])}</td>
+									  </tr>`;						
 						})
-						$('#modal_popUp .modal-content').html('<strong>Order ID:</strong> '+data.meta[0]+'<br/><strong>Order Date:</strong> '+data.meta[1]+'<br/>\n<strong>Order Delivered:</strong> '+data.meta[2]+'<br/>\n<strong>Status:</strong> '+data.meta[3]+'');			
-						$("#modal_popUp .modal-footer").before("<table class='striped bordered highlight'>"+content+"<tr><td colspan='4'><strong class='right' >Total</strong></td><td class='center'>"+subTotal+"</td></tr></table>");
+						$('#modal_popUp .modal-content').html(`<strong>Order ID:</strong> ${data.meta[0]}<br/><strong>Order Date:</strong> ${data.meta[1]}<br/>\n<strong>Order Delivered:</strong> ${data.meta[2]}<br/>\n<strong>Status:</strong> ${data.meta[3]}`);			
+						$("#modal_popUp .modal-footer").before(`<table class='striped bordered highlight'>${content}<tr><td colspan='4'><strong class='right' >Total</strong></td><td class='center'>${subTotal}</td></tr></table>`);
 						$("#modal_popUp .modal-footer").html("<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Close</a>");
-						$('#modal_popUp').openModal('show');			
+						$('#modal_popUp').modal('open');			
 
 						console.log(orders);
 					});
@@ -770,32 +810,32 @@ account = {
 							                        },
 							                        {data: "",
 							                            render: function ( data, type, full ){
-							                                return (full[0]!="")?"<span>"+full[0]+"</span>":null;
+							                                return (full[0]!="")?`<span>${full[0]}</span>`:null;
 							                            }
 							                        },
 							                        {data: "",
 							                            render: function ( data, type, full ){
-							                                return (full[2]!="")?"<span>"+full[2]+"</span>":null;
+							                                return (full[2]!="")?`<span>${full[2]}</span>`:null;
 							                            }
 							                        },
 							                        {data: "",
 							                            render: function ( data, type, full ){
-							                                return (full[1]!="")?"<span>"+full[1]+"</span>":null;
+							                                return (full[1]!="")?`<span>${full[1]}</span>`:null;
 							                            }
 							                        },
 							                        {data: "",
 							                            render: function ( data, type, full ){
-							                                return (full[3]!="")?"<span>"+full[3]+"</span>":null;
+							                                return (full[3]!="")?`<span>${full[3]}</span>`:null;
 							                            }
 							                        },
 							                        {data: "",
 							                            render: function ( data, type, full ){
-							                                return (full[4]!="")?"<span>"+full[4]+"</span>":null;
+							                                return (full[4]!="")?`<span>${full[4]}</span>`:null;
 							                            }
 							                        },
 							                        {data: "",
 							                            render: function ( data, type, full ){
-							                                return (full[5]!="")?"<span>"+full[5]+"</span>":null;
+							                                return (full[5]!="")?`<span>${full[5]}</span>`:null;
 							                            }
 							                        },
 							                    ],

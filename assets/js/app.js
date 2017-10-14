@@ -2,20 +2,19 @@ var App = function () {
     "use strict";
     return {
         handleCheckPageLoadUrl: function(hash){
-            var func = this;
             hash = (hash) ? hash : '#cmd=index';
             $('.sidebar [href="'+hash+'"][data-toggle=ajax]').trigger('click');
-            func.handleLoadPage(hash);
+            this.handleLoadPage(hash);
         },
         handleHashChange: function(){
-            var func = this;
             $(window).on('hashchange',function() {
                 if (window.location.hash) {
-                    func.handleLoadPage(window.location.hash);
+                    App.handleLoadPage(window.location.hash);
                 }
             });
         },
         handleLoadPage: function(hash){
+            hash = ((hash != "#!") || (hash != "#"))?hash:"#cmd=index";
             var node = localStorage.getItem('hash');
             var newhash = hash.split(';');
 
@@ -32,7 +31,7 @@ var App = function () {
                 $('#content').html(data);
                 $('#content').addClass('animated zoomIn');
                 var navigation = system.ajax('../pages/'+node+'/nav.html',"");
-                $("#navigation").html(navigation.responseText);                    
+                $("header").html(navigation.responseText);                    
                 $(".collapsible").collapsible({accordion:!1});
 
                 if(newhash.length>1){

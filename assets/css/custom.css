@@ -1,120 +1,105 @@
-body.bg{
-	background: url('../images/homebg.jpg') no-repeat;
-	background-size: cover;
+body.bg {
+    background: url('../images/homebg.jpg') no-repeat;
+    background-size: cover;
 }
-
-.overlap-gradient{
-	width:100%;
-	height: 100%;
-	background: -moz-linear-gradient(rgba(255,255,255,0.7),rgba(255,255,255,1));;
-	background: -webkit-linear-gradient(rgba(255,255,255,0.7),rgba(255,255,255,1));;
-	background: linear-gradient(rgba(255,255,255,0.7),rgba(255,255,255,1));;
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#a6000000',GradientType=0 );
+.overlap-gradient {
+    width: 100%;
+    height: 100%;
+    background: -moz-linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 1));
+    ;
+    background: -webkit-linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 1));
+    ;
+    background: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 1));
+    ;
+    filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#a6000000', GradientType=0);
 }
-
-.login-gradient{
-	width:100%;
+.login-gradient {
+    width: 100%;
     min-height: 700px;
-	background: -moz-linear-gradient(rgba(255,255,255,1),rgba(255,255,255,0.7));;
-	background: -webkit-linear-gradient(rgba(255,255,255,1),rgba(255,255,255,0.7));;
-	background: linear-gradient(rgba(255,255,255,1),rgba(255,255,255,0.7));;
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#a6000000',GradientType=0 );
+    background: -moz-linear-gradient(rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.7));
+    ;
+    background: -webkit-linear-gradient(rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.7));
+    ;
+    background: linear-gradient(rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.7));
+    ;
+    filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#a6000000', GradientType=0);
 }
-
-.no-shadow{
-	box-shadow:none !important;
+.no-shadow {
+    box-shadow: none !important;
 }
-
-.no-shadow:hover{
-	box-shadow:none !important;
+.no-shadow:hover {
+    box-shadow: none !important;
 }
-
-.input-field div.error{
-position: relative;
-top: -1rem;
-left: 0rem;
-font-size: 0.8rem;
-color:#1565c0;
--webkit-transform: translateY(0%);
--ms-transform: translateY(0%);
--o-transform: translateY(0%);
-transform: translateY(0%);
+.input-field div.error {
+    position: relative;
+    top: -1rem;
+    left: 0rem;
+    font-size: 0.8rem;
+    color: #1565c0;
+    -webkit-transform: translateY(0%);
+    -ms-transform: translateY(0%);
+    -o-transform: translateY(0%);
+    transform: translateY(0%);
 }
-
-.hidden{
-	display: none !important;
+.hidden {
+    display: none !important;
 }
-
-#ajax-subcontent{
-	min-height:600px;
+#ajax-subcontent {
+    min-height: 600px;
 }
-
 .client-avatar {
-  width: 42px;
+    width: 42px;
 }
 .client-avatar img {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
 }
-
-.block-content{
+.block-content {
     position: fixed;
     z-index: 25000;
     width: 100%;
     height: 100%;
-    background: rgba(255,255,255,0.6);
+    background: rgba(255, 255, 255, 0.6);
 }
-
-.visible{
-	visibility: visible;
+.visible {
+    visibility: visible;
 }
-
-i.icon:before{
+i.icon:before {
     max-height: 30px;
     max-width: 30px;
     overflow: hidden;
     color: transparent;
     content: ".....";
 }
-
-#subcontent{
-	min-height:600px;
+#subcontent {
+    min-height: 600px;
 }
-
-#modal_confirm{
+#modal_confirm {
     width: 30%;
     min-height: 260px;
     max-height: 95%;
 }
-
-#profile-card .card-profile-image{
-    overflow:hidden;
-    width:70px;
+#profile-card .card-profile-image {
+    overflow: hidden;
+    width: 70px;
     height: 70px;
 }
-
-#profile-card .card-profile-image img{
+#profile-card .card-profile-image img {
     width: 70px;
     position: absolute;
-    top: 0px;
+    /*top: 0px;*/
     z-index: 1;
     cursor: pointer;
 }
-
-#profile-card .card-profile-image a{
+#profile-card .card-profile-image a {
     opacity: 0.3;
 }
-
-#profile-card .card-profile-image:hover a{
+#profile-card .card-profile-image:hover a {
     opacity: 1;
-}            
+}
 
-#profile-card .btn-floating{
-    top:-5px;
-}            
-
-.icon-spin{
+.icon-spin {
     -webkit-animation: spin 2s infinite linear;
     -moz-animation: spin 2s infinite linear;
     -o-animation: spin 2s infinite linear;
@@ -154,45 +139,61 @@ i.icon:before{
         transform: rotate(359deg);
     }
 }
-
-.card-profile-image a{
+.card-profile-image a {
     opacity: 0.3;
 }
-
-.card-profile-image:hover a{
+.card-profile-image:hover a {
     opacity: 1;
-}            
-
-.hover{
+}
+.hover {
     opacity: 0.1;
     cursor: pointer;
 }
-.hover:hover{
+.hover:hover {
     opacity: 1;
 }
-
-#products{
+#products {
     padding-bottom: 200px;
 }
-
-#sidebar_menu .collection{
+#sidebar_menu .collection {
     border: 0px solid #e0e0e0 !important;
 }
-
-#sidebar_menu .collection .collection-item{
-    background-color: transparent !important; 
-    border-bottom: 0px solid #e0e0e0 !important; 
-    line-height: 1.5rem; 
+#sidebar_menu .collection .collection-item {
+    background-color: transparent !important;
+    border-bottom: 0px solid #e0e0e0 !important;
+    line-height: 1.5rem;
 }
-
 #sidebar_menu .collection .collection-item.avatar {
     min-height: 60px;
 }
-
-#signIn{
-    overflow:hidden;
+#signIn {
+    overflow: hidden;
+}
+#account {
+    overflow: hidden;
+}
+header, main, footer {
+    padding-left: 240px;
+}
+.parallax-demo header, .parallax-demo main, .parallax-demo footer {
+    padding-left: 0;
+}
+footer.example {
+    padding-left: 0;
+}
+@media only screen and (max-width: 992px) {
+    header, main, footer {
+        padding-left: 0;
+    }
+    h5>span {
+        display: block;
+        margin: 0 0 15px 0;
+    }
+}
+.bold {
+    font-weight: bold !important;
 }
 
-#account{
-    overflow:hidden;
+#profile-card table td{
+    padding: 5px;
 }

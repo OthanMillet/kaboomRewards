@@ -31,6 +31,21 @@ $function = new DatabaseClasses;
 		}
 	}
 
+    // if (isset($_GET['do-logIn'])){
+    //     $data = $_POST["data"];
+    //     $email = $data[0]['value'];
+    //     $password = $data[1]['value'];
+
+    //     $query = $Functions->PDO("SELECT * FROM tbl_applicant WHERE email = '{$email}'");
+    //     if($Functions->testPassword($password,$query[0][4])){
+    //         $queryApplicant = $Functions->PDO("SELECT * FROM tbl_applicant RIGHT JOIN tbl_personalinfo ON tbl_applicant.id = tbl_personalinfo.id WHERE tbl_applicant.id = '{$query[0][0]}' ");
+    //         print_r(json_encode($queryApplicant));
+    //     }
+    //     else{
+    //         echo 0;
+    //     }
+    // }
+
 	if(isset($_GET['login'])){
 		$data = $_POST['data'];
 		$username = $data[0]['value'];

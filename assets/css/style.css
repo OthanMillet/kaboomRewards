@@ -36,6 +36,7 @@ nav .brand-logo {
 }
 
 nav{
+  overflow: hidden;
   background-color: #fff !important;
   z-index: 1000 !important;
 }
@@ -336,4 +337,3 @@ nav ul:not(.indicators) li.no-border::before{
 nav .brand-logo {
     left: 5% !important;
 }
-

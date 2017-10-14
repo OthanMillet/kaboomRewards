@@ -7,6 +7,10 @@ product = {
 		var data = system.html('assets/harmony/Process.php?get-availableProducts');
 		return data.responseText;
 	},
+	get:function(){
+		var data = system.html('assets/harmony/Process.php?get-availableProducts');
+		return data.responseText;
+	},
 	getByID:function(id){
 		var ret = [];
 		var data = system.ajax('assets/harmony/Process.php?get-productsByID',id);
@@ -163,7 +167,7 @@ product = {
 			});
 		})
 	},
-}
+};
 
 market = {
 	ini:function(){
@@ -344,6 +348,9 @@ market = {
 		price.noUiSlider.on('slide', function(){
 	        market.sortUpdatePriceRange(price);
 		});
+	},
+	category:function(){
+		
 	},
 	sortUpdatePriceRange:function(price){
 		var priceRange = price.noUiSlider.get();
@@ -616,7 +623,7 @@ profile = {
 			}
 		});	
 	}
-}
+};
 
 wishlist = {
 	ini:function(){
@@ -672,4 +679,4 @@ wishlist = {
 			$("button[data-wishlist='"+v[1]+"']").attr({"disabled":"true"});
 		});
 	}
-}
+};

@@ -105,6 +105,20 @@ class DatabaseClasses extends DataClasses{
 		}
 	}
 
+	function password($string){
+		$options = ['cost' => 11,'salt' => mcrypt_create_iv(22, MCRYPT_DEV_URANDOM)];
+		return password_hash($string,PASSWORD_BCRYPT, $options);		
+	}
+	
+	function testPassword($string,$hash){
+		if (password_verify($string,$hash)) {
+		    return 1;
+		}
+		else {
+		    return 0;
+		}
+	}
+
 	function log($_command,$_id,$_remarks){
 		$date = DatabaseClasses::PDO_DateAndTime();
 		if($_command == "add"){
