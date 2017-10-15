@@ -432,7 +432,7 @@ $function = new DatabaseClasses;
 			$data = $_POST['data'];
 
 			$password = sha1($data[3]['value']);
-			$query = $function->PDO(false,"INSERT INTO tbl_admin(id,name,username,password,email,status,`date`) VALUES ('{$id}','{$data[0]['value']}','{$data[2]['value']}','{$password}','{$data[1]['value']}','1','{$date}')");
+			$query = $function->PDO(false,"INSERT INTO tbl_admin(id,name,username,password,email,status,`date`,capabilities,picture) VALUES ('{$id}','{$data[0]['value']}','{$data[2]['value']}','{$password}','{$data[1]['value']}','1','{$date}','admin','avatar.png')");
 			if($query->execute()){
 				$log = $function->log("add","admin","Added admin with an ID of ".$id);
 				echo 1;

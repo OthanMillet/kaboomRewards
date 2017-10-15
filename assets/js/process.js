@@ -118,7 +118,15 @@ var system = function(){
 		},
 		random:function(min,max){
 			return Math.floor(Math.random() * (max - min + 1) + min);
-		}
+		},
+		froala:function(element){
+		    $(function() {
+				$(element).froalaEditor({
+					toolbarButtons:['fullscreen', 'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 'fontFamily', 'fontSize', 'color', 'inlineStyle', 'paragraphStyle', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', 'quote', '-', 'insertLink', 'insertTable', '|', 'emoticons', 'specialCharacters', 'insertHR', 'selectAll', 'clearFormatting', '|', 'spellChecker', 'help', 'html', '|', 'undo', 'redo'],
+					quickInsertButtons: ['table', 'ol', 'ul', 'hr']
+				});
+		    });
+		},		
 	}
 }();
 

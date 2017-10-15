@@ -1,28 +1,62 @@
-<ul class="collapsible collapsible-accordion">
-    <li class="">
-        <a class="waves-effect waves-blue black-text" href="#cmd=index;content=account"><i class="icon students"></i> Account</a>
-    </li>
-    <li class="">
-        <a href="#cmd=index;content=list_products" class="waves-effect waves-blue black-text"><i class="icon teacher"></i> Products</a>
-    </li>
-    <li class="">
-        <a class="waves-effect waves-blue black-text" href="#cmd=index;content=clients"><i class="icon settings"></i> Clients</a>
-    </li>
-    <li class="no-padding">
-        <ul class="collapsible collapsible-accordion">
-            <li class="bold"><a class="collapsible-header waves-effect waves-cyan"><i class="icon settings"></i>  Request</a>
-                <div class="collapsible-body" style="display: none;">
-                    <ul>
-                        <li><a href='#cmd=index;content=request_accountUpdate'>Account Update</a>
-                        </li>
-                        <li><a href='#cmd=index;content=request_points'>Points</a>
+<aside id="left-sidebar-nav text-red">
+    <ul id="slide-out" class="side-nav fixed leftside-navigation ps-container ps-active-y animated" style="width: 240px; ">
+        <li class="blue darken-1" id='user-account' style='padding-top: 10px;padding-bottom: 10px;'>
+            <div class="row" style='margin-bottom: 0px !important;'>
+                <div class="col col s4 m4 l4">
+                    <img src="../assets/images/avatar.jpg" alt="" class="circle responsive-img valign profile-image">
+                </div>
+                <div class="col col s8 m8 l8">
+                    <a class='waves-effect waves-light white-text'  data-activates='account'>
+                        <span class="bold display_name">Administrator</span>
+                    </a>
+                </div>
+            </div>
+        </li>
+        <li class="no-padding">
+            <ul class="collapsible collapsible-accordion">
+                <li class="">
+                    <a class="waves-effect waves-blue black-text" href="#cmd=index;content=account"><i class="material-icons">account_circle</i> Account</a>
+                </li>
+                <li class="no-padding">
+                    <ul class="collapsible collapsible-accordion">
+                        <li class="bold">
+                            <a class="collapsible-header waves-effect waves-cyan" style="padding:0 32px;"><i class="material-icons">store</i> Products <i class="material-icons right" style="margin: 0px;">arrow_drop_down</i></a>
+                            <div class="collapsible-body" style="display: none;">
+                                <ul>
+                                    <li><a href="#cmd=index;content=list_products"><i class="material-icons"></i> - List</a></li>
+                                    <li><a href='#cmd=index;content=brands'><i class="material-icons"></i> - Brands</a></li>
+                                    <li><a href='#cmd=index;content=categories'><i class="material-icons"></i> - Categories</a></li>
+                                </ul>
+                            </div>
                         </li>
                     </ul>
-                </div>
-            </li>
-        </ul>
-    </li>
-     <li class="">
-        <a class="waves-effect waves-blue black-text" href="#cmd=index;content=sales"><i class="icon settings"></i> Sales</a>
-    </li>
-</ul>
+                </li>
+                <li class="">
+                    <a class="waves-effect waves-blue black-text" href="#cmd=index;content=clients"><i class="material-icons">group</i> Clients</a>
+                </li>
+                <li class="no-padding">
+                    <ul class="collapsible collapsible-accordion">
+                        <li class="bold">
+                            <a class="collapsible-header waves-effect waves-cyan" style="padding:0 32px;"><i class="material-icons">notifications</i> Request <i class="material-icons right" style="margin: 0px;">arrow_drop_down</i> </a>
+                            <div class="collapsible-body" style="display: none;">
+                                <ul>
+                                    <li><a href='#cmd=index;content=request_accountUpdate'><i class="material-icons"></i> - Account Update</a></li>
+                                    <li><a href='#cmd=index;content=request_points'><i class="material-icons"></i> - Points</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+                 <li class="">
+                    <a class="waves-effect waves-blue black-text" href="#cmd=index;content=sales"><i class="material-icons">monetization_on</i> Sales</a>
+                </li>
+                 <li class="">
+                    <a class="waves-effect waves-blue black-text" id='log-out' style="line-height: 42px;"><i class="material-icons">exit_to_app</i> Logout</a>
+                </li>
+            </ul>            
+        </li>
+    </ul>
+</aside>
+<script>
+    account.ini();
+</script>

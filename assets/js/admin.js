@@ -1,58 +1,87 @@
+$(document).ready(function(){
+	$('.modal').modal();
+});
+
 account = {
 	ini:function(){
-		this.add();
+		var data = this.get();
+		this.display(JSON.parse(data));
 		this.list();
+		this.add();
+
+		$("#log-out").on('click',function(){
+		    login.kill();
+		});
+	},
+	get:function(){
+		var data = system.html('../assets/harmony/Process.php?get-admin');
+		return data.responseText;
 	},
 	management:function(){
 		var data = system.xml("pages.xml");
 		$(data.responseText).find("addAccount").each(function(i,content){
 			$("#modal .modal-content").html(content);
-			$('#modal').openModal('show');			
+			$('#modal').modal('open');			
 		});
+	},
+	display:function(data){
+		var content = "";
+		var profile = (data[0][8] == "")?'avatar.jpg':data[0][8];
+
+		$("#user-account img.profile-image").attr({"src":"../assets/images/profile/"+profile});
+		$("#user-account div div a span.display_name").html(data[0][1]);
+
+		content = `<div id='profile-card' class='card'>
+						<div class='card-image waves-effect waves-block waves-light' style='max-height: 70px;'>
+						    <img class='activator' src='../assets/images/user-bg.jpg' alt='user background'>
+						</div>
+						<div class='card-content'>
+						    <div class='responsive-img activator card-profile-image circle' style='margin-top: -65px;'>
+						    	<img src='../assets/images/profile/${profile}' alt='' class='circle'>
+						    	<a data-cmd='updateAdminPicture' data-value='${profile}' data-name='${data[0][1]}' data-node='${data[0][0]}' data-prop='Picture' class='btn waves-effect white-text no-shadow black' style='font-size: 10px;z-index: 1;padding: 0 12px;top:40px;'>Change</a>
+							</div>
+							<a data-cmd='updateAdmin' data-value='${data[0][1]}' data-name='${data[0][1]}' data-node='${data[0][0]}' data-prop='Name' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update name'>
+								<i class='material-icons right hover black-text'>mode_edit</i>
+							</a>
+						    <span class='card-title activator grey-text text-darken-4'>${data[0][1]} </span>
+							<div class='divider'></div>
+							<table>
+								<tr>
+									<td class='bold' style='width:120px'><span style='width:80%;display: inline-block;'><i class='mdi-communication-email cyan-text text-darken-2'></i> Email: </span></td>
+									<td class='grey-text truncate'>${data[0][5]}</td>
+									<td>
+										<a data-cmd='updateAdmin' data-value='${data[0][5]}' data-name='${data[0][1]}' data-node='${data[0][0]}' data-prop='Email' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update email'>
+											<i class='material-icons right hover black-text'>mode_edit</i>
+										</a>
+									</td>
+								</tr>
+								<tr>
+									<td class='bold'><span style='width:80%;display: inline-block;'><i class='mdi-action-perm-identity cyan-text text-darken-2'></i> Username: </span></td>
+									<td class='grey-text truncate'>${data[0][2]}</td>
+									<td>
+										<a data-cmd='updateAdmin' data-value='${data[0][2]}' data-name='${data[0][1]}' data-node='${data[0][0]}' data-prop='Username' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update username'>
+											<i class='material-icons right hover black-text'>mode_edit</i>
+										</a>
+									</td>
+								</tr>
+								<tr>
+									<td class='bold'><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-action-verified-user cyan-text text-darken-2'></i> Password</span></td>
+									<td></td>
+									<td>
+										<a data-cmd='updateAdmin' data-name='${data[0][1]}' data-node='${data[0][0]}' data-prop='Password' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update password'>
+											<i class='material-icons right hover black-text'>mode_edit</i>
+										</a>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>`;
+		$("#display_newAdmin").html(content);
+		account.update();
+		account.updatePicture();
 	},
 	list:function(){
 		var content = "";
-		var data = system.html('../assets/harmony/Process.php?get-admin');
-		data.done(function(data){
-			data = JSON.parse(data);
-			var profile = (data[0][8] == "")?'avatar.jpg':data[0][8];
-			content = "<div id='profile-card' class='card'>"+
-					"    <div class='card-image waves-effect waves-block waves-light'>"+
-					"        <img class='activator' src='../assets/images/user-bg.jpg' alt='user background'>"+
-					"    </div>"+
-					"    <div class='card-content'>"+
-					"        <div class=' responsive-img activator card-profile-image circle'>"+
-					"        	<img src='../assets/images/profile/"+profile+"' alt='' class='circle'>"+
-					"        	<a data-cmd='updateAdminPicture' data-value='"+profile+"' data-name='"+data[0][1]+"' data-node='"+data[0][0]+"' data-prop='Picture' class='btn waves-effect white-text no-shadow black' style='font-size: 10px;z-index: 1;padding: 0 12px;top:40px;'>Change</a>"+
-					"		 </div>"+
-					"        <span class='card-title activator grey-text text-darken-4'>"+data[0][1]+" </span>"+
-					"			<a data-cmd='updateAdmin' data-value='"+data[0][1]+"' data-name='"+data[0][1]+"' data-node='"+data[0][0]+"' data-prop='Name' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update name'>"+
-					"				<i class='mdi-editor-mode-edit right black-text'></i>"+
-					"			</a>"+
-					"		 <div class='divider'></div>"+
-					"        <p><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-communication-email cyan-text text-darken-2'></i> Email: "+data[0][5]+"</span>"+
-					"			<a data-cmd='updateAdmin' data-value='"+data[0][5]+"' data-name='"+data[0][1]+"' data-node='"+data[0][0]+"' data-prop='Email' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update email'>"+
-					"				<i class='mdi-editor-mode-edit right black-text'></i>"+
-					"			</a>"+
-					"		 </p>"+
-					"		 <div class='divider'></div>"+
-					"        <p><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-action-perm-identity cyan-text text-darken-2'></i> Username: "+data[0][2]+"</span>"+
-					"			<a data-cmd='updateAdmin' data-value='"+data[0][2]+"' data-name='"+data[0][1]+"' data-node='"+data[0][0]+"' data-prop='Username' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update uaername'>"+
-					"				<i class='mdi-editor-mode-edit right black-text'></i>"+
-					"			</a>"+
-					"		 </p>"+
-					"		 <div class='divider'></div>"+
-					"        <p><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-action-verified-user cyan-text text-darken-2'></i> Password"+"</span>"+
-					"			<a data-cmd='updateAdmin' data-name='"+data[0][1]+"' data-node='"+data[0][0]+"' data-prop='Password' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update password'>"+
-					"				<i class='mdi-editor-mode-edit right black-text'></i>"+
-					"			</a>"+
-					"		 </p>"+
-					"    </div>"+
-					"</div>";
-			$("#display_newAdmin").html(content);
-		});
-
-		content = "";
 		var data = system.html('../assets/harmony/Process.php?get-listAdmin');
 		var actions = "", status = "";
 		data.done(function(data){
@@ -60,42 +89,39 @@ account = {
 			$.each(data,function(i,v){
 				if(Number(v[6]) == 1){
 					status = "Active";
-					var actions = "<a data-cmd='deactivateAdmin' data-name='"+v[1]+"' data-node='"+v[0]+"' class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='50' data-tooltip='Deactivate account' data-cmd='update'>"+
-								  "	<i class='mdi-action-lock-open right black-text'></i>"+
-								  "</a>";	
+					var actions = `<a data-cmd='deactivateAdmin' data-name='${v[1]}' data-node='${v[0]}' class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='50' data-tooltip='Deactivate account' data-cmd='update'>
+								  	<i class='material-icons right hover black-text'>mode_edit</i>
+								  </a>`;	
 				}
 				else{
 					status = "Deactivated";
-					var actions = "<a data-cmd='activateAdmin' data-name='"+v[1]+"' data-node='"+v[0]+"' class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='50' data-tooltip='Activate account' data-cmd='update'>"+
-								  "	<i class='mdi-action-lock right black-text'></i>"+
-								  "</a>";	
+					var actions = `<a data-cmd='activateAdmin' data-name='${v[1]}' data-node='${v[0]}' class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='50' data-tooltip='Activate account' data-cmd='update'>
+								  	<i class='material-icons right hover black-text'>mode_edit</i>
+								  </a>`;	
 				}
-				content += "<tr>"+
-							"	<td>"+v[1]+"</td>"+
-							"	<td>Admin</td>"+
-							"	<td>"+status+"</td>"+
-							"	<td>"+actions+"</td>"+
-							"</tr>";
+				content += `<tr>
+								<td>${v[1]}</td>
+								<td>${status}</td>
+								<td>${actions}</td>
+							</tr>`;
 			})	
 
-			content = "<table class='table bordered'>"+
-						"	<tr>"+
-						"		<th>Name</th><th>Role</th><th>Status</th><th></th>"+
-						"	</tr>"+content+"</table>";
+			content = `<table class='table bordered'>
+							<tr>
+								<th>Name</th><th>Status</th><th></th>
+							</tr>${content}</table>`;
 			$("#display_adminList").html(content);
 
 			account.deactivate();
 			account.activate();
 		});
-		account.update();
-		account.updatePicture();
 	},
 	add:function(){
 		$("#add_client").on('click',function(){
 			var data = system.xml("pages.xml");
 			$(data.responseText).find("addAccount").each(function(i,content){
 				$("#modal_popUp .modal-content").html(content);
-				$('#modal_popUp').openModal('show');			
+				$('#modal_popUp').modal('open');			
 
 				$("#form_registerAdmin").validate({
 				    rules: {
@@ -120,8 +146,8 @@ account = {
 						var data = system.ajax('../assets/harmony/Process.php?set-newAdmin',_form);
 						data.done(function(data){
 							if(data == 1){
-								var text = "<h1>Congratulations</h1>, you are now registered. You can login using <u>"+_form[2]['value']+"</u> as you username and <u>"+
-								_form[3]['value']+"</u> as your password. <a href='http://localhost/kaboomRewards/login.html'>Just follow this link</a>";
+								var text = `<h1>Congratulations</h1>, you are now registered. You can login using <u>${_form[2]['value']}</u> as you username and <u>${_form[3]['value']}</u>
+											as your password. <a href='http://localhost/kaboomRewards/login.html'>Just follow this link</a>`;
 								var data = system.send_mail(_form[1]['value']+',info@rnrdigitalconsultancy.com','New admin Registration',text);
 								if(data.responseText != ""){
 									system.clearForm();
@@ -141,21 +167,19 @@ account = {
 	update:function(){
 		$("a[data-cmd='updateAdmin']").on('click',function(){
 			var data = $(this).data();
-			console.log(data);
-
-			var content = "<h5>Change "+data.prop+"</h5>"+
-						  "<form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>"+
-						  "		<label for='field_"+data.prop+"'>"+data.prop+": </label>"+
-						  "		<input id='field_"+data.prop+"' value='"+data.value+"' type='text' name='field_"+data.prop+"' data-error='.error_"+data.prop+"'>"+
-						  "		<div class='error_"+data.prop+"'></div>"+
-						  "		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>"+
-						  "		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>"+
-						  "</form>";
+			var content = `<h5>Change ${data.prop}</h5>
+						  <form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>
+						  		<label for='field_${data.prop}'>${data.prop}: </label>
+						  		<input id='field_${data.prop}' value='${data.value}' type='text' name='field_${data.prop}' data-error='.error_${data.prop}'>
+						  		<div class='error_${data.prop}'></div>
+						  		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>
+						  		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>
+						  </form>`;
 			$("#modal_confirm .modal-content").html(content);
 			$('#modal_confirm .modal-footer').html("");			
 
 			if(data.prop == "Name"){
-				$('#modal_confirm').openModal('show');			
+				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
 				        field_Name: {required: true,maxlength: 50},
@@ -181,7 +205,7 @@ account = {
 								if(ajax == 1){
 									system.clearForm();
 									Materialize.toast('Name updated.',4000);
-									$('#modal_confirm').closeModal();	
+									$('#modal_confirm').modal('close');	
 									App.handleLoadPage("#cmd=index;content=account");
 								}
 								else{
@@ -193,7 +217,7 @@ account = {
 				}); 
 			}			
 			else if(data.prop == "Email"){
-				$('#modal_confirm').openModal('show');			
+				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
 				        field_Email: {required: true,maxlength: 50,checkEmail:true},
@@ -219,7 +243,7 @@ account = {
 								if(ajax == 1){
 									system.clearForm();
 									Materialize.toast('Email updated.',4000);
-									$('#modal_confirm').closeModal();	
+									$('#modal_confirm').modal('close');	
 									App.handleLoadPage("#cmd=index;content=account");
 								}
 								else{
@@ -231,7 +255,7 @@ account = {
 				}); 
 			}
 			else if(data.prop == "Username"){
-				$('#modal_confirm').openModal('show');			
+				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
 				        field_Username: {required: true,maxlength: 50,checkUsername:true,validateUsername:true},
@@ -257,7 +281,7 @@ account = {
 								if(ajax == 1){
 									system.clearForm();
 									Materialize.toast('Username updated.',4000);
-									$('#modal_confirm').closeModal();	
+									$('#modal_confirm').modal('close');	
 									App.handleLoadPage("#cmd=index;content=account");
 								}
 								else{
@@ -269,7 +293,7 @@ account = {
 				}); 
 			}
 			else if(data.prop == "Password"){
-				$('#modal_confirm').openModal('show');			
+				$('#modal_confirm').modal('open');			
 				$("#field_Password").val("");
 				$("#field_Password").attr({"type":"password"});
 				$("#form_update").append("<p><input type='checkbox' id='showPassword'><label for='showPassword'>Show password</label></p>");
@@ -305,7 +329,7 @@ account = {
 							if(data == 1){
 								system.clearForm();
 								Materialize.toast('Password updated.',4000);
-								$('#modal_confirm').closeModal();	
+								$('#modal_confirm').modal('close');	
 								App.handleLoadPage("#cmd=index;content=account");
 							}
 							else{
@@ -323,32 +347,32 @@ account = {
 			console.log(data);
 
 			var picture = "../assets/images/avatar.jpg";
-			var content = "<h4>Change "+data.prop+"</h4>"+
-  							"	<div class='row'>"+
-  							"		<div class='col s12'>"+
-							"			<div id='profile_picture2' class='ibox-content no-padding border-left-right '></div>"+
-							"		</div>"+
-							"	</div>";
+			var content = `<h4>Change ${data.prop}</h4>
+  							<div class='row'>
+  								<div class='col s12'>
+									<div id='profile_picture2' class='ibox-content no-padding border-left-right '></div>
+								</div>
+							</div>`;
 			$("#modal_confirm .modal-content").html(content);
 			$('#modal_confirm').removeClass('modal-fixed-footer');			
 			$('#modal_confirm .modal-footer').remove();			
-			$('#modal_confirm').openModal('show');			
+			$('#modal_confirm').modal('open');			
 
-    		var content =   "<div class='image-crop col s12' style='margin-bottom:5px;'>"+
-							"	<img width='100%' src='"+picture+"'>"+
-							"</div>"+
-							"<div class='btn-group col s12'>"+
-							"	<label for='inputImage' class='btn blue btn-floating btn-flat tooltipped' data-tooltip='Load image' data-position='top'>"+
-							"		<input type='file' accept='image/*' name='file' id='inputImage' class='hide'>"+
-							"		<i class='large mdi-editor-publish'></i>"+
-							"	</label>"+
-							"	<button class='btn blue btn-floating btn-flat tooltipped' data-cmd='cancel' type='button' data-tooltip='Cancel' data-position='top'>"+
-							"		<i class='mdi-navigation-close'></i>"+
-							"	</button>"+
-							"	<button class='btn blue btn-floating btn-flat hidden tooltipped right' data-cmd='save' type='button' data-tooltip='Save' data-position='top'>"+
-							"		<i class='mdi-content-save'></i>"+
-							"	</button>"+
-							"</div>";
+    		var content =   `<div class='image-crop col s12' style='margin-bottom:5px;'>
+								<img width='100%' src='${picture}'>
+							</div>
+							<div class='btn-group col s12'>
+								<label for='inputImage' class='btn blue btn-floating btn-flat tooltipped' data-tooltip='Load image' data-position='top'>
+									<input type='file' accept='image/*' name='file' id='inputImage' class='hide'>
+									<i class='material-icons right hover white-text'>portrait</i>
+								</label>
+								<button class='btn blue btn-floating btn-flat tooltipped' data-cmd='cancel' type='button' data-tooltip='Cancel' data-position='top'>
+									<i class='material-icons right hover white-text'>close</i>
+								</button>
+								<button class='btn blue btn-floating btn-flat hidden tooltipped right' data-cmd='save' type='button' data-tooltip='Save' data-position='top'>
+									<i class='material-icons right hover white-text'>save</i>
+								</button>
+							</div>`;
     		$("#profile_picture2").html(content);
 			$('.tooltipped').tooltip({delay: 50});
 
@@ -389,7 +413,7 @@ account = {
 												Materialize.toast('Picture has been changed.',4000);
 												system.clearForm();
 												App.handleLoadPage("#cmd=index;content=account");
-												$('#modal_confirm').closeModal();	
+												$('#modal_confirm').modal('close');	
 											});
 								    		status = false;
 								    	}
@@ -415,20 +439,20 @@ account = {
                 $inputImage.addClass("hide");
             }	            
             $("button[data-cmd='cancel']").click(function(){
-				$('#modal_confirm').closeModal();	
+				$('#modal_confirm').modal('close');	
             });
 		});
 	},
 	deactivate:function(){
 		$("a[data-cmd='deactivateAdmin']").on('click',function(){
 			var id = $(this).data('node');
-			var content = "Are you sure DEACTIVATE "+$(this).data('name')+"'s account?<br/>"+
-						  "<label for='field_description'>Remarks: </label>"+
-						  "<textarea class='materialize-textarea' data-field='field_description' name='field_description'></textarea>";
+			var content = `Are you sure DEACTIVATE ${$(this).data('name')}'s account?<br/>
+						  <label for='field_description'>Remarks: </label>
+						  <textarea class='materialize-textarea' data-field='field_description' name='field_description'></textarea>`;
 			$("#modal_confirm .modal-content").html(content);
-			$("#modal_confirm .modal-footer").html("<a class='waves-effect waves-red red white-text btn-flat modal-action modal-close'>Cancel</a>"+
-												   "<a data-cmd='button_proceed' class='waves-effect waves-grey btn-flat modal-action'>Proceed</a>");
-			$('#modal_confirm').openModal('show');			
+			$("#modal_confirm .modal-footer").html(`<a class='waves-effect waves-red red white-text btn-flat modal-action modal-close'>Cancel</a>
+													<a data-cmd='button_proceed' class='waves-effect waves-grey btn-flat modal-action'>Proceed</a>`);
+			$('#modal_confirm').modal('open');			
 
 			$("a[data-cmd='button_proceed']").on("click",function(){
 				var remarks = $("textarea[data-field='field_description']").val();
@@ -446,7 +470,7 @@ account = {
 							Materialize.toast('Account deactivaded.',4000);
 							system.clearForm();
 							App.handleLoadPage("#cmd=index;content=account");
-							$('#modal_confirm').closeModal();	
+							$('#modal_confirm').modal('close');	
 						}
 						else{
 							Materialize.toast('Cannot process request.',4000);
@@ -460,9 +484,9 @@ account = {
 		$("a[data-cmd='activateAdmin']").on('click',function(){
 			var id = $(this).data('node');
 			$("#modal_confirm .modal-content").html("Arey you sure ACTIVATE "+$(this).data('name')+"'s account?");
-			$("#modal_confirm .modal-footer").html("<a class='waves-effect waves-red red white-text btn-flat modal-action modal-close'>Cancel</a>"+
-												   "<a data-cmd='button_proceed' class='waves-effect waves-grey btn-flat modal-action modal-close'>Proceed</a>");
-			$('#modal_confirm').openModal('show');			
+			$("#modal_confirm .modal-footer").html(`<a class='waves-effect waves-red red white-text btn-flat modal-action modal-close'>Cancel</a>
+													<a data-cmd='button_proceed' class='waves-effect waves-grey btn-flat modal-action modal-close'>Proceed</a>`);
+			$('#modal_confirm').modal('open');			
 
 			$("a[data-cmd='button_proceed']").on("click",function(){
 				var data = system.ajax('../assets/harmony/Process.php?activate-admin',id);
@@ -472,7 +496,7 @@ account = {
 						Materialize.toast('Account activaded.',4000);
 						system.clearForm();
 						App.handleLoadPage("#cmd=index;content=account");
-						$('#modal_confirm').closeModal();	
+						$('#modal_confirm').modal('close');	
 					}
 					else{
 						Materialize.toast('Cannot process request.',4000);
@@ -503,30 +527,28 @@ client = {
 				search = system.searchJSON(getEmployee,1,v[0]);
 				search = (search.length > 0)?search[0][0]:0;
 				var logo = (v[7] == "")?'avatar.jpg':v[7];
-				content += "<tr>"+
-							"	<td width='1px'>"+(i+1)+". </td>"+
-							"	<td><img src='../assets/images/profile/"+logo+"' alt='Thumbnail' class='responsive-img valign profile-image' width='100px'></td>"+
-							"	<td width='400px'>"+v[1]+"</td>"+
-							"	<td>"+search+"</td>"+
-							"	<td width='10px'>Active</td>"+
-							"	<td width='1px'>"+
-							"		<a data-cmd='update' data-node='"+v[0]+"' class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='50' data-tooltip='Show'>"+
-							"			<i class='mdi-navigation-more-vert right black-text'></i>"+
-							"		</a>"+
-							"	</td>"+
-							"</tr>";
+				content += `<tr>
+								<td width='1px'>${(i+1)}. </td>
+								<td><img src='../assets/images/profile/${logo}' alt='Thumbnail' class='responsive-img valign profile-image' width='100px'></td>
+								<td width='400px'>${v[1]}</td>
+								<td>${search}</td>
+								<td width='10px'>Active</td>
+								<td width='1px'>
+									<a data-cmd='update' data-node='${v[0]}' class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='50' data-tooltip='Show'>
+										<i class='mdi-navigation-more-vert right black-text'></i>
+									</a>
+								</td>
+							</tr>`;
 			})	
 
-			content = "<table class='table bordered' id='products'>"+
-						"<thead>"+
-						"	<tr>"+
-						"		<th>#</th><th>Logo</th><th>Client</th><th># of Employees</th><th>Status</th><th></th>"+
-						"	</tr>"+
-						"</thead>"+
-						"</tbody>"+
-							content+
-						"</tbody>"+
-						"</table>";
+			content = `<table class='table bordered' id='products'>
+						<thead>
+							<tr>
+								<th>#</th><th>Logo</th><th>Client</th><th># of Employees</th><th>Status</th><th></th>
+							</tr>
+						</thead>
+						</tbody>${content}</tbody>
+						</table>`;
 			$("#display_clientList").html(content);
 
 			var table = $('#products').DataTable({
@@ -544,7 +566,7 @@ client = {
 				var data = table.row(this).data();
 				data = $.parseHTML(data[5]);
 				data = data[0].dataset.node;
-		    	$(location).attr('href','#cmd=index;content=focusClient;'+data);			
+		    	$(location).attr('href',`#cmd=index;content=focusClient;${data}`);			
 			});
 		}
 		else{
@@ -566,7 +588,7 @@ client = {
 			var data = system.xml("pages.xml");
 			$(data.responseText).find("addClient").each(function(i,content){
 				$("#modal_popUp .modal-content").html(content);
-				$('#modal_popUp').openModal('show');		
+				$('#modal_popUp').modal('open');		
 
 				$("#field_password").on('focus',function(){
 					$("#note_password").removeClass('zoomOut hidden').addClass("zoomIn");
@@ -601,8 +623,8 @@ client = {
 						var data = system.ajax('../assets/harmony/Process.php?set-newClient',_form);
 						data.done(function(data){
 							if(data == 1){
-								var text = "<h1>Congratulations</h1>, you are now registered. You can login using <u>"+_form[2]['value']+"</u> as you username and <u>"+
-								_form[5]['value']+"</u> as your password. <a href='http://localhost/kaboomRewards/login.html'>Just follow this link</a>";
+								var text = `<h1>Congratulations</h1>, you are now registered. You can login using <u>${_form[2]['value']}</u> as you username and <u>${_form[5]['value']}</u>
+											as your password. <a href='http://localhost/kaboomRewards/login.html'>Just follow this link</a>`;
 								var data = system.send_mail('rufo.gabrillo@gmail.com,info@rnrdigitalconsultancy.com','Employer Registration',text);
 								if(data.responseText != ""){
 									Materialize.toast('Saved.',4000);
@@ -623,114 +645,114 @@ client = {
 		data = data[0];
 		if(Number(data[5]) == 1){
 			status = "Active";
-			var actions = "<a data-cmd='deactivateEmployer' data-name='"+data[1]+"' data-node='"+data[0]+"' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Deactivate account' data-cmd='update'>"+
-						  "	<i class='mdi-action-lock-open right black-text'></i>"+
-						  "</a>";	
+			var actions = `<a data-cmd='deactivateEmployer' data-name='${data[1]}' data-node='${data[0]}' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Deactivate account' data-cmd='update'>
+						  	<i class='mdi-action-lock-open right black-text'></i>
+						  </a>`;	
 		}
 		else{
 			status = "Deactivated";
-			var actions = "<a data-cmd='activateEmployer' data-name='"+data[1]+"' data-node='"+data[0]+"' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Activate account' data-cmd='update'>"+
-						  "	<i class='mdi-action-lock right black-text'></i>"+
-						  "</a>";	
+			var actions = `<a data-cmd='activateEmployer' data-name='${data[1]}' data-node='${data[0]}' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Activate account' data-cmd='update'>
+						  	<i class='mdi-action-lock right black-text'></i>
+						  </a>`;	
 		}
 
 		var profile = ((data[7] == "") || data[7] == null)?"avatar.jpg":data[7];
 
-		content = "<div id='profile-card' class='card'>"+
-				"    <div class='card-image waves-effect waves-block waves-light'>"+
-				"        <img class='activator' src='../assets/images/user-bg.jpg' alt='user background'>"+
-				"    </div>"+
-				"    <div class='card-content'>"+
-				"        <div class=' responsive-img activator card-profile-image circle'>"+
-				"        	<img src='../assets/images/profile/"+profile+"' alt='' class='circle'>"+
-				"        	<a data-cmd='updateCompanyLogo' data-value='"+profile+"' data-name='"+data[1]+"' data-node='"+data[0]+"' data-prop='Picture' class='btn waves-effect white-text no-shadow black' style='font-size: 10px;z-index: 1;padding: 0 12px;top:40px;'>Change</a>"+
-				"		 </div>"+
-				"        <span class='card-title activator grey-text text-darken-4'>"+data[1]+" </span>"+
-				"			<a data-cmd='updateCompany' data-value='"+data[1]+"' data-name='"+data[1]+"' data-node='"+data[0]+"' data-prop='Name' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update account'>"+
-				"				<i class='mdi-editor-mode-edit right black-text'></i>"+
-				"			</a>"+
-				"		 <div class='divider'></div>"+
-				"        <p><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-action-perm-phone-msg cyan-text text-darken-2'></i> Phone: "+data[4]+"</span>"+
-				"			<a data-cmd='updateCompany' data-value='"+data[4]+"' data-name='"+data[1]+"' data-node='"+data[0]+"' data-prop='Phone' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>"+
-				"				<i class='mdi-editor-mode-edit right black-text'></i>"+
-				"			</a>"+
-				"		 </p>"+
-				"		 <div class='divider'></div>"+
-				"        <p><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-communication-email cyan-text text-darken-2'></i> Email: "+data[3]+"</span>"+
-				"			<a data-cmd='updateCompany' data-value='"+data[3]+"' data-name='"+data[1]+"' data-node='"+data[0]+"' data-prop='Email' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update email'>"+
-				"				<i class='mdi-editor-mode-edit right black-text'></i>"+
-				"			</a>"+
-				"		 </p>"+
-				"		 <div class='divider'></div>"+
-				"        <p><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-action-room cyan-text text-darken-2'></i> Address: "+data[2]+"</span>"+
-				"			<a data-cmd='updateCompany' data-value='"+data[2]+"' data-name='"+data[1]+"' data-node='"+data[0]+"' data-prop='Address' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update address'>"+
-				"				<i class='mdi-editor-mode-edit right black-text'></i>"+
-				"			</a>"+
-				"		 </p>"+
-				"    </div>"+
-				"</div>";
+		content = `<div id='profile-card' class='card'>
+				    <div class='card-image waves-effect waves-block waves-light'>
+				        <img class='activator' src='../assets/images/user-bg.jpg' alt='user background'>
+				    </div>
+				    <div class='card-content'>
+				        <div class=' responsive-img activator card-profile-image circle'>
+				        	<img src='../assets/images/profile/${profile}' alt='' class='circle'>
+				        	<a data-cmd='updateCompanyLogo' data-value='${profile}' data-name='${data[1]}' data-node='${data[0]}' data-prop='Picture' class='btn waves-effect white-text no-shadow black' style='font-size: 10px;z-index: 1;padding: 0 12px;top:40px;'>Change</a>
+						 </div>
+				        <span class='card-title activator grey-text text-darken-4'>${data[1]} </span>
+							<a data-cmd='updateCompany' data-value='${data[1]}' data-name='${data[1]}' data-node='${data[0]}' data-prop='Name' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update account'>
+								<i class='mdi-editor-mode-edit right black-text'></i>
+							</a>
+						 <div class='divider'></div>
+				        <p><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-action-perm-phone-msg cyan-text text-darken-2'></i> Phone: ${data[4]}</span>
+							<a data-cmd='updateCompany' data-value='${data[4]}' data-name='${data[1]}' data-node='${data[0]}' data-prop='Phone' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
+								<i class='mdi-editor-mode-edit right black-text'></i>
+							</a>
+						 </p>
+						 <div class='divider'></div>
+				        <p><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-communication-email cyan-text text-darken-2'></i> Email: ${data[3]}</span>
+							<a data-cmd='updateCompany' data-value='${data[3]}' data-name='${data[1]}' data-node='${data[0]}' data-prop='Email' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update email'>
+								<i class='mdi-editor-mode-edit right black-text'></i>
+							</a>
+						 </p>
+						 <div class='divider'></div>
+				        <p><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-action-room cyan-text text-darken-2'></i> Address: ${data[2]}</span>
+							<a data-cmd='updateCompany' data-value='${data[2]}' data-name='${data[1]}' data-node='${data[0]}' data-prop='Address' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update address'>
+								<i class='mdi-editor-mode-edit right black-text'></i>
+							</a>
+						 </p>
+				    </div>
+				</div>`;
 		$("#companyProfile").html(content);	
 	},
 	accountProfile(data){
 		data = data[0];
 		if(Number(data[8]) == 1){
 			status = "Active";
-			var actions = "<a data-cmd='deactivateEmployer' data-name='"+data[2]+"' data-node='"+data[0]+"' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Deactivate account' data-cmd='update'>"+
-						  "	<i class='mdi-action-lock-open right black-text'></i>"+
-						  "</a>";	
+			var actions = `<a data-cmd='deactivateEmployer' data-name='${data[2]}' data-node='${data[0]}' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Deactivate account' data-cmd='update'>
+						  	<i class='mdi-action-lock-open right black-text'></i>
+						  </a>`;	
 		}
 		else{
 			status = "Deactivated";
-			var actions = "<a data-cmd='activateEmployer' data-name='"+data[2]+"' data-node='"+data[0]+"' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Activate account' data-cmd='update'>"+
-						  "	<i class='mdi-action-lock right black-text'></i>"+
-						  "</a>";	
+			var actions = `<a data-cmd='activateEmployer' data-name='${data[2]}' data-node='${data[0]}' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Activate account' data-cmd='update'>
+						  	<i class='mdi-action-lock right black-text'></i>
+						  </a>`;	
 		}
 
 		var profile = ((data[7] == "") || data[7] == null)?"avatar.jpg":data[7];
 
-		content = "<div id='profile-card' class='card'>"+
-				"    <div class='card-image waves-effect waves-block waves-light'>"+
-				"        <img class='activator' src='../assets/images/user-bg.jpg' alt='user background'>"+
-				"    </div>"+
-				"    <div class='card-content'>"+
-				"        <div class=' responsive-img activator card-profile-image circle'>"+
-				"        	<img src='../assets/images/profile/"+profile+"' alt='' class='circle'>"+
-				"        	<a data-cmd='updateEmployerPicture' data-value='"+profile+"' data-name='"+data[2]+"' data-node='"+data[0]+"' data-prop='Picture' class='btn waves-effect white-text no-shadow black' style='font-size: 10px;z-index: 1;padding: 0 12px;top:40px;'>Change</a>"+
-				"		 </div>"+
-				"        <span class='card-title activator grey-text text-darken-4'>"+data[2]+" </span>"+
-				"			<a data-cmd='updateEmployer' data-value='"+data[2]+"' data-name='"+data[2]+"' data-node='"+data[0]+"' data-prop='Name' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update account'>"+
-				"				<i class='mdi-editor-mode-edit right black-text'></i>"+
-				"			</a>"+
-				"		 <div class='divider'></div>"+
-				"        <p><i class='mdi-action-info-outline cyan-text text-darken-2'></i> Status: "+status+actions+"</p>"+
-				"		 <div class='divider'></div>"+
-				"        <p><i class='mdi-action-perm-identity cyan-text text-darken-2'></i> HR Officer</p>"+
-				"		 <div class='divider'></div>"+
-				"        <p><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-action-perm-phone-msg cyan-text text-darken-2'></i> Phone: "+data[4]+"</span>"+
-				"			<a data-cmd='updateEmployer' data-value='"+data[4]+"' data-name='"+data[1]+"' data-node='"+data[0]+"' data-prop='Phone' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>"+
-				"				<i class='mdi-editor-mode-edit right black-text'></i>"+
-				"			</a>"+
-				"		 </p>"+
-				"		 <div class='divider'></div>"+
-				"        <p><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-communication-email cyan-text text-darken-2'></i> Email: "+data[3]+"</span>"+
-				"			<a data-cmd='updateEmployer' data-value='"+data[3]+"' data-name='"+data[1]+"' data-node='"+data[0]+"' data-prop='Email' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update email'>"+
-				"				<i class='mdi-editor-mode-edit right black-text'></i>"+
-				"			</a>"+
-				"		 </p>"+
-				"		 <div class='divider'></div>"+
-				"        <p><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-action-verified-user cyan-text text-darken-2'></i> Username: "+data[5]+"</span>"+
-				"			<a data-cmd='updateEmployer' data-value='"+data[5]+"' data-name='"+data[1]+"' data-node='"+data[0]+"' data-prop='Username' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update account'>"+
-				"				<i class='mdi-editor-mode-edit right black-text'></i>"+
-				"			</a>"+
-				"		 </p>"+
-				"		 <div class='divider'></div>"+
-				"        <p><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-action-verified-user cyan-text text-darken-2'></i> Password"+"</span>"+
-				"			<button disabled class='tooltipped btn-floating waves-effect black-text no-shadow white right'>"+
-				"				<i class='mdi-editor-mode-edit right grey-text'></i>"+
-				"			</button>"+
-				"		 </p>"+
-				"    </div>"+
-				"</div>";
+		content = `<div id='profile-card' class='card'>
+				    <div class='card-image waves-effect waves-block waves-light'>
+				        <img class='activator' src='../assets/images/user-bg.jpg' alt='user background'>
+				    </div>
+				    <div class='card-content'>
+				        <div class=' responsive-img activator card-profile-image circle'>
+				        	<img src='../assets/images/profile/${profile}' alt='' class='circle'>
+				        	<a data-cmd='updateEmployerPicture' data-value='${profile}' data-name='${data[2]}' data-node='${data[0]}' data-prop='Picture' class='btn waves-effect white-text no-shadow black' style='font-size: 10px;z-index: 1;padding: 0 12px;top:40px;'>Change</a>
+						 </div>
+				        <span class='card-title activator grey-text text-darken-4'>${data[2]} </span>
+							<a data-cmd='updateEmployer' data-value='${data[2]}' data-name='${data[2]}' data-node='${data[0]}' data-prop='Name' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update account'>
+								<i class='mdi-editor-mode-edit right black-text'></i>
+							</a>
+						 <div class='divider'></div>
+				        <p><i class='mdi-action-info-outline cyan-text text-darken-2'></i> Status: ${status} ${actions}</p>
+						 <div class='divider'></div>
+				        <p><i class='mdi-action-perm-identity cyan-text text-darken-2'></i> HR Officer</p>
+						 <div class='divider'></div>
+				        <p><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-action-perm-phone-msg cyan-text text-darken-2'></i> Phone: ${data[4]}</span>
+							<a data-cmd='updateEmployer' data-value='${data[4]}' data-name='${data[1]}' data-node='${data[0]}' data-prop='Phone' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
+								<i class='mdi-editor-mode-edit right black-text'></i>
+							</a>
+						 </p>
+						 <div class='divider'></div>
+				        <p><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-communication-email cyan-text text-darken-2'></i> Email: ${data[3]}</span>
+							<a data-cmd='updateEmployer' data-value='${data[3]}' data-name='${data[1]}' data-node='${data[0]}' data-prop='Email' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update email'>
+								<i class='mdi-editor-mode-edit right black-text'></i>
+							</a>
+						 </p>
+						 <div class='divider'></div>
+				        <p><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-action-verified-user cyan-text text-darken-2'></i> Username: ${data[5]}</span>
+							<a data-cmd='updateEmployer' data-value='${data[5]}' data-name='${data[1]}' data-node='${data[0]}' data-prop='Username' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update account'>
+								<i class='mdi-editor-mode-edit right black-text'></i>
+							</a>
+						 </p>
+						 <div class='divider'></div>
+				        <p><span style='width:80%;display: inline-block;' class='truncate'><i class='mdi-action-verified-user cyan-text text-darken-2'></i> Password</span>
+							<button disabled class='tooltipped btn-floating waves-effect black-text no-shadow white right'>
+								<i class='mdi-editor-mode-edit right grey-text'></i>
+							</button>
+						 </p>
+				    </div>
+				</div>`;
 		$("#accountProfile").html(content);	
 	},
 	details:function(id){
@@ -780,19 +802,19 @@ client = {
 			var data = $(this).data();
 			var id = data.node;
 
-			var content = "<h5>Change "+data.prop+"</h5>"+
-						  "<form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>"+
-						  "		<label for='field_"+data.prop+"'>"+data.prop+": </label>"+
-						  "		<input id='field_"+data.prop+"' value='"+data.value+"' type='text' name='field_"+data.prop+"' data-error='.error_"+data.prop+"'>"+
-						  "		<div class='error_"+data.prop+"'></div>"+
-						  "		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>"+
-						  "		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>"+
-						  "</form>";
+			var content = `<h5>Change ${data.prop}</h5>
+						  <form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>
+						  		<label for='field_${data.prop}'>${data.prop}: </label>
+						  		<input id='field_${data.prop}' value='${data.value}' type='text' name='field_${data.prop}' data-error='.error_${data.prop}'>
+						  		<div class='error_${data.prop}'></div>
+						  		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>
+						  		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>
+						  </form>`;
 			$("#modal_confirm .modal-content").html(content);
 			$('#modal_confirm .modal-footer').html("");			
 
 			if(data.prop == "Name"){
-				$('#modal_confirm').openModal('show');			
+				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
 				        field_Name: {required: true,maxlength: 50},
@@ -819,7 +841,7 @@ client = {
 								if(ajax == 1){
 									system.clearForm();
 									Materialize.toast('Name updated.',4000);
-									$('#modal_confirm').closeModal();	
+									$('#modal_confirm').modal('close');	
 									App.handleLoadPage("#cmd=index;content=focusClient");
 								}
 								else{
@@ -831,7 +853,7 @@ client = {
 				}); 
 			}			
 			else if(data.prop == "Phone"){
-				$('#modal_confirm').openModal('show');			
+				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
 				        field_Name: {required: true,maxlength: 50},
@@ -857,7 +879,7 @@ client = {
 								if(ajax == 1){
 									system.clearForm();
 									Materialize.toast('Phone updated.',4000);
-									$('#modal_confirm').closeModal();	
+									$('#modal_confirm').modal('close');	
 									App.handleLoadPage("#cmd=index;content=focusClient");
 								}
 								else{
@@ -869,7 +891,7 @@ client = {
 				}); 
 			}			
 			else if(data.prop == "Email"){
-				$('#modal_confirm').openModal('show');			
+				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
 				        field_Email: {required: true,maxlength: 50,checkEmail:true},
@@ -895,7 +917,7 @@ client = {
 								if(ajax == 1){
 									system.clearForm();
 									Materialize.toast('Email updated.',4000);
-									$('#modal_confirm').closeModal();	
+									$('#modal_confirm').modal('close');	
 									App.handleLoadPage("#cmd=index;content=focusClient");
 								}
 								else{
@@ -907,7 +929,7 @@ client = {
 				}); 
 			}
 			else if(data.prop == "Address"){
-				$('#modal_confirm').openModal('show');			
+				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
 				        field_Email: {required: true,maxlength: 50,checkEmail:true},
@@ -933,7 +955,7 @@ client = {
 								if(ajax == 1){
 									system.clearForm();
 									Materialize.toast('Address updated.',4000);
-									$('#modal_confirm').closeModal();	
+									$('#modal_confirm').modal('close');	
 									App.handleLoadPage("#cmd=index;content=focusClient");
 								}
 								else{
@@ -945,7 +967,7 @@ client = {
 				}); 
 			}
 			else if(data.prop == "Username"){
-				$('#modal_confirm').openModal('show');			
+				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
 				        field_Username: {required: true,maxlength: 50,checkUsername:true,validateUsername:true},
@@ -971,7 +993,7 @@ client = {
 								if(ajax == 1){
 									system.clearForm();
 									Materialize.toast('Username updated.',4000);
-									$('#modal_confirm').closeModal();	
+									$('#modal_confirm').modal('close');	
 									App.handleLoadPage("#cmd=index;content=focusClient");
 								}
 								else{
@@ -983,7 +1005,7 @@ client = {
 				}); 
 			}
 			else if(data.prop == "Password"){
-				$('#modal_confirm').openModal('show');			
+				$('#modal_confirm').modal('open');			
 				$("#field_Password").attr({"type":"password"});
 				$("#form_update").append("<p><input type='checkbox' id='showPassword'><label for='showPassword'>Show password</label></p>");
 
@@ -1017,7 +1039,7 @@ client = {
 							if(ajax == 1){
 								system.clearForm();
 								Materialize.toast('Password updated.',4000);
-								$('#modal_confirm').closeModal();	
+								$('#modal_confirm').modal('close');	
 								App.handleLoadPage("#cmd=index;content=focusClient");
 							}
 							else{
@@ -1033,19 +1055,19 @@ client = {
 			var data = $(this).data();
 			var id = data.node;
 
-			var content = "<h5>Change "+data.prop+"</h5>"+
-						  "<form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>"+
-						  "		<label for='field_"+data.prop+"'>"+data.prop+": </label>"+
-						  "		<input id='field_"+data.prop+"' value='"+data.value+"' type='text' name='field_"+data.prop+"' data-error='.error_"+data.prop+"'>"+
-						  "		<div class='error_"+data.prop+"'></div>"+
-						  "		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>"+
-						  "		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>"+
-						  "</form>";
+			var content = `<h5>Change ${data.prop}</h5>
+						  <form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>
+						  		<label for='field_${data.prop}'>${data.prop}: </label>
+						  		<input id='field_${data.prop}' value='${data.value}' type='text' name='field_${data.prop}' data-error='.error_${data.prop}'>
+						  		<div class='error_${data.prop}'></div>
+						  		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>
+						  		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>
+						  </form>`;
 			$("#modal_confirm .modal-content").html(content);
 			$('#modal_confirm .modal-footer').html("");			
 
 			if(data.prop == "Name"){
-				$('#modal_confirm').openModal('show');			
+				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
 				        field_Name: {required: true,maxlength: 50},
@@ -1072,7 +1094,7 @@ client = {
 								if(ajax == 1){
 									system.clearForm();
 									Materialize.toast('Name updated.',4000);
-									$('#modal_confirm').closeModal();	
+									$('#modal_confirm').modal('close');	
 									App.handleLoadPage("#cmd=index;content=focusClient");
 								}
 								else{
@@ -1084,7 +1106,7 @@ client = {
 				}); 
 			}			
 			else if(data.prop == "Phone"){
-				$('#modal_confirm').openModal('show');			
+				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
 				        field_Name: {required: true,maxlength: 50},
@@ -1110,7 +1132,7 @@ client = {
 								if(ajax == 1){
 									system.clearForm();
 									Materialize.toast('Phone updated.',4000);
-									$('#modal_confirm').closeModal();	
+									$('#modal_confirm').modal('close');	
 									App.handleLoadPage("#cmd=index;content=focusClient");
 								}
 								else{
@@ -1122,7 +1144,7 @@ client = {
 				}); 
 			}			
 			else if(data.prop == "Email"){
-				$('#modal_confirm').openModal('show');			
+				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
 				        field_Email: {required: true,maxlength: 50,checkEmail:true},
@@ -1148,7 +1170,7 @@ client = {
 								if(ajax == 1){
 									system.clearForm();
 									Materialize.toast('Email updated.',4000);
-									$('#modal_confirm').closeModal();	
+									$('#modal_confirm').modal('close');	
 									App.handleLoadPage("#cmd=index;content=focusClient");
 								}
 								else{
@@ -1160,7 +1182,7 @@ client = {
 				}); 
 			}
 			else if(data.prop == "Address"){
-				$('#modal_confirm').openModal('show');			
+				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
 				        field_Address: {required: true,maxlength: 100},
@@ -1187,7 +1209,7 @@ client = {
 								if(ajax == 1){
 									system.clearForm();
 									Materialize.toast('Address updated.',4000);
-									$('#modal_confirm').closeModal();	
+									$('#modal_confirm').modal('close');	
 									App.handleLoadPage("#cmd=index;content=focusClient");
 								}
 								else{
@@ -1206,32 +1228,32 @@ client = {
 			console.log(data);
 			var id = data.node;
 			var picture = "../assets/images/profile/avatar.jpg";
-			var content = "<h4>Change "+data.prop+"</h4>"+
-  							"	<div class='row'>"+
-  							"		<div class='col s12'>"+
-							"			<div id='profile_picture2' class='ibox-content no-padding border-left-right '></div>"+
-							"		</div>"+
-							"	</div>";
+			var content = `<h4>Change ${data.prop}</h4>
+  							<div class='row'>
+  								<div class='col s12'>
+									<div id='profile_picture2' class='ibox-content no-padding border-left-right '></div>
+								</div>
+							</div>`;
 			$("#modal_confirm .modal-content").html(content);
 			$('#modal_confirm').removeClass('modal-fixed-footer');			
 			$('#modal_confirm .modal-footer').remove();			
-			$('#modal_confirm').openModal('show');			
+			$('#modal_confirm').modal('open');			
 
-    		var content =   "<div class='image-crop col s12' style='margin-bottom:5px;'>"+
-							"	<img width='100%' src='"+picture+"'>"+
-							"</div>"+
-							"<div class='btn-group col s12'>"+
-							"	<label for='inputImage' class='btn blue btn-floating btn-flat tooltipped' data-tooltip='Load image' data-position='top'>"+
-							"		<input type='file' accept='image/*' name='file' id='inputImage' class='hide'>"+
-							"		<i class='large mdi-editor-publish'></i>"+
-							"	</label>"+
-							"	<button class='btn blue btn-floating btn-flat tooltipped' data-cmd='cancel' type='button' data-tooltip='Cancel' data-position='top'>"+
-							"		<i class='mdi-navigation-close'></i>"+
-							"	</button>"+
-							"	<button class='btn blue btn-floating btn-flat hidden tooltipped right' data-cmd='save' type='button' data-tooltip='Save' data-position='top'>"+
-							"		<i class='mdi-content-save'></i>"+
-							"	</button>"+
-							"</div>";
+    		var content =   `<div class='image-crop col s12' style='margin-bottom:5px;'>
+								<img width='100%' src='${picture}'>
+							</div>
+							<div class='btn-group col s12'>
+								<label for='inputImage' class='btn blue btn-floating btn-flat tooltipped' data-tooltip='Load image' data-position='top'>
+									<input type='file' accept='image/*' name='file' id='inputImage' class='hide'>
+									<i class='large mdi-editor-publish'></i>
+								</label>
+								<button class='btn blue btn-floating btn-flat tooltipped' data-cmd='cancel' type='button' data-tooltip='Cancel' data-position='top'>
+									<i class='mdi-navigation-close'></i>
+								</button>
+								<button class='btn blue btn-floating btn-flat hidden tooltipped right' data-cmd='save' type='button' data-tooltip='Save' data-position='top'>
+									<i class='mdi-content-save'></i>
+								</button>
+							</div>`;
     		$("#profile_picture2").html(content);
 			$('.tooltipped').tooltip({delay: 50});
 
@@ -1269,7 +1291,7 @@ client = {
 												Materialize.toast('Picture has been changed.',4000);
 												system.clearForm();
 												App.handleLoadPage("#cmd=index;content=focusClient;"+id);
-												$('#modal_confirm').closeModal();	
+												$('#modal_confirm').modal('close');	
 											});
 								    		status = false;
 								    	}
@@ -1295,7 +1317,7 @@ client = {
                 $inputImage.addClass("hide");
             }	            
             $("button[data-cmd='cancel']").click(function(){
-				$('#modal_confirm').closeModal();	
+				$('#modal_confirm').modal('close');	
             });
 		});
 
@@ -1313,7 +1335,7 @@ client = {
 			$("#modal_confirm .modal-content").html(content);
 			$('#modal_confirm').removeClass('modal-fixed-footer');			
 			$('#modal_confirm .modal-footer').remove();			
-			$('#modal_confirm').openModal('show');			
+			$('#modal_confirm').modal('open');			
 
     		var content =   "<div class='image-crop col s12' style='margin-bottom:5px;'>"+
 							"	<img width='100%' src='"+picture+"'>"+
@@ -1367,7 +1389,7 @@ client = {
 												Materialize.toast('Picture has been changed.',4000);
 												system.clearForm();
 												App.handleLoadPage("#cmd=index;content=focusClient;"+id);
-												$('#modal_confirm').closeModal();	
+												$('#modal_confirm').modal('close');	
 											});
 								    		status = false;
 								    	}
@@ -1393,20 +1415,20 @@ client = {
                 $inputImage.addClass("hide");
             }	            
             $("button[data-cmd='cancel']").click(function(){
-				$('#modal_confirm').closeModal();	
+				$('#modal_confirm').modal('close');	
             });
 		});
 	},
 	deactivate:function(){
 		$("a[data-cmd='deactivateEmployer']").on('click',function(){
 			var id = $(this).data('node');
-			var content = "Arey you sure DEACTIVATE "+$(this).data('name')+"'s account?<br/>"+
+			var content = "Arey you sure DEACTIVATE ${$(this).data('name')}'s account?<br/>"+
 						  "<label for='field_description'>Remarks: </label>"+
 						  "<textarea class='materialize-textarea' data-field='field_description' name='field_description'></textarea>";
 			$("#modal_confirm .modal-content").html(content);
 			$("#modal_confirm .modal-footer").html("<a class='waves-effect waves-red red white-text btn-flat modal-action modal-close'>Cancel</a>"+
 												   "<a data-cmd='button_proceed' class='waves-effect waves-grey btn-flat modal-action'>Proceed</a>");
-			$('#modal_confirm').openModal('show');			
+			$('#modal_confirm').modal('open');			
 
 			$("a[data-cmd='button_proceed']").on("click",function(){
 				var remarks = $("textarea[data-field='field_description']").val();
@@ -1424,7 +1446,7 @@ client = {
 							Materialize.toast('Account deactivaded.',4000);
 							system.clearForm();
 							App.handleLoadPage("#cmd=index;content=focusClient");
-							$('#modal_confirm').closeModal();	
+							$('#modal_confirm').modal('close');	
 						}
 						else{
 							Materialize.toast('Cannot process request.',4000);
@@ -1437,10 +1459,10 @@ client = {
 	activate:function(){
 		$("a[data-cmd='activateEmployer']").on('click',function(){
 			var id = $(this).data('node');
-			$("#modal_confirm .modal-content").html("Arey you sure ACTIVATE "+$(this).data('name')+"'s account?");
-			$("#modal_confirm .modal-footer").html("<a class='waves-effect waves-red red white-text btn-flat modal-action modal-close'>Cancel</a>"+
-												   "<a data-cmd='button_proceed' class='waves-effect waves-grey btn-flat modal-action modal-close'>Proceed</a>");
-			$('#modal_confirm').openModal('show');			
+			$("#modal_confirm .modal-content").html(`Arey you sure ACTIVATE ${$(this).data('name')}'s account?`);
+			$("#modal_confirm .modal-footer").html(`<a class='waves-effect waves-red red white-text btn-flat modal-action modal-close'>Cancel</a>
+													<a data-cmd='button_proceed' class='waves-effect waves-grey btn-flat modal-action modal-close'>Proceed</a>`);
+			$('#modal_confirm').modal('open');			
 
 			$("a[data-cmd='button_proceed']").on("click",function(){
 				var data = system.ajax('../assets/harmony/Process.php?activate-employer',id);
@@ -1449,7 +1471,7 @@ client = {
 						Materialize.toast('Account activaded.',4000);
 						system.clearForm();
 						App.handleLoadPage("#cmd=index;content=focusClient");
-						$('#modal_confirm').closeModal();	
+						$('#modal_confirm').modal('close');	
 					}
 					else{
 						Materialize.toast('Cannot process request.',4000);
@@ -1468,35 +1490,35 @@ client = {
 			var address = ((data[0][13] == "") || data[0][13] == null)?"Not assigned":data[0][13];
 			var contactNumber = ((data[0][11] == "") || data[0][11] == null)?"Not assigned":data[0][11];
 
-			content = "<div class='row'>"+
-					"<div class=''>"+
-					"	<div class='col s3 m2 l2'>"+
-					"		<img src='../assets/images/avatar.jpg' alt='Employee logo' class='circle center responsive-img valign profile-image'>"+
-					"	</div>"+
-					"	<div class='col s9 m10 l10'>"+
-					"		<ul class='collection with-header'>"+
-					"			<li class='collection-header'>"+
-					"				<h4>"+data[0][6]+" "+data[0][5]+" <small>"+data[0][1]+"</small></h4>"+
-					"			</li>"+
-					"			<li class='collection-item'>"+
-					"        		<div><i class='mdi-action-perm-identity cyan-text text-darken-2'></i> "+position+"</div>"+
-					"			</li>"+
-					"			<li class='collection-item'>"+
-					"        		<div><i class='mdi-action-perm-phone-msg cyan-text text-darken-2'></i> "+contactNumber+"</div>"+
-					"			</li>"+
-					"			<li class='collection-item'>"+
-					"        		<div><i class='mdi-communication-email cyan-text text-darken-2'></i> "+data[0][12]+"</div>"+
-					"			</li>"+
-					"			<li class='collection-item'>"+
-					"        		<div><i class='mdi-action-room cyan-text text-darken-2'></i> "+address+"</div>"+
-					"			</li>"+
-					"			<li class='collection-item'>"+
-					"        		<div><i class='mdi-social-cake cyan-text text-darken-2'></i> "+data[0][10]+"</div>"+
-					"			</li>"+
-					"		</ul>"+
-					"	</div>";
+			content = `<div class='row'>
+							<div class='col s3 m2 l2'>
+								<img src='../assets/images/avatar.jpg' alt='Employee logo' class='circle center responsive-img valign profile-image'>
+							</div>
+							<div class='col s9 m10 l10'>
+								<ul class='collection with-header'>
+									<li class='collection-header'>
+										<h4>${data[0][6]} ${data[0][5]} <small> ${data[0][1]} </small></h4>
+									</li>
+									<li class='collection-item'>
+							    		<div><i class='mdi-action-perm-identity cyan-text text-darken-2'></i> ${position}</div>
+									</li>
+									<li class='collection-item'>
+							    		<div><i class='mdi-action-perm-phone-msg cyan-text text-darken-2'></i> ${contactNumber}</div>
+									</li>
+									<li class='collection-item'>
+							    		<div><i class='mdi-communication-email cyan-text text-darken-2'></i> ${data[0][12]}</div>
+									</li>
+									<li class='collection-item'>
+							    		<div><i class='mdi-action-room cyan-text text-darken-2'></i> ${address}</div>
+									</li>
+									<li class='collection-item'>
+							    		<div><i class='mdi-social-cake cyan-text text-darken-2'></i> ${data[0][10]}</div>
+									</li>
+								</ul>
+							</div>
+						</div>`;
 			$("#modal_popUp .modal-content").html(content);
-			$('#modal_popUp').openModal('show');			
+			$('#modal_popUp').modal('open');			
 		});
 	},	
 	sendAccount:function(count){
@@ -1525,15 +1547,15 @@ client = {
 		data.done(function(data){
 			data = JSON.parse(data);
 			if(data.length>0){
-				content = "<div class='card-panel' style='margin-top: 0px;'>"+
-							"	<div class='row'>"+
-							"		<div class='center-align'>"+
-							"			<div class='col s12'>"+
-							"				<p>Sending employee account confirmation. <span class='counter'>0/0</span><br/>Please do not interrupt.<br/><br/><span class='loader'></span></p>"+
-							"			</div>"+
-							"		</div>"+
-							"	</div>"+
-							"</div>";
+				content = `<div class='card-panel' style='margin-top: 0px;'>
+								<div class='row'>
+									<div class='center-align'>
+										<div class='col s12'>
+											<p>Sending employee account confirmation. <span class='counter'>0/0</span><br/>Please do not interrupt.<br/><br/><span class='loader'></span></p>
+										</div>
+									</div>
+								</div>
+							</div>`;
 				$("#confirmList").html(content);
 				$("#confirmList p span.counter").html(data.length+" left");
 				var data = system.xml("pages.xml");
@@ -1544,9 +1566,6 @@ client = {
 					client.sendConfirm(id);
 				});
 			}
-			// else{
-			// 	Materialize.toast('Saved.',4000);
-			// }
 		});			
 	},
 	sendConfirm:function(id){
@@ -1568,6 +1587,649 @@ client = {
 	}
 }
 
+product = {
+	ini:function(){
+		this.add();
+		this.list();
+	},
+	refresh:function(){
+	    var hash = window.location.hash;
+	    var hash = hash.split(';');
+	    var id = hash[2];
+		product.display(id);
+	},
+	get:function(){
+		var data = system.html('../assets/harmony/Process.php?get-products');
+		return data;
+	},
+	display:function(id){
+		var content = "", image = "", productImage = '',chips = [],chipsContent = "";
+		var data = system.ajax('../assets/harmony/Process.php?get-productDetails',id);
+		data.done(function(data){
+			data = JSON.parse(data);
+			productImage = ((data[0][10] == "") || (data[0][10] == null))?"default.png":data[0][10];
+			if(data[0][4].length>0){
+				if(data[0][4][0] == "["){
+					chips = JSON.parse(data[0][4]);
+					$.each(chips,function(i,v){
+						chipsContent += "<div class='chip'>"+v+"</div>";
+					});
+				}
+				else{
+					chipsContent = data[0][4];
+				}
+			}
+			else{
+				chipsContent = "No category";				
+			}
+
+			image = `<div class='card-profile-image'>
+					  	<img class='activator' width='100%' draggable='false' src='../assets/images/products/${productImage}' alt='product-img'>
+					  	<a data-cmd='updateProductPicture' data-value='${productImage}' data-node='${data[0][0]}' data-prop='Picture' class='btn waves-effect white-text no-shadow black' style='font-size: 10px;z-index: 1;padding: 0 12px;top: -36px;'>Change</a>
+					</div>`;
+			content = `
+					<table>
+						<tr>
+							<td class='bold'>Product:</td>
+							<td class='grey-text'>${data[0][1]}</td>
+							<td>
+								<a data-cmd='updateProduct' data-value='${data[0][1]}' data-node='${data[0][0]}' data-prop='Product' class='right tooltipped btn-floating waves-effect no-shadow white right' data-position='left' data-delay='0' data-tooltip='Update'>
+									<i class='material-icons right black-text hover'>mode_edit</i>
+								</a>
+							</td>
+						</tr>
+						<tr>
+							<td class='bold'>Price:</td>
+							<td class='grey-text'>${data[0][3]}</td>
+							<td>
+								<a data-cmd='updateProduct' data-value='${data[0][3]}' data-node='${data[0][0]}' data-prop='Price' class='right tooltipped btn-floating waves-effect no-shadow white right' data-position='left' data-delay='0' data-tooltip='Update'>
+									<i class='material-icons right black-text hover'>mode_edit</i>
+								</a>
+							</td>
+						</tr>
+						<tr>
+							<td class='bold'>Quantity:</td>
+							<td class='grey-text'>${data[0][2]}</td>
+							<td>
+								<a data-cmd='updateProduct' data-value='${data[0][2]}' data-node='${data[0][0]}' data-prop='SKU' class='right tooltipped btn-floating waves-effect no-shadow white right' data-position='left' data-delay='0' data-tooltip='Update'>
+									<i class='material-icons right black-text hover'>mode_edit</i>
+								</a>
+							</td>
+						</tr>
+						<tr>
+							<td class='bold'>Categories:</td>
+							<td class='grey-text'>${chipsContent}</td>
+							<td>
+								<a data-cmd='updateProduct' data-value='${data[0][4]}' data-node='${data[0][0]}' data-prop='Categories' class='right tooltipped btn-floating waves-effect no-shadow white right' data-position='left' data-delay='0' data-tooltip='Update'>
+									<i class='material-icons right black-text hover'>mode_edit</i>
+								</a>
+							</td>
+						</tr>
+						<tr>
+							<td class='bold' style='vertical-align:baseline;'>Description:</td>
+							<td class='grey-text'>${data[0][5]}</td>
+							<td>
+								<a data-cmd='updateProduct' data-value='${data[0][5]}' data-node='${data[0][0]}' data-prop='Description' class='right tooltipped btn-floating waves-effect no-shadow white right' data-position='left' data-delay='0' data-tooltip='Update'>
+									<i class='material-icons right black-text hover'>mode_edit</i>
+								</a>
+							</td>
+						</tr>
+						<tr>
+							<td class='bold'>Status:</td>
+							<td class='grey-text'>${data[0][6]}</td>
+							<td>
+								<a data-cmd='updateProduct' data-value='${data[0][6]}' data-node='${data[0][0]}' data-prop='Status' class='right tooltipped btn-floating waves-effect no-shadow white right' data-position='left' data-delay='0' data-tooltip='Update'>
+									<i class='material-icons right black-text hover'>mode_edit</i>
+								</a>
+							</td>
+						</tr>
+						<tr>
+							<td class='bold'>Date added:</td>
+							<td class='grey-text'>${data[0][7]}</td>
+							<td></td>
+						</tr>
+					</table>`;
+			$("#product").html(`<div class='col s12 m3 l3' style='padding-top: 0.5rem;'>${image}</div><div class='col s12 m9 l9'>${content}</div>`);
+			
+			$("a[data-cmd='updateProduct']").on('click',function(){
+				var data = $(this).data();
+				data = [data.node,data.prop,data.value];
+				product.update(id,data);
+			});
+
+			$("a[data-cmd='updateProductPicture']").on('click',function(){
+				var data = $(this).data();
+				data = [data.node,data.prop,data.value];
+				product.updatePicture(id,data);
+			})
+		});
+	},
+	update:function(id,data){
+		console.log(data);
+		if(data[1] == "Product"){
+			var content = `<h4>Change ${data[1]}</h4>
+						  <form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>
+						  		<div class='col s12'>
+						  			<label for='field_product'>Product Name: </label>
+						  			<input id='field_product' type='text' name='field_product' data-error='.error_product' value='${data[2]}'>
+						  			<div class='error_product'></div>
+						  		</div>
+						  		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>
+						  		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>
+						  </form>`;
+			$("#modal_confirm .modal-content").html(content);
+			$('#modal_confirm').modal('open');			
+			$("#form_update").validate({
+			    rules: {
+			        field_product: {required: true,maxlength: 50},
+			    },
+			    errorElement : 'div',
+			    errorPlacement: function(error, element) {
+					var placement = $(element).data('error');
+					if(placement){
+						$(placement).append(error)
+					} 
+					else{
+						error.insertAfter(element);
+					}
+				},
+				submitHandler: function (form) {
+					var _form = $(form).serializeArray();
+					if(data[2] == _form[0]['value']){
+						Materialize.toast('You did not even change the product name.',4000);
+					}
+					else{
+						var ajax = system.ajax('../assets/harmony/Process.php?update-product',[id,_form]);
+						ajax.done(function(ajax){
+							console.log(ajax);
+							if(ajax == 1){
+								system.clearForm();
+								Materialize.toast('Product updated.',4000);
+								$('#modal_confirm').modal('close');	
+								product.refresh();
+							}
+							else{
+								Materialize.toast('Cannot process request.',4000);
+							}
+						});
+					}
+			    }
+			}); 
+		}	
+		else if(data[1] == "Price"){
+			var content = `<h4>Change ${data[1]}</h4>
+						  <form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>
+						  		<div class='col s12'>
+						  			<label for='field_price'>Price: </label>
+						  			<input id='field_price' type='number' name='field_price' data-error='.error_price' value='${data[2]}'>
+						  			<div class='error_price'></div>
+						  		</div>
+						  		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>
+						  		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>
+						  </form>`;
+			$("#modal_confirm .modal-content").html(content);
+			$('#modal_confirm').modal('open');			
+			$("#form_update").validate({
+			    rules: {
+			        field_price: {required: true,maxlength: 50,checkCurrency:true},
+			    },
+			    errorElement : 'div',
+			    errorPlacement: function(error, element) {
+					var placement = $(element).data('error');
+					if(placement){
+						$(placement).append(error)
+					} 
+					else{
+						error.insertAfter(element);
+					}
+				},
+				submitHandler: function (form) {
+					var _form = $(form).serializeArray();
+					if(data[2] == _form[0]['value']){
+						Materialize.toast('You did not even change the product name.',4000);
+					}
+					else{
+						var ajax = system.ajax('../assets/harmony/Process.php?update-product',[id,_form]);
+						ajax.done(function(ajax){
+							if(ajax == 1){
+								system.clearForm();
+								Materialize.toast('Product updated.',4000);
+								$('#modal_confirm').modal('close');	
+								product.refresh();
+							}
+							else{
+								Materialize.toast('Cannot process request.',4000);
+							}
+						});
+					}
+			    }
+			}); 
+		}			
+		else if(data[1] == "SKU"){
+			var content = `<h4>Change ${data[1]}</h4>
+						  <form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>
+						  		<div class='col s12'>
+						  			<label for='field_qty'>SKU: </label>
+						  			<input id='field_qty' type='number' name='field_qty' data-error='.error_qty' value='${data[2]}'>
+						  			<div class='error_qty'></div>
+						  		</div>
+						  		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>
+						  		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>
+						  </form>`;
+			$("#modal_confirm .modal-content").html(content);
+			$('#modal_confirm').modal('open');			
+			$("#form_update").validate({
+			    rules: {
+			        field_qty: {required: true,maxlength: 50,checkPositiveNumber:true},
+			    },
+			    errorElement : 'div',
+			    errorPlacement: function(error, element) {
+					var placement = $(element).data('error');
+					if(placement){
+						$(placement).append(error)
+					} 
+					else{
+						error.insertAfter(element);
+					}
+				},
+				submitHandler: function (form) {
+					var _form = $(form).serializeArray();
+					if(data[2] == _form[0]['value']){
+						Materialize.toast('You did not even change the product name.',4000);
+					}
+					else{
+						var ajax = system.ajax('../assets/harmony/Process.php?update-product',[id,_form]);
+						ajax.done(function(ajax){
+							console.log(ajax);
+							if(ajax == 1){
+								system.clearForm();
+								Materialize.toast('Product updated.',4000);
+								$('#modal_confirm').modal('close');	
+								product.refresh();
+							}
+							else{
+								Materialize.toast('Cannot process request.',4000);
+							}
+						});
+					}
+			    }
+			}); 
+		}			
+		else if(data[1] == "Categories"){
+			var content = `<h4>Change ${data[1]}</h4>
+						  <form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>
+						  		<div class='col s12'>
+						  			<label for='field_categories'>Price: </label>
+						  			<input id='field_categories' type='text' length='100' name='field_categories' data-error='.error_categories' value='${data[2]}'>
+						  			<div class='error_categories'></div>
+						  		</div>
+						  		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>
+						  		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>
+						  </form>`;
+			$("#modal_confirm .modal-content").html(content);
+			$('#modal_confirm').modal('open');		
+
+			$('input#field_categories').materialtags();
+		    $('.chip i').removeClass('material-icons').addClass('mdi-navigation-close').html("");
+			$('input#field_categories').on('itemAdded', function(event) {
+			    $('.chip i').removeClass('material-icons').addClass('mdi-navigation-close').html("");
+			});
+
+			$("#form_update").validate({
+			    rules: {
+			        field_categories: {required: true,maxlength: 50,checkCurrency:true},
+			    },
+			    errorElement : 'div',
+			    errorPlacement: function(error, element) {
+					var placement = $(element).data('error');
+					if(placement){
+						$(placement).append(error)
+					} 
+					else{
+						error.insertAfter(element);
+					}
+				},
+				submitHandler: function (form) {
+					$('input.n-tag').val("");
+					var _form = $('input#field_categories').materialtags('items');
+					if((_form.length == 1) && (data[2] == _form[0])){
+						Materialize.toast('You did not even change the product name.',4000);
+					}
+					else{
+						var ajax = system.ajax('../assets/harmony/Process.php?update-product',[id,[{'name':'field_categories','value':JSON.stringify(_form)}]]);
+						ajax.done(function(ajax){
+							console.log(ajax);
+							if(ajax == 1){
+								system.clearForm();
+								Materialize.toast('Product updated.',4000);
+								$('#modal_confirm').modal('close');	
+								product.refresh();
+							}
+							else{
+								Materialize.toast('Cannot process request.',4000);
+							}
+						});
+					}
+			    }
+			}); 
+		}			
+		else if(data[1] == "Description"){
+			var content = `<h4>Change ${data[1]}</h4>
+						  <form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>
+						  		<div class='row'>
+						  			<div class='col s12'>
+						  				<label for='field_price'>Price: </label>
+						  				<textarea class='materialize-textarea' id='field_description' data-field='field_description' data-error='.error_description' name='field_description'>${data[2]}</textarea>
+						  				<div class='error_description'></div>
+						  			</div>
+						  		</div>
+						  		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>
+						  		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>
+						  </form>`;
+			$("#modal_popUp .modal-content").html(content);
+			$('#modal_popUp').modal('open');
+
+			system.froala("#field_description");
+
+			$("#form_update").validate({
+			    rules: {
+			        field_description: {required: true,maxlength: 1000},
+			    },
+			    errorElement : 'div',
+			    errorPlacement: function(error, element) {
+					var placement = $(element).data('error');
+					if(placement){
+						$(placement).append(error)
+					} 
+					else{
+						error.insertAfter(element);
+					}
+				},
+				submitHandler: function (form) {
+					var _form = $(form).serializeArray();
+					if(data[2] == _form[0]['value']){
+						Materialize.toast('You did not even change the product name.',4000);
+					}
+					else{
+						var ajax = system.ajax('../assets/harmony/Process.php?update-product',[id,_form]);
+						ajax.done(function(ajax){
+							console.log(ajax);
+							if(ajax == 1){
+								system.clearForm();
+								Materialize.toast('Description is updated.',4000);
+								$('#modal_popUp').modal('close');	
+								product.refresh();
+							}
+							else{
+								Materialize.toast('Cannot process request.',4000);
+							}
+						});
+					}
+			    }
+			}); 
+		}			
+		else if(data[1] == "Status"){
+			var content = `<h4>Change Status</h4>
+						  <form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>
+						  		<div class='col s12'>
+						  		<label for='field_status' class='active'>Gender: </label>
+						  		<select name='field_status'>
+						  			<option selected>Published</option>
+						  			<option>Pending</option>
+						  		</select>
+						  		</div>
+						  		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>
+						  		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>
+						  </form>`;
+			$("#modal_confirm .modal-content").html(content);
+			$('#modal_confirm').modal('open');			
+		    $("select").material_select();
+			$("#form_update").validate({
+			    rules: {
+			        field_status: {required: true,maxlength: 50},
+			    },
+			    errorElement : 'div',
+			    errorPlacement: function(error, element) {
+					var placement = $(element).data('error');
+					if(placement){
+						$(placement).append(error)
+					} 
+					else{
+						error.insertAfter(element);
+					}
+				},
+				submitHandler: function (form) {
+					var _form = $(form).serializeArray();
+					var ajax = system.ajax('../assets/harmony/Process.php?update-product',[id,_form]);
+					ajax.done(function(ajax){
+						console.log(ajax);
+						if(ajax == 1){
+							system.clearForm();
+							Materialize.toast('status is updated.',4000);
+							$('#modal_confirm').modal('close');	
+								product.refresh();
+						}
+						else{
+							Materialize.toast('Cannot process request.',4000);
+						}
+					});
+			    }
+			}); 
+		}
+	},
+	updatePicture:function(id,data){
+		var picture = `../assets/images/products/${data[2]}`;
+		var content = `<h4>Change product image</h4>
+						<div class='row'>
+							<div class='col s12'>
+								<div id='profile_picture2' class='ibox-content no-padding border-left-right '></div>
+							</div>
+						</div>`;
+		$("#modal_confirm .modal-content").html(content);
+		$('#modal_confirm .modal-footer').html("");			
+		$('#modal_confirm').modal('open');			
+
+		var content =   `<div class='image-crop col s12' style='margin-bottom:5px;'>
+							<img width='100%' src='${picture}'>
+						</div>
+						<div class='btn-group col s12'>
+							<label for='inputImage' class='btn blue btn-floating btn-flat tooltipped' data-tooltip='Load image' data-position='top'>
+								<input type='file' accept='image/*' name='file' id='inputImage' class='hide'>
+								<i class='material-icons right hover white-text'>portrait</i>
+							</label>
+							<button class='btn blue btn-floating btn-flat tooltipped' data-cmd='cancel' type='button' data-tooltip='Cancel' data-position='top'>
+								<i class='material-icons right hover white-text'>close</i>
+							</button>
+							<button class='btn blue btn-floating btn-flat hidden tooltipped right' data-cmd='save' type='button' data-tooltip='Save' data-position='top'>
+								<i class='material-icons right hover white-text'>save</i>
+							</button>
+						</div>`;
+		$("#profile_picture2").html(content);
+		$('.tooltipped').tooltip({delay: 50});
+
+        var $inputImage = $("#inputImage");
+        var status = true;
+        if(window.FileReader){
+            $inputImage.change(function() {
+                var fileReader = new FileReader(),
+                        files = this.files,
+                        file;
+
+                file = files[0];
+
+                if (/^image\/\w+$/.test(file.type)) {
+                    fileReader.readAsDataURL(file);
+                    fileReader.onload = function () {
+                        $inputImage.val("");
+
+			            var $image = $(".image-crop > img")
+			            $($image).cropper({
+			            	aspectRatio: 1/1,
+						    autoCropArea: 0.80,
+						    preview: ".avatar-preview",
+						    built: function () {
+		    		    		$(".cropper-container").attr({'style':'left:0px !important;top:0px;width:100%;height:100%;'});
+
+						    	$("button[data-cmd='save']").removeClass('hidden');
+						    	$("button[data-cmd='rotate']").removeClass('hidden');
+						    	
+					            $("button[data-cmd='save']").click(function(){									    	
+							    	$(this).html("<i class='mdi-action-cached icon-spin'></i>").addClass('disabled');
+							    	if(status){
+										var ajax = system.ajax('../assets/harmony/Process.php?update-productPicture',[id,$image.cropper("getDataURL")]);
+										ajax.done(function(ajax){
+											console.log(ajax);
+											if(ajax == 1){
+												Materialize.toast('Picture has been changed.',4000);
+												$('#modal_confirm').modal('close');	
+												product.refresh();
+											}
+											else{
+												Materialize.toast('Cannot process request.',4000);
+											}
+										});
+							    		status = false;
+							    	}
+					            });
+						    }
+						});
+                        $image.cropper("reset", true).cropper("replace", this.result);
+			            $("button[data-cmd='rotate']").click(function(){
+			            	var data = $(this).data('option');
+				        	$image.cropper('rotate', data);
+			            });
+                    };
+                }
+                else{
+                    showMessage("Please choose an image file.");
+                }
+            });
+        }
+        else{
+            $inputImage.addClass("hide");
+        }	            
+        $("button[data-cmd='cancel']").click(function(){
+			$('#modal_confirm').modal('close');	
+        });
+	},
+	list:function(){
+		var content = "", chips = [],chipsContent = "";
+		var data = product.get();
+		data = JSON.parse(data.responseText);
+		$.each(data,function(i,v){
+			var prodPicture = ((v[10] == "") || (v[10] == null))?"default.png":v[10];
+			content += `<tr>
+							<td width='1px'>${(i+1)}. </td>
+							<td><img src='../assets/images/products/${prodPicture}' alt='${v[1]} Picture' class='valign profile-image' height='50px'></td>
+							<td width='300px'>${v[1]}</td>
+							<td>${v[2]}</td>
+							<td>${v[3]}</td>
+							<td>published</td>
+							<td width='1px'>
+								<a href='#cmd=index;content=focusProduct;${v[0]}' class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='0' data-tooltip='Show Details' data-cmd='update'>
+								<i class='material-icons right hover black-text'>more_vert</i>
+								</a>
+							</td>
+						</tr>`;
+		});
+
+		content = `<table class='table bordered center' id='products'>
+					<thead>
+						<tr>
+							<th>#</th><th>Thumbnail</th><th>Product</th><th>Qty</th><th>Price</th><th>Status</th><th></th>
+						</tr>
+					</thead>
+					</tbody>${content}</tbody>
+					</table>`;
+		$("#display_productList").html(content);
+
+		var table = $('#products').DataTable({
+	        "order": [[ 0, 'asc' ]],
+	        "drawCallback": function ( settings ) {
+	            var api = this.api();
+	            var rows = api.rows( {page:'current'} ).nodes();
+	            var last=null;
+	        }
+	    });
+	},
+	listGrid:function(){
+		var data = system.xml("pages.xml");
+		var _content = "";
+		$(data.responseText).find("product").each(function(i,content){
+			console.log();
+			for(x=0;x<=100;x++){
+				_content += content.innerHTML;
+			}
+			$("#products").html(_content);
+		});
+	},
+	add:function(){
+		$("#add_product").on('click',function(){
+			var data = system.xml("pages.xml");
+			$(data.responseText).find("addProduct").each(function(i,content){
+				$("#modal_popUp .modal-content").html(content);
+				$('#modal_popUp').modal('open');
+
+				$("#form_addProduct").validate({
+				    rules: {
+				        field_productName: {required: true,maxlength: 50},
+				        field_qty: {required: true,maxlength: 50,checkPositiveNumber:true},
+				        field_price: {required: true,maxlength: 50,checkCurrency:true},
+				        field_description: {required: true,maxlength: 900},
+				        field_category: {required: false},
+				    },
+				    errorElement : 'div',
+				    errorPlacement: function(error, element) {
+						var placement = $(element).data('error');
+						if(placement){
+							$(placement).append(error)
+						} 
+						else{
+							error.insertAfter(element);
+						}
+					},
+					submitHandler: function (form) {
+						var _form = $(form).serializeArray();
+						var data = system.ajax('../assets/harmony/Process.php?set-newProductAdmin',_form);
+						data.done(function(data){
+							data = JSON.parse(data);
+							if(data[0] == 1){
+								$('#modal_popUp').modal('close');	
+								Materialize.toast('Saved.',4000);
+								system.clearForm();
+						    	$(location).attr('href',`#cmd=index;content=focusProduct;${data[1]}`);			
+							}
+							else{
+								Materialize.toast('Cannot process request.',4000);
+							}
+						});
+				    }
+				});
+			});
+		})
+	},
+	addBrands:function(){
+
+	},
+	getBrands:function(){
+		var data = system.html('../assets/harmony/Process.php?get-products');
+		return data;
+	},
+	listBrands:function(data){
+
+	},
+	getCategory:function(){
+
+	},
+	listCategory:function(){
+
+	},
+	addCategory:function(){
+
+	}
+}
+
+// es6 above
 employee = {
 	get:function(){
 		var data = system.html('../assets/harmony/Process.php?get-employee');
@@ -1578,7 +2240,7 @@ employee = {
 		$(data.responseText).find("addEmployee").each(function(i,content){
 			console.log("xxx");
 			$("#modal_popUp .modal-content").html(content);
-			$('#modal_popUp').openModal('show');		
+			$('#modal_popUp').modal('open');		
 		    $("select").material_select();
 
 			$("#form_addEmployee").validate({
@@ -1823,7 +2485,7 @@ employee = {
 							  "		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>"+
 							  "</form>";
 				$("#modal_confirm .modal-content").html(content);
-				$('#modal_confirm').openModal('show');			
+				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
 				        field_gname: {required: true,maxlength: 50},
@@ -1848,7 +2510,7 @@ employee = {
 							if(data == 1){
 								system.clearForm();
 								Materialize.toast('Name updated.',4000);
-								$('#modal_confirm').closeModal();	
+								$('#modal_confirm').modal('close');	
 								App.handleLoadPage("#cmd=index;content=focusEmployee;"+id);
 							}
 							else{
@@ -1859,7 +2521,7 @@ employee = {
 				}); 
 			}			
 			else if(data.prop == "Nickname"){
-				$('#modal_confirm').openModal('show');			
+				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
 				        field_Nickname: {required: true,maxlength: 50},
@@ -1882,7 +2544,7 @@ employee = {
 							if(data == 1){
 								system.clearForm();
 								Materialize.toast('Name updated.',4000);
-								$('#modal_confirm').closeModal();	
+								$('#modal_confirm').modal('close');	
 								App.handleLoadPage("#cmd=index;content=focusEmployee;"+id);
 							}
 							else{
@@ -1893,7 +2555,7 @@ employee = {
 				}); 
 			}			
 			else if(data.prop == "Position"){
-				$('#modal_confirm').openModal('show');			
+				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
 				        field_Nickname: {required: true,maxlength: 50},
@@ -1916,7 +2578,7 @@ employee = {
 							if(data == 1){
 								system.clearForm();
 								Materialize.toast('Name updated.',4000);
-								$('#modal_confirm').closeModal();	
+								$('#modal_confirm').modal('close');	
 								App.handleLoadPage("#cmd=index;content=focusEmployee;"+id);
 							}
 							else{
@@ -1927,7 +2589,7 @@ employee = {
 				}); 
 			}			
 			else if(data.prop == "Phone"){
-				$('#modal_confirm').openModal('show');			
+				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
 				        field_Name: {required: true,maxlength: 50},
@@ -1950,7 +2612,7 @@ employee = {
 							if(data == 1){
 								system.clearForm();
 								Materialize.toast('Name updated.',4000);
-								$('#modal_confirm').closeModal();	
+								$('#modal_confirm').modal('close');	
 								App.handleLoadPage("#cmd=index;content=focusEmployee;"+id);
 							}
 							else{
@@ -1961,7 +2623,7 @@ employee = {
 				}); 
 			}			
 			else if(data.prop == "Email"){
-				$('#modal_confirm').openModal('show');			
+				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
 				        field_Email: {required: true,maxlength: 50,checkEmail:true},
@@ -1984,7 +2646,7 @@ employee = {
 							if(data == 1){
 								system.clearForm();
 								Materialize.toast('Email updated.',4000);
-								$('#modal_confirm').closeModal();	
+								$('#modal_confirm').modal('close');	
 								App.handleLoadPage("#cmd=index;content=focusEmployee;"+id);
 							}
 							else{
@@ -1995,7 +2657,7 @@ employee = {
 				}); 
 			}
 			else if(data.prop == "Address"){
-				$('#modal_confirm').openModal('show');			
+				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
 				        field_Email: {required: true,maxlength: 50,checkEmail:true},
@@ -2018,7 +2680,7 @@ employee = {
 							if(data == 1){
 								system.clearForm();
 								Materialize.toast('Address updated.',4000);
-								$('#modal_confirm').closeModal();	
+								$('#modal_confirm').modal('close');	
 								App.handleLoadPage("#cmd=index;content=focusEmployee;"+id);
 							}
 							else{
@@ -2042,7 +2704,7 @@ employee = {
 							  "		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>"+
 							  "</form>";
 				$("#modal_confirm .modal-content").html(content);
-				$('#modal_confirm').openModal('show');			
+				$('#modal_confirm').modal('open');			
 			    $("select").material_select();
 				$("#form_update").validate({
 				    rules: {
@@ -2066,7 +2728,7 @@ employee = {
 							if(data == 1){
 								system.clearForm();
 								Materialize.toast('Gender updated.',4000);
-								$('#modal_confirm').closeModal();	
+								$('#modal_confirm').modal('close');	
 								App.handleLoadPage("#cmd=index;content=focusEmployee;"+id);
 							}
 							else{
@@ -2086,7 +2748,7 @@ employee = {
 							  "		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>"+
 							  "</form>";
 				$("#modal_confirm .modal-content").html(content);
-				$('#modal_confirm').openModal('show');			
+				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
 				        field_dob: {required: true,maxlength: 50,checkDate:true},
@@ -2109,7 +2771,7 @@ employee = {
 							if(data == 1){
 								system.clearForm();
 								Materialize.toast('Date of birth updated.',4000);
-								$('#modal_confirm').closeModal();	
+								$('#modal_confirm').modal('close');	
 								App.handleLoadPage("#cmd=index;content=focusEmployee;"+id);
 							}
 							else{
@@ -2136,7 +2798,7 @@ employee = {
 			$("#modal_confirm .modal-content").html(content);
 			$('#modal_confirm').removeClass('modal-fixed-footer');			
 			$('#modal_confirm .modal-footer').remove();			
-			$('#modal_confirm').openModal('show');			
+			$('#modal_confirm').modal('open');			
 
     		var content =   "<div class='image-crop col s12' style='margin-bottom:5px;'>"+
 							"	<img width='100%' src='"+picture+"'>"+
@@ -2190,7 +2852,7 @@ employee = {
 												Materialize.toast('Picture has been changed.',4000);
 												system.clearForm();
 												App.handleLoadPage("#cmd=index;content=focusEmployee;"+id);
-												$('#modal_confirm').closeModal();	
+												$('#modal_confirm').modal('close');	
 											});
 								    		status = false;
 								    	}
@@ -2216,7 +2878,7 @@ employee = {
                 $inputImage.addClass("hide");
             }	            
             $("button[data-cmd='cancel']").click(function(){
-				$('#modal_confirm').closeModal();	
+				$('#modal_confirm').modal('close');	
             });
 		});
 	},
@@ -2229,7 +2891,7 @@ employee = {
 			$("#modal_confirm .modal-content").html(content);
 			$("#modal_confirm .modal-footer").html("<a class='waves-effect waves-red red white-text btn-flat modal-action modal-close'>Cancel</a>"+
 												   "<a data-cmd='button_proceed' class='waves-effect waves-grey btn-flat modal-action'>Proceed</a>");
-			$('#modal_confirm').openModal('show');			
+			$('#modal_confirm').modal('open');			
 
 			$("a[data-cmd='button_proceed']").on("click",function(){
 				var remarks = $("textarea[data-field='field_description']").val();
@@ -2247,7 +2909,7 @@ employee = {
 							Materialize.toast('Account deactivaded.',4000);
 							system.clearForm();
 							App.handleLoadPage("#cmd=index;content=focusEmployee");
-							$('#modal_confirm').closeModal();	
+							$('#modal_confirm').modal('close');	
 						}
 						else{
 							Materialize.toast('Cannot process request.',4000);
@@ -2263,7 +2925,7 @@ employee = {
 			$("#modal_confirm .modal-content").html("Arey you sure ACTIVATE "+$(this).data('name')+"'s account?");
 			$("#modal_confirm .modal-footer").html("<a class='waves-effect waves-red red white-text btn-flat modal-action modal-close'>Cancel</a>"+
 												   "<a data-cmd='button_proceed' class='waves-effect waves-grey btn-flat modal-action modal-close'>Proceed</a>");
-			$('#modal_confirm').openModal('show');			
+			$('#modal_confirm').modal('open');			
 
 			$("a[data-cmd='button_proceed']").on("click",function(){
 				var data = system.ajax('../assets/harmony/Process.php?activate-employee',id);
@@ -2272,7 +2934,7 @@ employee = {
 						Materialize.toast('Account activaded.',4000);
 						system.clearForm();
 						App.handleLoadPage("#cmd=index;content=focusClient");
-						$('#modal_confirm').closeModal();	
+						$('#modal_confirm').modal('close');	
 					}
 					else{
 						Materialize.toast('Cannot process request.',4000);
@@ -2396,7 +3058,7 @@ employee = {
 						$('#modal_popUp .modal-content').html('<strong>Order ID:</strong> '+data.meta[0]+'<br/><strong>Order Date:</strong> '+data.meta[1]+'<br/>\n<strong>Order Delivered:</strong> '+data.meta[2]+'<br/>\n<strong>Status:</strong> '+data.meta[3]+'');			
 						$("#modal_popUp .modal-footer").before("<table class='striped bordered highlight'>"+content+"<tr><td colspan='4'><strong class='right' >Total</strong></td><td class='center'>"+subTotal+"</td></tr></table>");
 						$("#modal_popUp .modal-footer").html("<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Close</a>");
-						$('#modal_popUp').openModal('show');			
+						$('#modal_popUp').modal('open');			
 
 						console.log(orders);
 					});
@@ -2577,7 +3239,7 @@ points = {
 			var data = system.xml("pages.xml");
 			$(data.responseText).find("addPoints").each(function(i,content){
 				$("#modal_popUp .modal-content").html(content);
-				$('#modal_popUp').openModal('show');	
+				$('#modal_popUp').modal('open');	
 
 				$("#form_addPoints").validate({
 				    rules: {
@@ -2760,648 +3422,6 @@ points = {
 	}
 }
 
-product = {
-	ini:function(){
-		this.add();
-		this.list();
-	},
-	get:function(){
-		var data = system.html('../assets/harmony/Process.php?get-products');
-		return data;
-	},
-	display:function(id){
-		var content = "", image = "", productImage = '',chips = [],chipsContent = "";
-		var data = system.ajax('../assets/harmony/Process.php?get-productDetails',id);
-		data.done(function(data){
-			data = JSON.parse(data);
-
-			productImage = ((data[0][10] == "") || (data[0][10] == null))?"default.png":data[0][10];
-			if(data[0][4].length>0){
-				if(data[0][4][0] == "["){
-					chips = JSON.parse(data[0][4]);
-					$.each(chips,function(i,v){
-						chipsContent += "<div class='chip'>"+v+"</div>";
-					});
-				}
-				else{
-					chipsContent = data[0][4];
-				}
-			}
-			else{
-				chipsContent = "No category";				
-			}
-
-			image = "	<div class='card-profile-image'>"+
-					"   	<img class='activator' width='100%' draggable='false' src='../assets/images/products/"+productImage+"' alt='product-img'>"+
-					"   	<a data-cmd='updateProductPicture' data-value='"+productImage+"' data-node='"+data[0][0]+"' data-prop='Picture' class='btn waves-effect white-text no-shadow black' style='font-size: 10px;z-index: 1;padding: 0 12px;top: -36px;'>Change</a>"+
-					"	</div>";
-			content = "<ul id='task-card' class='collection with-header'>"+
-						"    <li class='collection-header'>"+
-						"		<div class='row'>"+
-						"			<div class='col s10'>"+
-						"    			<strong>Product:</strong>"+data[0][1]+
-						"			</div>"+
-						"			<div class='col s2'>"+
-						"				<a data-cmd='updateProduct' data-value='"+data[0][1]+"' data-node='"+data[0][0]+"' data-prop='Product' class='right tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='0' data-tooltip='Update'>"+
-						"					<i class='mdi-editor-mode-edit right black-text'></i>"+
-						"				</a>"+
-						"			</div>"+
-						"		</div>"+
-						"    </li>"+
-						"    <li class='collection-header'>"+
-						"		<div class='row'>"+
-						"			<div class='col s10'>"+
-						"    			<strong>Price:</strong>"+data[0][3]+
-						"			</div>"+
-						"			<div class='col s2'>"+
-						"				<a data-cmd='updateProduct' data-value='"+data[0][3]+"' data-node='"+data[0][0]+"' data-prop='Price' class='right tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='0' data-tooltip='Update'>"+
-						"					<i class='mdi-editor-mode-edit right black-text'></i>"+
-						"				</a>"+
-						"			</div>"+
-						"		</div>"+
-						"    </li>"+
-						"    <li class='collection-header'>"+
-						"		<div class='row'>"+
-						"			<div class='col s10'>"+
-						"    			<strong>SKU:</strong>"+data[0][2]+
-						"			</div>"+
-						"			<div class='col s2'>"+
-						"				<a data-cmd='updateProduct' data-value='"+data[0][2]+"' data-node='"+data[0][0]+"' data-prop='SKU' class='right tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='0' data-tooltip='Update'>"+
-						"					<i class='mdi-editor-mode-edit right black-text'></i>"+
-						"				</a>"+
-						"			</div>"+
-						"		</div>"+
-						"    </li>"+
-						"    <li class='collection-header'>"+
-						"		<div class='row'>"+
-						"			<div class='col s10'>"+
-						"    			<strong>Categories:</strong>"+chipsContent+
-						"			</div>"+
-						"			<div class='col s2'>"+
-						"				<a data-cmd='updateProduct' data-value='"+data[0][4]+"' data-node='"+data[0][0]+"' data-prop='Categories' class='right tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='0' data-tooltip='Update'>"+
-						"					<i class='mdi-editor-mode-edit right black-text'></i>"+
-						"				</a>"+
-						"			</div>"+
-						"		</div>"+
-						"    </li>"+
-						"    <li class='collection-header'>"+
-						"		<div class='row'>"+
-						"			<div class='col s10'>"+
-						"    			<strong>Description:</strong>"+data[0][5]+
-						"			</div>"+
-						"			<div class='col s2'>"+
-						"				<a data-cmd='updateProduct' data-value='"+data[0][5]+"' data-node='"+data[0][0]+"' data-prop='Description' class='right tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='0' data-tooltip='Update'>"+
-						"					<i class='mdi-editor-mode-edit right black-text'></i>"+
-						"				</a>"+
-						"			</div>"+
-						"		</div>"+
-						"    </li>"+
-						"    <li class='collection-header'>"+
-						"		<div class='row'>"+
-						"			<div class='col s10'>"+
-						"    			<strong>Status:</strong>"+data[0][6]+
-						"			</div>"+
-						"			<div class='col s2'>"+
-						"				<a data-cmd='updateProduct' data-value='"+data[0][6]+"' data-node='"+data[0][0]+"' data-prop='Status' class='right tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='0' data-tooltip='Update'>"+
-						"					<i class='mdi-editor-mode-edit right black-text'></i>"+
-						"				</a>"+
-						"			</div>"+
-						"		</div>"+
-						"    </li>"+
-						"    <li class='collection-header'>"+
-						"		<div class='row'>"+
-						"			<div class='col s10'>"+
-						"    			<strong>Date added:</strong>"+data[0][7]+
-						"			</div>"+
-						"		</div>"+
-						"    </li>"+
-						"</ul>";
-			$("#product").html("<div class='col s12 m3 l3' style='padding-top: 0.5rem;'>"+image+"</div><div class='col s12 m9 l9'>"+content+"</div>");
-			
-			$("a[data-cmd='updateProduct']").on('click',function(){
-				var data = $(this).data();
-				data = [data.node,data.prop,data.value];
-				product.update(id,data);
-			})
-			$("a[data-cmd='updateProductPicture']").on('click',function(){
-				var data = $(this).data();
-				data = [data.node,data.prop,data.value];
-				product.updatePicture(id,data);
-			})
-		});
-	},
-	update:function(id,data){
-		console.log(data);
-		if(data[1] == "Product"){
-			var content = "<h4>Change "+data[1]+"</h4>"+
-						  "<form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>"+
-						  "		<div class='col s12'>"+
-						  "			<label for='field_product'>Product Name: </label>"+
-						  "			<input id='field_product' type='text' name='field_product' data-error='.error_product' value='"+data[2]+"'>"+
-						  "			<div class='error_product'></div>"+
-						  "		</div>"+
-						  "		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>"+
-						  "		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>"+
-						  "</form>";
-			$("#modal_confirm .modal-content").html(content);
-			$('#modal_confirm').openModal('show');			
-			$("#form_update").validate({
-			    rules: {
-			        field_product: {required: true,maxlength: 50},
-			    },
-			    errorElement : 'div',
-			    errorPlacement: function(error, element) {
-					var placement = $(element).data('error');
-					if(placement){
-						$(placement).append(error)
-					} 
-					else{
-						error.insertAfter(element);
-					}
-				},
-				submitHandler: function (form) {
-					var _form = $(form).serializeArray();
-					if(data[2] == _form[0]['value']){
-						Materialize.toast('You did not even change the product name.',4000);
-					}
-					else{
-						var ajax = system.ajax('../assets/harmony/Process.php?update-product',[id,_form]);
-						ajax.done(function(ajax){
-							console.log(ajax);
-							if(ajax == 1){
-								system.clearForm();
-								Materialize.toast('Product updated.',4000);
-								$('#modal_confirm').closeModal();	
-								App.handleLoadPage("#cmd=index;content=focusProduct;"+id);
-							}
-							else{
-								Materialize.toast('Cannot process request.',4000);
-							}
-						});
-					}
-			    }
-			}); 
-		}	
-		else if(data[1] == "Price"){
-			var content = "<h4>Change "+data[1]+"</h4>"+
-						  "<form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>"+
-						  "		<div class='col s12'>"+
-						  "			<label for='field_price'>Price: </label>"+
-						  "			<input id='field_price' type='number' name='field_price' data-error='.error_price' value='"+data[2]+"'>"+
-						  "			<div class='error_price'></div>"+
-						  "		</div>"+
-						  "		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>"+
-						  "		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>"+
-						  "</form>";
-			$("#modal_confirm .modal-content").html(content);
-			$('#modal_confirm').openModal('show');			
-			$("#form_update").validate({
-			    rules: {
-			        field_price: {required: true,maxlength: 50,checkCurrency:true},
-			    },
-			    errorElement : 'div',
-			    errorPlacement: function(error, element) {
-					var placement = $(element).data('error');
-					if(placement){
-						$(placement).append(error)
-					} 
-					else{
-						error.insertAfter(element);
-					}
-				},
-				submitHandler: function (form) {
-					var _form = $(form).serializeArray();
-					if(data[2] == _form[0]['value']){
-						Materialize.toast('You did not even change the product name.',4000);
-					}
-					else{
-						var ajax = system.ajax('../assets/harmony/Process.php?update-product',[id,_form]);
-						ajax.done(function(ajax){
-							if(ajax == 1){
-								system.clearForm();
-								Materialize.toast('Product updated.',4000);
-								$('#modal_confirm').closeModal();	
-								App.handleLoadPage("#cmd=index;content=focusProduct;"+id);
-							}
-							else{
-								Materialize.toast('Cannot process request.',4000);
-							}
-						});
-					}
-			    }
-			}); 
-		}			
-		else if(data[1] == "SKU"){
-			var content = "<h4>Change "+data[1]+"</h4>"+
-						  "<form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>"+
-						  "		<div class='col s12'>"+
-						  "			<label for='field_qty'>SKU: </label>"+
-						  "			<input id='field_qty' type='number' name='field_qty' data-error='.error_qty' value='"+data[2]+"'>"+
-						  "			<div class='error_qty'></div>"+
-						  "		</div>"+
-						  "		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>"+
-						  "		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>"+
-						  "</form>";
-			$("#modal_confirm .modal-content").html(content);
-			$('#modal_confirm').openModal('show');			
-			$("#form_update").validate({
-			    rules: {
-			        field_qty: {required: true,maxlength: 50,checkPositiveNumber:true},
-			    },
-			    errorElement : 'div',
-			    errorPlacement: function(error, element) {
-					var placement = $(element).data('error');
-					if(placement){
-						$(placement).append(error)
-					} 
-					else{
-						error.insertAfter(element);
-					}
-				},
-				submitHandler: function (form) {
-					var _form = $(form).serializeArray();
-					if(data[2] == _form[0]['value']){
-						Materialize.toast('You did not even change the product name.',4000);
-					}
-					else{
-						var ajax = system.ajax('../assets/harmony/Process.php?update-product',[id,_form]);
-						ajax.done(function(ajax){
-							console.log(ajax);
-							if(ajax == 1){
-								system.clearForm();
-								Materialize.toast('Product updated.',4000);
-								$('#modal_confirm').closeModal();	
-								App.handleLoadPage("#cmd=index;content=focusProduct;"+id);
-							}
-							else{
-								Materialize.toast('Cannot process request.',4000);
-							}
-						});
-					}
-			    }
-			}); 
-		}			
-		else if(data[1] == "Categories"){
-			var content = "<h4>Change "+data[1]+"</h4>"+
-						  "<form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>"+
-						  "		<div class='col s12'>"+
-						  "			<label for='field_categories'>Price: </label>"+
-						  "			<input id='field_categories' type='text' length='100' name='field_categories' data-error='.error_categories' value='"+data[2]+"'>"+
-						  "			<div class='error_categories'></div>"+
-						  "		</div>"+
-						  "		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>"+
-						  "		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>"+
-						  "</form>";
-			$("#modal_confirm .modal-content").html(content);
-			$('#modal_confirm').openModal('show');		
-
-			$('input#field_categories').materialtags();
-		    $('.chip i').removeClass('material-icons').addClass('mdi-navigation-close').html("");
-			$('input#field_categories').on('itemAdded', function(event) {
-			    $('.chip i').removeClass('material-icons').addClass('mdi-navigation-close').html("");
-			});
-
-			$("#form_update").validate({
-			    rules: {
-			        field_categories: {required: true,maxlength: 50,checkCurrency:true},
-			    },
-			    errorElement : 'div',
-			    errorPlacement: function(error, element) {
-					var placement = $(element).data('error');
-					if(placement){
-						$(placement).append(error)
-					} 
-					else{
-						error.insertAfter(element);
-					}
-				},
-				submitHandler: function (form) {
-					$('input.n-tag').val("");
-					var _form = $('input#field_categories').materialtags('items');
-					if((_form.length == 1) && (data[2] == _form[0])){
-						Materialize.toast('You did not even change the product name.',4000);
-					}
-					else{
-						var ajax = system.ajax('../assets/harmony/Process.php?update-product',[id,[{'name':'field_categories','value':JSON.stringify(_form)}]]);
-						ajax.done(function(ajax){
-							console.log(ajax);
-							if(ajax == 1){
-								system.clearForm();
-								Materialize.toast('Product updated.',4000);
-								$('#modal_confirm').closeModal();	
-								App.handleLoadPage("#cmd=index;content=focusProduct;"+id);
-							}
-							else{
-								Materialize.toast('Cannot process request.',4000);
-							}
-						});
-					}
-			    }
-			}); 
-		}			
-		else if(data[1] == "Description"){
-			var content = "<h4>Change "+data[1]+"</h4>"+
-						  "<form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>"+
-						  "		<div class='row'>"+
-						  "			<div class='col s12'>"+
-						  "				<label for='field_price'>Price: </label>"+
-						  "				<textarea class='materialize-textarea' id='field_description' data-field='field_description' data-error='.error_description' name='field_description'>"+data[2]+"</textarea>"+
-						  "				<div class='error_description'></div>"+
-						  "			</div>"+
-						  "		</div>"+
-						  "		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>"+
-						  "		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>"+
-						  "</form>";
-			$("#modal_popUp .modal-content").html(content);
-			$('#modal_popUp').openModal('show');
-
-			system.froala("#field_description");
-
-			$("#form_update").validate({
-			    rules: {
-			        field_description: {required: true,maxlength: 1000},
-			    },
-			    errorElement : 'div',
-			    errorPlacement: function(error, element) {
-					var placement = $(element).data('error');
-					if(placement){
-						$(placement).append(error)
-					} 
-					else{
-						error.insertAfter(element);
-					}
-				},
-				submitHandler: function (form) {
-					var _form = $(form).serializeArray();
-					if(data[2] == _form[0]['value']){
-						Materialize.toast('You did not even change the product name.',4000);
-					}
-					else{
-						var ajax = system.ajax('../assets/harmony/Process.php?update-product',[id,_form]);
-						ajax.done(function(ajax){
-							console.log(ajax);
-							if(ajax == 1){
-								system.clearForm();
-								Materialize.toast('Description is updated.',4000);
-								$('#modal_popUp').closeModal();	
-								App.handleLoadPage("#cmd=index;content=focusProduct;"+id);
-							}
-							else{
-								Materialize.toast('Cannot process request.',4000);
-							}
-						});
-					}
-			    }
-			}); 
-		}			
-		else if(data[1] == "Status"){
-			var content = "<h4>Change Status</h4>"+
-						  "<form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>"+
-						  "		<div class='col s12'>"+
-						  "		<label for='field_status' class='active'>Gender: </label>"+
-						  "		<select name='field_status'>"+
-						  "			<option selected>Published</option>"+
-						  "			<option>Pending</option>"+
-						  "		</select>"+
-						  "		</div>"+
-						  "		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>"+
-						  "		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>"+
-						  "</form>";
-			$("#modal_confirm .modal-content").html(content);
-			$('#modal_confirm').openModal('show');			
-		    $("select").material_select();
-			$("#form_update").validate({
-			    rules: {
-			        field_status: {required: true,maxlength: 50},
-			    },
-			    errorElement : 'div',
-			    errorPlacement: function(error, element) {
-					var placement = $(element).data('error');
-					if(placement){
-						$(placement).append(error)
-					} 
-					else{
-						error.insertAfter(element);
-					}
-				},
-				submitHandler: function (form) {
-					var _form = $(form).serializeArray();
-					var ajax = system.ajax('../assets/harmony/Process.php?update-product',[id,_form]);
-					ajax.done(function(ajax){
-						console.log(ajax);
-						if(ajax == 1){
-							system.clearForm();
-							Materialize.toast('status is updated.',4000);
-							$('#modal_confirm').closeModal();	
-							App.handleLoadPage("#cmd=index;content=focusProduct;"+id);
-						}
-						else{
-							Materialize.toast('Cannot process request.',4000);
-						}
-					});
-			    }
-			}); 
-		}
-	},
-	updatePicture:function(id,data){
-		var picture = "../assets/images/products/"+data[2];
-		var content = "<h4>Change product image</h4>"+
-						"	<div class='row'>"+
-						"		<div class='col s12'>"+
-						"			<div id='profile_picture2' class='ibox-content no-padding border-left-right '></div>"+
-						"		</div>"+
-						"	</div>";
-		$("#modal_confirm .modal-content").html(content);
-		$('#modal_confirm .modal-footer').html("");			
-		$('#modal_confirm').openModal('show');			
-
-		var content =   "<div class='image-crop col s12' style='margin-bottom:5px;'>"+
-						"	<img width='100%' src='"+picture+"'>"+
-						"</div>"+
-						"<div class='btn-group col s12'>"+
-						"	<label for='inputImage' class='btn blue btn-floating btn-flat tooltipped' data-tooltip='Load image' data-position='top'>"+
-						"		<input type='file' accept='image/*' name='file' id='inputImage' class='hide'>"+
-						"		<i class='large mdi-editor-publish'></i>"+
-						"	</label>"+
-						"	<button class='btn blue btn-floating btn-flat tooltipped' data-cmd='cancel' type='button' data-tooltip='Cancel' data-position='top'>"+
-						"		<i class='mdi-navigation-close'></i>"+
-						"	</button>"+
-						"	<button class='btn blue btn-floating btn-flat hidden tooltipped right' data-cmd='save' type='button' data-tooltip='Save' data-position='top'>"+
-						"		<i class='mdi-content-save'></i>"+
-						"	</button>"+
-						"</div>";
-		$("#profile_picture2").html(content);
-		$('.tooltipped').tooltip({delay: 50});
-
-        var $inputImage = $("#inputImage");
-        var status = true;
-        if(window.FileReader){
-            $inputImage.change(function() {
-                var fileReader = new FileReader(),
-                        files = this.files,
-                        file;
-
-                file = files[0];
-
-                if (/^image\/\w+$/.test(file.type)) {
-                    fileReader.readAsDataURL(file);
-                    fileReader.onload = function () {
-                        $inputImage.val("");
-
-			            var $image = $(".image-crop > img")
-			            $($image).cropper({
-			            	aspectRatio: 1/1,
-						    autoCropArea: 0.80,
-						    preview: ".avatar-preview",
-						    built: function () {
-		    		    		$(".cropper-container").attr({'style':'left:0px !important;top:0px;width:100%;height:100%;'});
-
-						    	$("button[data-cmd='save']").removeClass('hidden');
-						    	$("button[data-cmd='rotate']").removeClass('hidden');
-						    	
-					            $("button[data-cmd='save']").click(function(){									    	
-							    	$(this).html("<i class='mdi-action-cached icon-spin'></i>").addClass('disabled');
-							    	if(status){
-										var ajax = system.ajax('../assets/harmony/Process.php?update-productPicture',[id,$image.cropper("getDataURL")]);
-										ajax.done(function(ajax){
-											console.log(ajax);
-											if(ajax == 1){
-												Materialize.toast('Picture has been changed.',4000);
-												$('#modal_confirm').closeModal();	
-												App.handleLoadPage("#cmd=index;content=focusProduct;"+id);
-											}
-											else{
-												Materialize.toast('Cannot process request.',4000);
-											}
-										});
-							    		status = false;
-							    	}
-					            });
-						    }
-						});
-
-                        $image.cropper("reset", true).cropper("replace", this.result);
-
-			            $("button[data-cmd='rotate']").click(function(){
-			            	var data = $(this).data('option');
-				        	$image.cropper('rotate', data);
-			            });
-
-                    };
-                }
-                else{
-                    showMessage("Please choose an image file.");
-                }
-            });
-        }
-        else{
-            $inputImage.addClass("hide");
-        }	            
-        $("button[data-cmd='cancel']").click(function(){
-			$('#modal_confirm').closeModal();	
-        });
-	},
-	list:function(){
-		var content = "", chips = [],chipsContent = "";
-		var data = product.get();
-		data = JSON.parse(data.responseText);
-		$.each(data,function(i,v){
-			var prodPicture = ((v[10] == "") || (v[10] == null))?"default.png":v[10];
-			content += "<tr>"+
-						"	<td width='1px'>"+(i+1)+". </td>"+
-						"	<td><img src='../assets/images/products/"+prodPicture+"' alt='"+v[1]+" Picture' class='valign profile-image' height='50px'></td>"+
-						"	<td width='300px'>"+v[1]+"</td>"+
-						"	<td>"+v[2]+"</td>"+
-						"	<td>"+v[3]+"</td>"+
-						"	<td>published</td>"+
-						"	<td width='1px'>"+
-						"		<a href='#cmd=index;content=focusProduct;"+v[0]+"' class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='0' data-tooltip='Show Details' data-cmd='update'>"+
-						"			<i class='mdi-navigation-more-vert right black-text'></i>"+
-						"		</a>"+
-						"	</td>"+
-						"</tr>";
-		});
-
-		content = "<table class='table bordered center' id='products'>"+
-					"<thead>"+
-					"	<tr>"+
-					"		<th>#</th><th>Thumbnail</th><th>Product</th><th>Qty</th><th>Price</th><th>Status</th><th></th>"+
-					"	</tr>"+
-					"</thead>"+
-					"</tbody>"+
-						content+
-					"</tbody>"+
-					"</table>";
-		$("#display_productList").html(content);
-
-		var table = $('#products').DataTable({
-	        "order": [[ 0, 'asc' ]],
-	        "drawCallback": function ( settings ) {
-	            var api = this.api();
-	            var rows = api.rows( {page:'current'} ).nodes();
-	            var last=null;
-	        }
-	    });
-	},
-	listGrid:function(){
-		var data = system.xml("pages.xml");
-		var _content = "";
-		$(data.responseText).find("product").each(function(i,content){
-			console.log();
-			for(x=0;x<=100;x++){
-				_content += content.innerHTML;
-
-			}
-			$("#products").html(_content);
-		});
-	},
-	add:function(){
-		$("#add_product").on('click',function(){
-			var data = system.xml("pages.xml");
-			$(data.responseText).find("addProduct").each(function(i,content){
-				$("#modal_popUp .modal-content").html(content);
-				$('#modal_popUp').openModal('show');
-
-				$("#form_addProduct").validate({
-				    rules: {
-				        field_productName: {required: true,maxlength: 50},
-				        field_qty: {required: true,maxlength: 50,checkPositiveNumber:true},
-				        field_price: {required: true,maxlength: 50,checkCurrency:true},
-				        field_description: {required: true,maxlength: 900},
-				        field_category: {required: false},
-				    },
-				    errorElement : 'div',
-				    errorPlacement: function(error, element) {
-						var placement = $(element).data('error');
-						if(placement){
-							$(placement).append(error)
-						} 
-						else{
-							error.insertAfter(element);
-						}
-					},
-					submitHandler: function (form) {
-						var _form = $(form).serializeArray();
-						var data = system.ajax('../assets/harmony/Process.php?set-newProductAdmin',_form);
-						data.done(function(data){
-							data = JSON.parse(data);
-							if(data[0] == 1){
-								$('#modal_popUp').closeModal();	
-								Materialize.toast('Saved.',4000);
-								system.clearForm();
-						    	$(location).attr('href',"#cmd=index;content=focusProduct;"+data[1]);			
-							}
-							else{
-								Materialize.toast('Cannot process request.',4000);
-							}
-						});
-				    }
-				});
-			});
-		})
-	},
-}
-
 request = {
 	ini:function(){
 	},
@@ -3555,7 +3575,7 @@ request = {
 		var content = "Are you sure you want to "+data[0]+" the request?<br/><br/>";
 		$("#modal_confirm .modal-content").html(content);
 		$('#modal_confirm .modal-footer').html("<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Close</a><button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Proceed</button>");			
-		$('#modal_confirm').openModal('show');			
+		$('#modal_confirm').modal('open');			
 
 		$("button[data-cmd='button_proceed']").on('click',function(){
 			console.log(data);
@@ -3565,7 +3585,7 @@ request = {
 					console.log(ajax);
 					if(ajax == 1){
 						Materialize.toast('Account updated.',4000);
-						$('#modal_confirm').closeModal();	
+						$('#modal_confirm').modal('close');	
 						App.handleLoadPage("#cmd=index;content=request_accountUpdate;");
 					}
 					else{
@@ -3579,7 +3599,7 @@ request = {
 					console.log(ajax);
 					if(ajax == 1){
 						Materialize.toast('Request cancelled.',4000);
-						$('#modal_confirm').closeModal();	
+						$('#modal_confirm').modal('close');	
 						App.handleLoadPage("#cmd=index;content=request_accountUpdate;");
 					}
 					else{
@@ -3594,7 +3614,7 @@ request = {
 		var content = "Are you sure you want to "+data[0]+" the additional points?<br/><br/>";
 		$("#modal_confirm .modal-content").html(content);
 		$('#modal_confirm .modal-footer').html("<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Close</a><button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Proceed</button>");			
-		$('#modal_confirm').openModal('show');			
+		$('#modal_confirm').modal('open');			
 
 		$("button[data-cmd='button_proceed']").on('click',function(){
 			console.log(data);
@@ -3604,7 +3624,7 @@ request = {
 					console.log(ajax);
 					if(ajax == 1){
 						Materialize.toast('Points updated.',4000);
-						$('#modal_confirm').closeModal();	
+						$('#modal_confirm').modal('close');	
 						App.handleLoadPage("#cmd=index;content=request_points;");
 					}
 					else{
@@ -3618,7 +3638,7 @@ request = {
 					console.log(ajax);
 					if(ajax == 1){
 						Materialize.toast('Request cancelled.',4000);
-						$('#modal_confirm').closeModal();	
+						$('#modal_confirm').modal('close');	
 						App.handleLoadPage("#cmd=index;content=request_points;");
 					}
 					else{

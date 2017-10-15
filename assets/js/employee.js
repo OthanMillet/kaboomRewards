@@ -15,8 +15,6 @@ account = {
 			$("#log-out").on('click',function(){
 			    login.kill();
 			})
-
-
 		});
 	},
 	details:function(){
@@ -570,13 +568,13 @@ account = {
 							<div class='btn-group col s12'>
 								<label for='inputImage' class='btn blue btn-floating btn-flat tooltipped' data-tooltip='Load image' data-position='top'>
 									<input type='file' accept='image/*' name='file' id='inputImage' class='hide'>
-									<i class='large mdi-editor-publish'></i>
+									<i class='material-icons right hover white-text'>portrait</i>
 								</label>
 								<button class='btn blue btn-floating btn-flat tooltipped' data-cmd='cancel' type='button' data-tooltip='Cancel' data-position='top'>
-									<i class='mdi-navigation-close'></i>
+									<i class='material-icons right hover white-text'>close</i>
 								</button>
 								<button class='btn blue btn-floating btn-flat hidden tooltipped right' data-cmd='save' type='button' data-tooltip='Save' data-position='top'>
-									<i class='mdi-content-save'></i>
+									<i class='material-icons right hover white-text'>save</i>
 								</button>
 							</div>`;
     		$("#profile_picture2").html(content);
@@ -643,119 +641,6 @@ account = {
             $("button[data-cmd='cancel']").click(function(){
 				$('#modal_confirm').modal('close');	
             });
-		});
-	},
-	getPoints:function(id){
-		var data = system.ajax('../assets/harmony/Process.php?get-employeePointsAdmin',id);
-		data.done(function(data){
-			data = JSON.parse(data);
-			data = (data.length<=0)?0:data[0][2];
-			$("#display_points span").html(data)
-		});
-	},
-	getPointsActivity:function(id){
-		var content = "";
-		var data = system.ajax('../assets/harmony/Process.php?get-employeePointsActivityAdmin',id);
-		data.done(function(data){
-			data = JSON.parse(data);
-			if(data.length<=0){
-				$("#pointsActivity").html("<h4 class='center'>No points activity</h4>");
-			}
-			else{
-				$.each(data,function(i,v){
-					content += `<tr>
-									<td width='1px'>${(i+1)}. </td>
-									<td>${v[1]}</td>
-									<td>${v[2]}</td>
-									<td>${v[5]}</td>
-									<td>${v[3]}</td>
-								</tr>`;
-				})					
-				$("#pointsActivity table tbody").html(content);
-
-				var table = $('#pointsActivity table').DataTable({
-			        "order": [[ 0, 'asc' ]],
-			        "drawCallback": function ( settings ) {
-			            var api = this.api();
-			            var rows = api.rows( {page:'current'} ).nodes();
-			            var last=null;
-			        }
-			    });
-			}
-		});
-	},
-	getBuysActivity:function(id){
-		var content = "";
-		var data = system.ajax('../assets/harmony/Process.php?get-employeeBuysActivityAdmin',id);
-		data.done(function(data){
-			data = JSON.parse(data);
-			if(data.length<=0){
-				$("#buyingActivity").html("<h4 class='center'>No buying activity</h4>");
-			}
-			else{
-				$.each(data,function(i,v){
-					content += `<tr>
-									<td width='1px'>${(i+1)}. </td>
-									<td width='20%'>${v[0].substring(0,6)}...</td>
-									<td width='30%'>${v[2]}</td>
-									<td width='30%'>${v[3]}</td>
-									<td width='30%'>For Delivery</td>
-									<td width='9%'>
-										<a data-cmd='showOrder' data-node='${v[0]}' data-meta='${JSON.stringify([v[0],v[2],v[3],"For Delivery"])}' class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='0' data-tooltip='Show details'>
-											<i class='mdi-navigation-more-vert right black-text'></i>
-										</a>
-									</td>
-								</tr>`;
-				})					
-				$("#buyingActivity table tbody").html(content);
-
-				var table = $('#buyingActivity table').DataTable({
-			        "order": [[ 0, 'asc' ]],
-			        "drawCallback": function ( settings ) {
-			            var api = this.api();
-			            var rows = api.rows( {page:'current'} ).nodes();
-			            var last=null;
-			        }
-			    });
-
-				$("a[data-cmd='showOrder']").on('click',function(){
-					var data = $(this).data();
-					var content = "";
-					console.log(data);
-					$("#modal_popUp table").remove();
-
-					var subTotal = 0;
-					var orders = system.ajax('../assets/harmony/Process.php?get-orders',data.node);
-					orders.done(function(orders){
-						var orders = JSON.parse(orders);
-						content = `<thead><tr>
-								  <th class='center'></th>						
-								  <th class='center'>Product</th>						
-								  <th class='center'>Quantity</th>						
-								  <th class='center'>Price</th>						
-								  <th class='center'>Total</th>						
-								  </tr></thead>`;						
-
-						$.each(orders,function(i,v){
-							var product = ((v[17] == "") || (v[17] == null))?"default.png":v[17];
-							subTotal = subTotal + (v[10]*v[1]);
-							content += `<tr>
-									  <td class='center'><img src='../assets/images/products/${product}' alt='Thumbnail' class='valign profile-image' width='80px'></td>
-									  <td class='center'>${v[8]}</td>
-									  <td class='center'>${v[1]}</td>
-									  <td class='center'>${v[10]}</td>
-									  <td class='center'>${(v[10]*v[1])}</td>
-									  </tr>`;						
-						})
-						$('#modal_popUp .modal-content').html(`<strong>Order ID:</strong> ${data.meta[0]}<br/><strong>Order Date:</strong> ${data.meta[1]}<br/>\n<strong>Order Delivered:</strong> ${data.meta[2]}<br/>\n<strong>Status:</strong> ${data.meta[3]}`);			
-						$("#modal_popUp .modal-footer").before(`<table class='striped bordered highlight'>${content}<tr><td colspan='4'><strong class='right' >Total</strong></td><td class='center'>${subTotal}</td></tr></table>`);
-						$("#modal_popUp .modal-footer").html("<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Close</a>");
-						$('#modal_popUp').modal('open');			
-
-						console.log(orders);
-					});
-				});
-			}
 		});
 	},
 	upload:function(){
@@ -916,13 +801,129 @@ account = {
 	},
 }
 
+activity = {
+	getPointsActivity:function(id){
+		var content = "";
+		var data = system.ajax('../assets/harmony/Process.php?get-employeePointsActivityAdmin',id);
+		data.done(function(data){
+			data = JSON.parse(data);
+			if(data.length<=0){
+				$("#pointsActivity").html("<h4 class='center'>No points activity</h4>");
+			}
+			else{
+				$.each(data,function(i,v){
+					content += `<tr>
+									<td width='1px'>${(i+1)}. </td>
+									<td>${v[1]}</td>
+									<td>${v[2]}</td>
+									<td>${v[5]}</td>
+									<td>${v[3]}</td>
+								</tr>`;
+				})					
+				$("#pointsActivity table tbody").html(content);
+
+				var table = $('#pointsActivity table').DataTable({
+			        "order": [[ 0, 'asc' ]],
+			        "drawCallback": function ( settings ) {
+			            var api = this.api();
+			            var rows = api.rows( {page:'current'} ).nodes();
+			            var last=null;
+			        }
+			    });
+			}
+		});
+	},
+	getBuysActivity:function(id){
+		var content = "";
+		var data = system.ajax('../assets/harmony/Process.php?get-employeeBuysActivityAdmin',id);
+		data.done(function(data){
+			data = JSON.parse(data);
+			if(data.length<=0){
+				$("#buyingActivity").html("<h4 class='center'>No buying activity</h4>");
+			}
+			else{
+				$.each(data,function(i,v){
+					content += `<tr>
+									<td width='1px'>${(i+1)}. </td>
+									<td width='20%'>${v[0].substring(0,6)}...</td>
+									<td width='30%'>${v[2]}</td>
+									<td width='30%'>${v[3]}</td>
+									<td width='30%'>For Delivery</td>
+									<td width='9%'>
+										<a data-cmd='showOrder' data-node='${v[0]}' data-meta='${JSON.stringify([v[0],v[2],v[3],"For Delivery"])}' class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='0' data-tooltip='Show details'>
+											<i class='mdi-navigation-more-vert right black-text'></i>
+										</a>
+									</td>
+								</tr>`;
+				})					
+				$("#buyingActivity table tbody").html(content);
+
+				var table = $('#buyingActivity table').DataTable({
+			        "order": [[ 0, 'asc' ]],
+			        "drawCallback": function ( settings ) {
+			            var api = this.api();
+			            var rows = api.rows( {page:'current'} ).nodes();
+			            var last=null;
+			        }
+			    });
+
+				$("a[data-cmd='showOrder']").on('click',function(){
+					var data = $(this).data();
+					var content = "";
+					console.log(data);
+					$("#modal_popUp table").remove();
+
+					var subTotal = 0;
+					var orders = system.ajax('../assets/harmony/Process.php?get-orders',data.node);
+					orders.done(function(orders){
+						var orders = JSON.parse(orders);
+						content = `<thead><tr>
+								  <th class='center'></th>						
+								  <th class='center'>Product</th>						
+								  <th class='center'>Quantity</th>						
+								  <th class='center'>Price</th>						
+								  <th class='center'>Total</th>						
+								  </tr></thead>`;						
+
+						$.each(orders,function(i,v){
+							var product = ((v[17] == "") || (v[17] == null))?"default.png":v[17];
+							subTotal = subTotal + (v[10]*v[1]);
+							content += `<tr>
+									  <td class='center'><img src='../assets/images/products/${product}' alt='Thumbnail' class='valign profile-image' width='80px'></td>
+									  <td class='center'>${v[8]}</td>
+									  <td class='center'>${v[1]}</td>
+									  <td class='center'>${v[10]}</td>
+									  <td class='center'>${(v[10]*v[1])}</td>
+									  </tr>`;						
+						})
+						$('#modal_popUp .modal-content').html(`<strong>Order ID:</strong> ${data.meta[0]}<br/><strong>Order Date:</strong> ${data.meta[1]}<br/>\n<strong>Order Delivered:</strong> ${data.meta[2]}<br/>\n<strong>Status:</strong> ${data.meta[3]}`);			
+						$("#modal_popUp .modal-footer").before(`<table class='striped bordered highlight'>${content}<tr><td colspan='4'><strong class='right' >Total</strong></td><td class='center'>${subTotal}</td></tr></table>`);
+						$("#modal_popUp .modal-footer").html("<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Close</a>");
+						$('#modal_popUp').modal('open');			
+
+						console.log(orders);
+					});
+				});
+			}
+		});
+	}
+}
+
 points = {
 	ini:function(){
 		var data = system.ajax('../assets/harmony/Process.php?get-employeeAccount',"");
 		data = JSON.parse(data.responseText);
 		var id = data[0][0];
-		account.getPoints(id);
-		account.getPointsActivity(id);
-		account.getBuysActivity(id);
+		this.get(id);
+		activity.getPointsActivity(id);
+		activity.getBuysActivity(id);
+	},
+	get:function(id){
+		var data = system.ajax('../assets/harmony/Process.php?get-employeePointsAdmin',id);
+		data.done(function(data){
+			data = JSON.parse(data);
+			data = (data.length<=0)?0:data[0][2];
+			$("#display_points span").html(data)
+		});
 	},
 }
