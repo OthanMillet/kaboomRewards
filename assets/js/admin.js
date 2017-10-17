@@ -1600,7 +1600,7 @@ product = {
 	},
 	get:function(){
 		var data = system.html('../assets/harmony/Process.php?get-products');
-		return data;
+		return data.responseText;
 	},
 	display:function(id){
 		var content = "", image = "", productImage = '',chips = [],chipsContent = "";
@@ -2115,7 +2115,7 @@ product = {
 	list:function(){
 		var content = "", chips = [],chipsContent = "";
 		var data = product.get();
-		data = JSON.parse(data.responseText);
+		data = JSON.parse(data);
 		$.each(data,function(i,v){
 			var prodPicture = ((v[10] == "") || (v[10] == null))?"default.png":v[10];
 			content += `<tr>
@@ -2145,6 +2145,8 @@ product = {
 
 		var table = $('#products').DataTable({
 	        "order": [[ 0, 'asc' ]],
+	        "bLengthChange": false,
+	        "pageLength": 50,
 	        "drawCallback": function ( settings ) {
 	            var api = this.api();
 	            var rows = api.rows( {page:'current'} ).nodes();
@@ -2209,24 +2211,320 @@ product = {
 		})
 	},
 	addBrands:function(){
+		$("#add_brand").on("click",function(){
+			var data = system.xml("pages.xml");
+			$(data.responseText).find("addBrand").each(function(i,content){
+				$("#modal_popUp .modal-content").html(content);
+				$('#modal_popUp').modal('open');
 
+
+		        var $inputImage = $("#field_file");
+	            var $image = $(".image-crop > img");
+		        var status = true;
+		        if(window.FileReader){
+		            $inputImage.change(function() {
+		                var fileReader = new FileReader(),
+		                        files = this.files,
+		                        file;
+
+		                file = files[0];
+
+		                if (/^image\/\w+$/.test(file.type)) {
+		                    fileReader.readAsDataURL(file);
+		                    fileReader.onload = function () {
+		                        $inputImage.val("");
+
+					            $($image).cropper({
+					            	aspectRatio: 1/1,
+								    autoCropArea: 0.80,
+								    preview: ".avatar-preview",
+								    built: function () {
+				    		    		$(".cropper-container").attr({'style':'left:0px !important;top:0px;width:100%;height:100%;'});
+				    		    		$("#button_icon").removeAttr("disabled");
+								    }
+								});
+		                        $image.cropper("reset", true).cropper("replace", this.result);
+		                    };
+		                }
+		                else{
+							Materialize.toast('Please choose an image file.',4000);
+		                }
+		            });
+		        }
+		        else{
+		            $inputImage.addClass("hide");
+		        }
+
+				$("#form_addBrand").validate({
+				    rules: {
+				        field_brand: {required: true,maxlength: 300},
+				        field_remarks: {required: true,maxlength: 500},
+				    },
+				    errorElement : 'div',
+				    errorPlacement: function(error, element) {
+						var placement = $(element).data('error');
+						if(placement){
+							$(placement).append(error)
+						} 
+						else{
+							error.insertAfter(element);
+						}
+					},
+					submitHandler: function (form) {
+						var _form = $(form).serializeArray();
+						_form.push($image.cropper("getDataURL"));
+						var data = system.ajax('../assets/harmony/Process.php?set-addBrand',_form);
+						data.done(function(data){
+							if(data == 1){
+								Materialize.toast('Brand added.',1000,'',function(){
+									$('#modal_popUp').modal('close');	
+									product.listBrands();
+								});
+							}
+							else{
+								Materialize.toast('Cannot process request.',4000);
+							}
+						});
+				    }
+				});
+			});
+		});
 	},
 	getBrands:function(){
-		var data = system.html('../assets/harmony/Process.php?get-products');
-		return data;
+		var data = system.html('../assets/harmony/Process.php?get-brands');
+		return data.responseText;
 	},
-	listBrands:function(data){
+	listBrands:function(){
+		var data = JSON.parse(this.getBrands());
+		if(data.length>0){
+			var content = "";
+			$.each(data,function(i,v){
+				var brandICon = ((v[3] == "") || (v[3] == null))?"default.png":v[3];
+				content += `<tr>
+								<td width='1px'>${(i+1)}. </td>
+								<td><img src='../assets/images/brand/${brandICon}' alt='${v[1]} logo' class='valign profile-image' height='50px'></td>
+								<td width='300px'>${v[1]}</td>
+								<td>${v[2]}</td>
+								<td width='1px'>
+									<a class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-node='${v[0]}' data-name='${v[1]}' data-cmd='deleteBrand' data-position='left' data-delay='0' data-tooltip='Delete' data-cmd='update'>
+										<i class='material-icons right hover black-text'>delete</i>
+									</a>
+								</td>
+							</tr>`;
+			});
 
+			content = `<table class='table bordered center' id='brands'>
+						<thead>
+							<tr>
+								<th>#</th><th>Thumbnail</th><th>Brand</th><th>Description</th><th></th>
+							</tr>
+						</thead>
+						</tbody>${content}</tbody>
+						</table>`;
+			$("#display_brands").html(content);
+
+			var table = $('#brands').DataTable({
+		        "order": [[ 0, 'asc' ]],
+		        "bLengthChange": false,
+		        "pageLength": 50,
+		        "drawCallback": function ( settings ) {
+		            var api = this.api();
+		            var rows = api.rows( {page:'current'} ).nodes();
+		            var last=null;
+		        }
+		    });
+
+		    $("a[data-cmd='deleteBrand']").on('click',function(){
+		    	var data = $(this).data();
+		    	product.deleteBrand([data.name, data.node]);
+		    });
+		}
+		else{
+			$("#display_brands").html("<h4 class='grey-text center'>No brand is on the list. Add a brand.</h4>");
+		}
+		this.addBrands();
 	},
-	getCategory:function(){
-
-	},
-	listCategory:function(){
-
+	deleteBrand:function(data){
+		var productData = data;
+		var content = `Are you sure DELETE ${productData[0]}?`;
+		$("#modal_confirm .modal-content").html(content);
+		$("#modal_confirm .modal-footer").html(`<a class='waves-effect waves-red red white-text btn-flat modal-action modal-close'>Cancel</a>
+												<a data-cmd='button_proceed' class='waves-effect waves-grey btn-flat modal-action'>Proceed</a>`);
+		$('#modal_confirm').modal('open');
+		$("a[data-cmd='button_proceed']").on("click",function(){
+			var data = system.ajax('../assets/harmony/Process.php?set-deleteBrand',productData[1]);
+			data.done(function(data){
+				console.log(data);
+				if(data == 1){
+					Materialize.toast('Brand deleted.',1000,'',function(){
+						$('#modal_confirm').modal('close');	
+						product.listBrands();
+					});
+				}
+				else{
+					Materialize.toast('Cannot process request.',4000);
+				}
+			});
+		});
 	},
 	addCategory:function(){
+		$("#add_category").on("click",function(){
+			var data = system.xml("pages.xml");
+			$(data.responseText).find("addCategory").each(function(i,content){
+				$("#modal_popUp .modal-content").html(content);
+				$('#modal_popUp').modal('open');	
+				$('.tooltipped').tooltip({delay: 50});
 
-	}
+		        var $inputImage = $("#field_file");
+	            var $image = $(".image-crop > img");
+		        var status = true;
+		        if(window.FileReader){
+		            $inputImage.change(function() {
+		                var fileReader = new FileReader(),
+		                        files = this.files,
+		                        file;
+
+		                file = files[0];
+
+		                if (/^image\/\w+$/.test(file.type)) {
+		                    fileReader.readAsDataURL(file);
+		                    fileReader.onload = function () {
+		                        $inputImage.val("");
+
+					            $($image).cropper({
+					            	aspectRatio: 1/1,
+								    autoCropArea: 0.80,
+								    preview: ".avatar-preview",
+								    built: function () {
+				    		    		$(".cropper-container").attr({'style':'left:0px !important;top:0px;width:100%;height:100%;'});
+				    		    		$("#button_icon").removeAttr("disabled");
+								    }
+								});
+		                        $image.cropper("reset", true).cropper("replace", this.result);
+		                    };
+		                }
+		                else{
+							Materialize.toast('Please choose an image file.',4000);
+		                }
+		            });
+		        }
+		        else{
+		            $inputImage.addClass("hide");
+		        }
+
+				$("#form_addCategory").validate({
+				    rules: {
+				        field_category: {required: true,maxlength: 300},
+				        field_file: {required: true},
+				    },
+				    errorElement : 'div',
+				    errorPlacement: function(error, element) {
+						var placement = $(element).data('error');
+						if(placement){
+							$(placement).append(error)
+						} 
+						else{
+							error.insertAfter(element);
+						}
+					},
+					submitHandler: function(form){
+    		    		$("#button_icon").attr({"disabled":"true"});
+						var _form = $(form).serializeArray();
+						_form.push($image.cropper("getDataURL"));
+						var data = system.ajax('../assets/harmony/Process.php?set-addCategory',_form);
+						data.done(function(data){
+							if(data == 1){
+								Materialize.toast('Category added.',1000,'',function(){
+									$('#modal_popUp').modal('close');	
+									product.listCategory();
+								});
+							}
+							else{
+								Materialize.toast('Cannot process request.',4000);
+		    		    		$("#button_icon").removeAttr("disabled");
+							}
+						});
+				    }
+				});
+			});
+		});
+	},
+	getCategory:function(){
+		var data = system.html('../assets/harmony/Process.php?get-category');
+		return data.responseText;
+	},
+	listCategory:function(){
+		var data = JSON.parse(product.getCategory());
+		if(data.length>0){
+			var content = "";
+			$.each(data,function(i,v){
+				var brandICon = ((v[2] == "") || (v[2] == null))?"default.png":v[2];
+				content += `<tr>
+								<td width='1px'>${(i+1)}. </td>
+								<td><img src='../assets/images/icon/${brandICon}' alt='${v[1]} logo' class='valign profile-image' height='50px'></td>
+								<td width='300px'>${v[1]}</td>
+								<td width='1px'>
+									<a class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-node='${v[0]}' data-name='${v[1]}' data-cmd='deleteCategory' data-position='left' data-delay='0' data-tooltip='Delete' data-cmd='update'>
+										<i class='material-icons right hover black-text'>delete</i>
+									</a>
+								</td>
+							</tr>`;
+			});
+
+			content =   `<table class='table bordered center' id='brands'>
+							<thead>
+								<tr>
+									<th>#</th><th>Icon</th><th>Category</th><th></th>
+								</tr>
+							</thead>
+							</tbody>${content}</tbody>
+						</table>`;
+			$("#display_category").html(content);
+
+			var table = $('#brands').DataTable({
+		        "order": [[ 0, 'asc' ]],
+		        "bLengthChange": false,
+		        "pageLength": 50,
+		        "drawCallback": function ( settings ) {
+		            var api = this.api();
+		            var rows = api.rows( {page:'current'} ).nodes();
+		            var last=null;
+		        }
+		    });
+
+		    $("a[data-cmd='deleteCategory']").on('click',function(){
+		    	var data = $(this).data();
+		    	product.deleteCategory([data.name, data.node]);
+		    });
+		}
+		else{
+			$("#display_category").html("<h4 class='grey-text center'>No category is on the list. Add a category.</h4>");
+		}
+		this.addCategory();
+	},
+	deleteCategory:function(data){
+		var productData = data;
+		var content = `Are you sure DELETE ${productData[0]}?`;
+		$("#modal_confirm .modal-content").html(content);
+		$("#modal_confirm .modal-footer").html(`<a class='waves-effect waves-red red white-text btn-flat modal-action modal-close'>Cancel</a>
+												<a data-cmd='button_proceed' class='waves-effect waves-grey btn-flat modal-action'>Proceed</a>`);
+		$('#modal_confirm').modal('open');
+		$("a[data-cmd='button_proceed']").on("click",function(){
+			var data = system.ajax('../assets/harmony/Process.php?set-deleteCategory',productData[1]);
+			data.done(function(data){
+				console.log(data);
+				if(data == 1){
+					Materialize.toast('Category deleted.',1000,'',function(){
+						$('#modal_confirm').modal('close');	
+						product.listCategory();
+					});
+				}
+				else{
+					Materialize.toast('Cannot process request.',4000);
+				}
+			});
+		});
+	},
 }
 
 // es6 above

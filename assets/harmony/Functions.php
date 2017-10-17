@@ -26,17 +26,17 @@ class DatabaseClasses extends DataClasses{
 	}
 
 	function getEmployee(){
-		$user = DatabaseClasses::PDO(true,"SELECT * FROM tbl_employee WHERE employee_id = '{$_SESSION['kaboom'][0]}' AND password = '{$_SESSION['kaboom'][1]}'");
+		$user = DatabaseClasses::PDO("SELECT * FROM tbl_employee WHERE employee_id = '{$_SESSION['kaboom'][0]}' AND password = '{$_SESSION['kaboom'][1]}'");
 		return (count($user)<=0)?0:$user[0][0];
 	}
 
 	function getUser(){
-		$user = DatabaseClasses::PDO(true,"SELECT * FROM tbl_employer WHERE username = '{$_SESSION['kaboom'][0]}' AND password = '{$_SESSION['kaboom'][1]}'");
+		$user = DatabaseClasses::PDO("SELECT * FROM tbl_employer WHERE username = '{$_SESSION['kaboom'][0]}' AND password = '{$_SESSION['kaboom'][1]}'");
 		return (count($user)<=0)?0:$user[0][0];
 	}
 
 	function getAdmin(){
-		$user = DatabaseClasses::PDO(true,"SELECT * FROM tbl_admin WHERE username = '{$_SESSION['kaboom'][0]}' AND password = '{$_SESSION['kaboom'][1]}'");
+		$user = DatabaseClasses::PDO("SELECT * FROM tbl_admin WHERE username = '{$_SESSION['kaboom'][0]}' AND password = '{$_SESSION['kaboom'][1]}'");
 		return (count($user)<=0)?0:$user[0][0];
 	}
 
@@ -77,19 +77,19 @@ class DatabaseClasses extends DataClasses{
 		}
 	}
 
-	function PDO($do,$query){
+	function PDO($query){
 		$array = array();
 		$Data = DatabaseClasses::DBCon();
-		$query = $Data->prepare($query);
-		if($do){
-			$query->execute();
-			foreach ($query->fetchAll(PDO::FETCH_NUM) as $key) {
+		$result = $Data->prepare($query);
+		if(strpos($query, 'SELECT') === 0){
+			$result->execute();
+			foreach ($result->fetchAll(PDO::FETCH_NUM) as $key) {
 				$array[] = $key;
 			}
 			return $array;
 		}
 		else{
-			return $query;
+			return $result;
 		}
 	}
 
@@ -123,7 +123,7 @@ class DatabaseClasses extends DataClasses{
 		$date = DatabaseClasses::PDO_DateAndTime();
 		if($_command == "add"){
 			$id = DatabaseClasses::PDO_IDGenerator('tbl_logs','id');
-			$Query = DatabaseClasses::PDO(false,"INSERT INTO tbl_logs(id,account,remarks,`date`) VALUES ('{$id}','{$_id}','{$_remarks}','{$date}')");
+			$Query = DatabaseClasses::PDO("INSERT INTO tbl_logs(id,account,remarks,`date`) VALUES ('{$id}','{$_id}','{$_remarks}','{$date}')");
 			if($Query->execute()){
 				return $id;	
 			}
@@ -133,7 +133,7 @@ class DatabaseClasses extends DataClasses{
 			}			
 		}
 		else{
-			$Query = DatabaseClasses::PDO(false,"UPDATE tbl_logs SET remarks = '{$_remarks}' WHERE id = '{$_command}'");
+			$Query = DatabaseClasses::PDO("UPDATE tbl_logs SET remarks = '{$_remarks}' WHERE id = '{$_command}'");
 			if(!$Query->execute()){
 				$Data = $Query->errorInfo();
 				return $Data;
@@ -144,7 +144,7 @@ class DatabaseClasses extends DataClasses{
 	function log2($_id,$_remarks,$_header){
 		$date = DatabaseClasses::PDO_DateAndTime();
 		$id = DatabaseClasses::PDO_IDGenerator('tbl_logs','id');
-		$Query = DatabaseClasses::PDO(false,"INSERT INTO tbl_logs(id,account,remarks,`date`,header) VALUES ('{$id}','{$_id}','{$_remarks}','{$date}','{$_header}')");
+		$Query = DatabaseClasses::PDO("INSERT INTO tbl_logs(id,account,remarks,`date`,header) VALUES ('{$id}','{$_id}','{$_remarks}','{$date}','{$_header}')");
 		if($Query->execute()){
 			return 1;	
 		}
@@ -255,12 +255,12 @@ class DatabaseClasses extends DataClasses{
 
 	function db_buckup(){
 		$sql=""; $createsql=""; $dropsql="DROP TABLE IF EXISTS "; $subcreatesql=""; $insertsql=""; $subinsertsql="";
-		$q1 = DatabaseClasses::PDO(true,"SHOW TABLES");
+		$q1 = DatabaseClasses::PDO("SHOW TABLES");
 		foreach($q1 as $i1 => $v1){
 			$dropsql .= "`{$v1[0]}`";
 			if(count($q1)!=($i1+1)){$dropsql .= ", ";}
 		
-			$q2 = DatabaseClasses::PDO(true,"DESCRIBE {$v1[0]}");
+			$q2 = DatabaseClasses::PDO("DESCRIBE {$v1[0]}");
 			$subcreatesql=""; $pri = ""; $columns = "";
 			foreach ($q2 as $i2 => $v2) {
 				$columns .= "`{$v2[0]}`";
@@ -273,7 +273,7 @@ class DatabaseClasses extends DataClasses{
 			$createsql = "CREATE TABLE IF NOT EXISTS `{$v1[0]}` (\n{$subcreatesql}\n) ENGINE=InnoDB DEFAULT CHARSET=latin1;\n\n";
 
 			$insertsql="";
-			$q3 = DatabaseClasses::PDO(true,"SELECT * FROM {$v1[0]}");
+			$q3 = DatabaseClasses::PDO("SELECT * FROM {$v1[0]}");
 			if(count($q3)>0){
 				foreach ($q3 as $i3 => $v3) {
 					$subinsertsql="";
