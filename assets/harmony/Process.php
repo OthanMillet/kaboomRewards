@@ -207,6 +207,11 @@ $function = new DatabaseClasses;
 			print_r(json_encode($query));
 		}
 
+		if(isset($_GET['get-sales'])){
+			$query = $function->PDO("SELECT tbl_orders.id, tbl_orders.employee_id, tbl_orders.order_date, tbl_orders.date_delivered, tbl_orders.status, tbl_employee.id, tbl_employee.employee_id, tbl_employee.company_id, tbl_employee.family_name, tbl_employee.given_name, tbl_employee.middle_name, tbl_employee.nickname, tbl_employee.gender, tbl_employee.date_of_birth, tbl_employee.contact_number, tbl_employee.email_address, tbl_employee.address, tbl_employee.picture, tbl_employee.position, tbl_company.id, tbl_company.company_name, tbl_company.logo FROM tbl_orders INNER JOIN tbl_employee ON tbl_orders.employee_id = tbl_employee.id INNER JOIN tbl_company ON tbl_employee.company_id = tbl_company.id ORDER BY tbl_orders.order_date DESC");
+			print_r(json_encode($query));
+		}
+
 		if(isset($_GET['get-wishlist'])){
 			$data = $_POST['data'];
 			$query = $function->PDO("SELECT * FROM tbl_wishlist WHERE employee_id = '{$data}' AND status = 1");
@@ -829,7 +834,7 @@ $function = new DatabaseClasses;
 			$newpoints = $currentPoints[0][2]-$spent;
 
 			if($newpoints>=0){
-				$query = $function->PDO("INSERT INTO tbl_orders(id,employee_id,order_date,date_delivered,status) VALUES ('{$orderID}','{$user}','{$date}','',1); INSERT INTO tbl_orderdetails(id,qty,product_id,order_id,order_date,order_delivered,status) VALUES ".$q1.";".$q2.";");
+				$query = $function->PDO("INSERT INTO tbl_orders(id,employee_id,order_date,date_delivered,status) VALUES ('{$orderID}','{$user}','{$date}','','Pending'); INSERT INTO tbl_orderdetails(id,qty,product_id,order_id,order_date,order_delivered,status) VALUES ".$q1.";".$q2.";");
 				if($query->execute()){
 					$_query = $function->PDO("UPDATE tbl_points SET points = '{$newpoints}' WHERE id = '{$user}';");
 					if($_query->execute()){

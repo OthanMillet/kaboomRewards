@@ -2571,7 +2571,6 @@ product = {
 	},
 }	
 
-// es6 above
 employee = {
 	get:function(){
 		var data = system.html('../assets/harmony/Process.php?get-employee');
@@ -3361,7 +3360,7 @@ employee = {
 	},
 	getBuysActivity:function(id){
 		var content = "";
-		var data = system.ajax('../assets/harmony/Process.php?get-employeeBuysActivityAdmin',id);
+		var data = system.ajax('../assets/harmony/Process.php?get-employeeBuysActivityByEmployee',id);
 		data.done(function(data){
 			data = JSON.parse(data);
 			if(data.length<=0){
@@ -3700,22 +3699,22 @@ points = {
 							                        },
 							                        {data: "",
 							                            render: function ( data, type, full ){
-							                                return (full[0]!="")?"<span>"+full[0]+"</span>":null;
+							                                return (full[0]!="")?`<span>${full[0]}</span>`:null;
 							                            }
 							                        },
 							                        {data: "",
 							                            render: function ( data, type, full ){
-							                                return (full[2]!="")?"<span>"+full[1]+"</span>":null;
+							                                return (full[2]!="")?`<span>${full[1]}</span>`:null;
 							                            }
 							                        },
 							                        {data: "",
 							                            render: function ( data, type, full ){
-							                                return (full[1]!="")?"<span>"+full[2]+"</span>":null;
+							                                return (full[1]!="")?`<span>${full[2]}</span>`:null;
 							                            }
 							                        },
 							                        {data: "",
 							                            render: function ( data, type, full ){
-							                                return (full[3]!="")?"<span>"+full[3]+"</span>":null;
+							                                return (full[3]!="")?`<span>${full[3]}</span>`:null;
 							                            }
 							                        }
 							                    ]
@@ -3739,8 +3738,8 @@ points = {
 										},1000)
 									}
 									else{
-										Materialize.toast("It seems that you are uploading a data that is not validated or<br/> either of the following:<br/>"+
-											"&bull; No employees yet; <br/>&bull; Your are uploading too many data; <br/>&bull; You are uploading unformatted CSV file.",
+										Materialize.toast(`It seems that you are uploading a data that is not validated or<br/> either of the following:<br/> 
+															&bull; No employees yet; <br/>&bull; Your are uploading too many data; <br/>&bull; You are uploading unformatted CSV file.`,
 											10000);
 					                	$("#display_import").addClass('hidden');
 										$("#display_importLoading").addClass('animated zoomOut').html("");
@@ -3825,9 +3824,9 @@ request = {
 					genderCall = "her";
 
 				if(v[1].length==1)
-					reqCount = "<span class=''>"+v[1].length+" request</span>";
+					reqCount = `<span class=''>${v[1].length} request</span>`;
 				else
-					reqCount = "<span class=''>"+v[1].length+" requests</span>";
+					reqCount = `<span class=''>${v[1].length} requests</span>`;
 
 				reqContent = "";
 				$.each(v[1],function(i2,v2){
@@ -3842,23 +3841,22 @@ request = {
 						value = v2[4];
 					}
 
-					reqContent += "<li style='padding:10px; border-bottom: 1px solid #ccc;'>"+
-								  v[0][4]+" wants to change "+genderCall+" "+v2[5]+" to <u>"+value+".</u>"+
-								  " <a data-cmd='approve' data-node='"+v[0][0]+"' data-request='"+v2[0]+"' class='blue-text hover'>Approve</a>"+
-								  " <a data-cmd='cancel' data-node='"+v[0][0]+"' data-request='"+v2[0]+"' class='black-text hover'>Cancel</a>"+
-								  "</li>";
+					reqContent += `<li style='padding:10px; border-bottom: 1px solid #ccc;'>${v[0][4]} wants to change ${genderCall} ${v2[5]} to <u>${value}.</u>
+								   <a data-cmd='approve' data-node='${v[0][0]}' data-request='${v2[0]}' class='blue-text hover'>Approve</a>
+								   <a data-cmd='cancel' data-node='${v[0][0]}' data-request='${v2[0]}' class='black-text hover'>Cancel</a>
+								  </li>`;
 				});
 
-				content += "<li class='avatar'>"+
-							"   <div class='collapsible-header' style='padding-top: 10px;padding-bottom: 10px;'>"+
-							"   	<img src='../assets/images/profile/"+profile+"' class='circle' width='42px' height='42px'/>"+
-							"		"+v[0][4]+" "+v[0][3]+""+
-							"		<a data-cmd='viewRequests' data-node='"+v[0][0]+"'>"+reqCount+"</a>"+
-							"	</div>"+
-							"   <div class='collapsible-body'>"+
-							"		<ul style='margin: 20px;'>"+reqContent+"</ul>"+
-							"	</div>"+
-							"</li>"; 
+				content += `<li class='avatar'>
+							   <div class='collapsible-header' style='padding-top: 10px;padding-bottom: 10px;'>
+							   	<img src='../assets/images/profile/${profile}' class='circle' width='42px' height='42px'/>
+									${v[0][4]} ${v[0][3]}
+									<a data-cmd='viewRequests' data-node='${v[0][0]}'>${reqCount}</a>
+								</div>
+							   <div class='collapsible-body'>
+									<ul style='margin: 20px;'>${reqContent}</ul>
+								</div>
+							</li>`; 
 			})
 			$("#display_requestsList ul").append(content);
 			$("#display_requestsList ul li").removeClass('active');
@@ -3892,9 +3890,9 @@ request = {
 					genderCall = "her";
 
 				if(v[1].length==1)
-					reqCount = "<span class=''>"+v[1].length+" request</span>";
+					reqCount = `<span class=''>${v[1].length} request</span>`;
 				else
-					reqCount = "<span class=''>"+v[1].length+" requests</span>";
+					reqCount = `<span class=''>${v[1].length} requests</span>`;
 
 				reqContent = "";
 				$.each(v[1],function(i2,v2){
@@ -3909,23 +3907,22 @@ request = {
 						value = v2[4];
 					}
 
-					reqContent += "<li style='padding:10px; border-bottom: 1px solid #ccc;'>"+
-								  v[0][4]+" wants to change "+genderCall+" "+v2[5]+" to <u>"+value+".</u>"+
-								  " <a data-cmd='approve' data-node='"+v[0][0]+"' data-request='"+v2[0]+"' class='blue-text hover'>Approve</a>"+
-								  " <a data-cmd='cancel' data-node='"+v[0][0]+"' data-request='"+v2[0]+"' class='black-text hover'>Cancel</a>"+
-								  "</li>";
+					reqContent += `<li style='padding:10px; border-bottom: 1px solid #ccc;'> ${v[0][4]} wants to change ${genderCall} ${v2[5]} to <u>${value}.</u>
+								   <a data-cmd='approve' data-node='${v[0][0]}' data-request='${v2[0]}' class='blue-text hover'>Approve</a>
+								   <a data-cmd='cancel' data-node='${v[0][0]}' data-request='${v2[0]}' class='black-text hover'>Cancel</a>
+								  </li>`;
 				});
 
-				content += "<li class='avatar'>"+
-							"   <div class='collapsible-header' style='padding-top: 10px;padding-bottom: 10px;'>"+
-							"   	<img src='../assets/images/profile/"+profile+"' class='circle' width='42px' height='42px'/>"+
-							"		"+v[0][4]+" "+v[0][3]+""+
-							"		<a data-cmd='viewRequests' data-node='"+v[0][0]+"'>"+reqCount+"</a>"+
-							"	</div>"+
-							"   <div class='collapsible-body'>"+
-							"		<ul style='margin: 20px;'>"+reqContent+"</ul>"+
-							"	</div>"+
-							"</li>"; 
+				content += `<li class='avatar'>
+							   <div class='collapsible-header' style='padding-top: 10px;padding-bottom: 10px;'>
+							   	<img src='../assets/images/profile/${profile}' class='circle' width='42px' height='42px'/>
+									${v[0][4]} ${v[0][3]}
+									<a data-cmd='viewRequests' data-node='${v[0][0]}'>${reqCount}</a>
+								</div>
+							   <div class='collapsible-body'>
+									<ul style='margin: 20px;'>${reqContent}</ul>
+								</div>
+							</li>`; 
 			})
 			$("#display_requestsList ul").append(content);
 			$("#display_requestsList ul li").removeClass('active');
@@ -3946,7 +3943,7 @@ request = {
 		}
 	},
 	optionsAccountUpdate:function(data){
-		var content = "Are you sure you want to "+data[0]+" the request?<br/><br/>";
+		var content = "Are you sure you want to ${data[0]} the request?<br/><br/>";
 		$("#modal_confirm .modal-content").html(content);
 		$('#modal_confirm .modal-footer').html("<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Close</a><button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Proceed</button>");			
 		$('#modal_confirm').modal('open');			
@@ -4027,44 +4024,94 @@ request = {
 
 sales = {
 	ini:function(){
-		sales.list();
+		const list = this.get();
+		this.list(list);
 	},
-	list:function(){
-		var content = "", chips = [],chipsContent = "";
-		var data = system.ajax('../assets/harmony/Process.php?get-allOrders','');
-		data = JSON.parse(data.responseText);
-		console.log(data);
-		$.each(data,function(i,v){
-			var prodPicture = ((v[17] == "") || (v[17] == null))?"default.png":v[17];
-			content += "<tr>"+
-						"	<td width='1px'>"+(i+1)+". </td>"+
-						"	<td><img src='../assets/images/products/"+prodPicture+"' alt='"+v[1]+" Picture' class='valign profile-image' height='50px'></td>"+
-						"	<td width='300px'>"+v[8]+"</td>"+
-						"	<td>"+v[1]+"</td>"+
-						"	<td>"+v[10]+"</td>"+
-						"	<td>"+v[4]+"</td>"+
-						"</tr>";
-		});
+	get:function(){
+		const data = system.html('../assets/harmony/Process.php?get-sales');
+		return data.responseText;
+	},
+	viewOrders:function(){
 
-		content = "<table class='table bordered center' id='products'>"+
-					"<thead>"+
-					"	<tr>"+
-					"		<th>#</th><th>Thumbnail</th><th>Product</th><th>Qty</th><th>Price</th><th>Date</th>"+
-					"	</tr>"+
-					"</thead>"+
-					"</tbody>"+
-						content+
-					"</tbody>"+
-					"</table>";
-		$("#display_productList").html(content);
+	},
+	list:function(data){
+		const list = JSON.parse(data);
+		console.log(list);
+		let content = "";
 
-		var table = $('#products').DataTable({
-	        "order": [[ 0, 'asc' ]],
-	        "drawCallback": function ( settings ) {
-	            var api = this.api();
-	            var rows = api.rows( {page:'current'} ).nodes();
-	            var last=null;
-	        }
-	    });
+		if(data.length<=0){
+			$("#buyingActivity").html("<h4 class='center'>No buying activity</h4>");
+		}
+		else{
+			$.each(list,function(i,v){
+				console.log(v);
+				profile = (v[17] == "")?'avatar.jpg':v[17];
+				content += `<tr>
+								<td width='1px'>${(i+1)}. </td>
+								<td width='20%' class-'center'>
+									<img src='../assets/images/profile/${profile}' class='circle' width='42px' height='42px'/><br/>
+									<span>${v[9]} ${v[8]}</span>
+								</td>
+								<td width='20%'>${v[0].substring(0,8)}</td>
+								<td width='30%'>${v[2]}</td>
+								<td width='30%'>${v[3]}</td>
+								<td width='30%'>${v[4]}</td>
+								<td width='9%'>
+									<a data-cmd='showOrder' data-node='${v[0]}' data-meta='${JSON.stringify([v[0],v[2],v[3],v[4]])}' class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='0' data-tooltip='Show details'>
+										<i class='material-icons right hover black-text'>more_vert</i>
+									</a>
+								</td>
+							</tr>`;
+			})					
+			$("#display_orderList table tbody").html(content);
+		    $("select").material_select();
+		    $(".dropdown-button").dropdown();
+
+			var table = $('#display_orderList table').DataTable({
+		        "order": [[ 0, 'asc' ]],
+		        bLengthChange:false,
+		        "drawCallback": function ( settings ) {
+		            var api = this.api();
+		            var rows = api.rows( {page:'current'} ).nodes();
+		            var last=null;
+		        }
+		    });
+
+			$("a[data-cmd='showOrder']").on('click',function(){
+				var data = $(this).data();
+				var content = "";
+				$("#modal table").remove();
+
+				var subTotal = 0;
+				var orders = system.ajax('../assets/harmony/Process.php?get-orders',data.node);
+				orders.done(function(orders){
+					var orders = JSON.parse(orders);
+					content = `<thead><tr>
+								  <th class='center'></th>
+								  <th class='center'>Product</th>
+								  <th class='center'>Quantity</th>
+								  <th class='center'>Price</th>
+								  <th class='center'>Total</th>
+							  </tr></thead>`;						
+
+					$.each(orders,function(i,v){
+						console.log(v);
+						var product = ((v[17] == "") || (v[17] == null))?"default.png":v[17];
+						subTotal = subTotal + (v[10]*v[1]);
+						content += `<tr>
+									  <td class='center'><img src='../assets/images/products/${product}' alt='Thumbnail' class='valign profile-image' width='80px'></td>
+									  <td class='center'>${v[8]}</td>
+									  <td class='center'>${v[1]}</td>
+									  <td class='center'>${v[10]}</td>
+									  <td class='center'>${(v[10]*v[1])}</td>
+								  </tr>`;						
+					})
+					$('#modal .modal-content').html(`<strong>Order ID:</strong> ${(data.meta[0].substring(0,8))}<br/><strong>Order Date:</strong> ${data.meta[1]}<br/>\n<strong>Order Delivered:</strong> ${data.meta[2]}<br/>\n<strong>Status:</strong> ${data.meta[3]}`);			
+					$("#modal .modal-footer").before(`<table class='striped bordered highlight'>${content}<tr><td colspan='4'><strong class='right' >Total</strong></td><td class='center'>${subTotal}</td></tr></table>`);
+					$("#modal .modal-footer").html("<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Close</a>");
+					$('#modal').modal('open');			
+				});
+			});
+		}
 	},
 }

@@ -1673,7 +1673,7 @@ employee = {
 	},
 	getBuysActivity:function(id){
 		var content = "";
-		var data = system.ajax('../assets/harmony/Process.php?get-employeeBuysActivityAdmin',id);
+		var data = system.ajax('../assets/harmony/Process.php?get-employeeBuysActivityByEmployee',id);
 		data.done(function(data){
 			data = JSON.parse(data);
 			if(data.length<=0){
