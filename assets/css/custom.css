@@ -197,3 +197,7 @@ footer.example {
 #profile-card table td{
     padding: 5px;
 }
+
+table .truncate{
+    display: table-cell !important;
+}

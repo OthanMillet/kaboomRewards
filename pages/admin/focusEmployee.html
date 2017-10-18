@@ -1,37 +1,24 @@
-<div class="wrapper">
-	<div class="container">
-		<div class="row">
-			<div class="col s12 m8 l8">
-				<h5 class="breadcrumbs-title">Employee Details</h5>
-				<ol class="breadcrumbs">
-					<li><a href="../account/">Dashboard</a></li>
-					<li><a id='bread1'>Client Details</a></li>
-					<li class="active">Employee Details</li>
-				</ol>
-			</div>
-			<div class='col s12 m4 l4 input-field right'>
-				<p><a class="btn waves-effect waves-light orange right" id="add_points">Add Points</a></p>
-			</div>
+<div class="section">
+	<div class="row">
+		<div class="col s12">
+			<h5 class="breadcrumbs-title">Employee Details</h5>
 		</div>
 	</div>
 	<div class="divider"></div>
-    <div class="container">
-        <div class="section">
-			<div id='display_employeeDetails' class="row margin hidden">							
-				<div class='col s12 m6 l5' id="profile">
-				</div>
-				<div class='col s12 m6 l7' id="employees">
-					<h2><span style='font-size:15px'>Current points</span> <span class='actual-points'>0</span></h2>
-					<div class="divider"></div>
-					<div class="row">
-						<div class="col s12">
-							<ul class="tabs z-depth-0 grey lighten-2" style="width: 100%;height: 48px;">
-								<li class="tab col s3"><a class="waves-effect waves-light black-text grey lighten-2" href="#pointsActivity"><i class="mdi-action-perm-identity"></i> Points Activity</a></li>
-								<li class="tab col s3"><a class="waves-effect waves-light black-text grey lighten-3" href="#buyingActivity"><i class="mdi-action-settings-display"></i> Buying Activity</a></li>
-							</ul>
+	<div id='display_employeeDetails' class="row margin hidden">	
+		<div class='col s12 m12 l12' id="profile"></div>
+		<div class='col s12 m12 l12' id="employees">
+			<div class="divider"></div>
+			<h2><span>Current points</span> <span class='actual-points bold'>0</span></h2>
+			<div class="row">
+
+				<ul class="collapsible" data-collapsible="accordion">
+					<li>
+						<div class="collapsible-header">
+							<i class="material-icons">control_point</i>Points Activity
 						</div>
-						<div class="col s12">
-							<div id="pointsActivity" class="col s12  white">
+						<div class="collapsible-body">
+							<div id="pointsActivity">
 						        <table class='display dataTable bordered' width="100%">
 						            <thead>
 						                <tr>	
@@ -45,7 +32,14 @@
 						            <tbody></tbody>
 						        </table>
 							</div>
-							<div id="buyingActivity" class="col s12  white">
+						</div>
+					</li>
+					<li>
+						<div class="collapsible-header">
+							<i class="material-icons">shopping_basket</i>Buying Activity
+						</div>
+						<div class="collapsible-body">
+							<div id="buyingActivity">
 						        <table class='display dataTable bordered' width="100%">
 						            <thead>
 						                <tr>	
@@ -61,19 +55,19 @@
 						        </table>
 							</div>
 						</div>
-					</div>
-				</div>
+					</li>
+				</ul>
 			</div>
-			<div id='display_error' class="row margin"></div>
-        </div>
-    </div>
+		</div>
+	</div>
+	<div id='display_error' class="row margin"></div>
+</div>
+<div class="fixed-action-btn">
+	<a class="btn-floating btn-large waves-effect waves-light orange right" id="add_points"><i class="material-icons">file_upload</i></a>
 </div>
 <script type="text/javascript">
-	$('ul.tabs').tabs();
-	setTimeout(function(){
-		$('ul.tabs').attr({"style":"width: 100%;height: 48px;"});				
-		$('.indicator').attr({"style":"bottom: 0px;left: 0px;z-index: 1;right:"+$(".tab")[0].offsetWidth+"px"});				
-	},1000);
+
+	$('.collapsible').collapsible();
     $("select").material_select();
     $(".dropdown-button").dropdown();
     $('.tooltipped').tooltip({delay: 50});
@@ -82,11 +76,7 @@
     var hash = hash.split(';');
     var id = hash[2];
     var client = id.split("-");
-    $("#bread1").attr({"href":"#cmd=index;content=focusClient;"+client[0]});
+    $("#bread1").attr({"href":`#cmd=index;content=focusClient;${client[0]}`});
     employee.details(id);
 	points.add(id);
 </script>
-
-
-
-
