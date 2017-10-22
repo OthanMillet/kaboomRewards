@@ -21,7 +21,7 @@ account = {
 		var data = system.ajax('../assets/harmony/Process.php?get-employeeAccount',"");
 		data = JSON.parse(data.responseText);
 		var id = data[0][0];
-	    account.getPoints(id);
+	    points.get(id);
 		var content = "";
 		var data = system.ajax('../assets/harmony/Process.php?get-employeeDetails',id);
 		data.done(function(data){

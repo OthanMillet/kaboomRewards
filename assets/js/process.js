@@ -246,3 +246,16 @@ login = {
 		}); 
 	}
 };
+
+$(document).on('ready',function(){
+	let content = `<div class="progress" style="margin: 0;">
+                    <div class="indeterminate"></div>
+                </div>
+                <div class="red" style="text-align: center;line-height: 20px;">
+                    <div class="col s12 white-text">
+                        The site is currently undergoing a series of updates. Some functionality might not work.
+                    </div>
+                </div>`;
+
+    $("body").prepend(content);
+})

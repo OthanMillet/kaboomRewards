@@ -1695,16 +1695,16 @@ product = {
 							<td class='bold'>Quantity:</td>
 							<td class='grey-text'>${data[0][2]}</td>
 							<td>
-								<a data-cmd='updateProduct' data-value='${data[0][2]}' data-node='${data[0][0]}' data-prop='SKU' class='right tooltipped btn-floating waves-effect no-shadow white right' data-position='left' data-delay='0' data-tooltip='Update'>
+								<a data-cmd='updateProduct' data-value='${data[0][2]}' data-node='${data[0][0]}' data-prop='Quantity' class='right tooltipped btn-floating waves-effect no-shadow white right' data-position='left' data-delay='0' data-tooltip='Update'>
 									<i class='material-icons right black-text hover'>mode_edit</i>
 								</a>
 							</td>
 						</tr>
 						<tr>
-							<td class='bold'>Categories:</td>
+							<td class='bold'>Category:</td>
 							<td class='grey-text'>${chipsContent}</td>
 							<td>
-								<a data-cmd='updateProduct' data-value='${data[0][4]}' data-node='${data[0][0]}' data-prop='Categories' class='right tooltipped btn-floating waves-effect no-shadow white right' data-position='left' data-delay='0' data-tooltip='Update'>
+								<a data-cmd='updateProduct' data-value='${data[0][4]}' data-node='${data[0][0]}' data-prop='Category' class='right tooltipped btn-floating waves-effect no-shadow white right' data-position='left' data-delay='0' data-tooltip='Update'>
 									<i class='material-icons right black-text hover'>mode_edit</i>
 								</a>
 							</td>
@@ -1754,7 +1754,7 @@ product = {
 			var content = `<h4>Change ${data[1]}</h4>
 						  <form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>
 						  		<div class='col s12'>
-						  			<label for='field_product'>Product Name: </label>
+						  			<label for='field_product'>${data[1]}: </label>
 						  			<input id='field_product' type='text' name='field_product' data-error='.error_product' value='${data[2]}'>
 						  			<div class='error_product'></div>
 						  		</div>
@@ -1804,7 +1804,7 @@ product = {
 			var content = `<h4>Change ${data[1]}</h4>
 						  <form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>
 						  		<div class='col s12'>
-						  			<label for='field_price'>Price: </label>
+						  			<label for='field_price'>${data[1]}: </label>
 						  			<input id='field_price' type='number' name='field_price' data-error='.error_price' value='${data[2]}'>
 						  			<div class='error_price'></div>
 						  		</div>
@@ -1849,11 +1849,11 @@ product = {
 			    }
 			}); 
 		}			
-		else if(data[1] == "SKU"){
+		else if(data[1] == "Quantity"){
 			var content = `<h4>Change ${data[1]}</h4>
 						  <form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>
 						  		<div class='col s12'>
-						  			<label for='field_qty'>SKU: </label>
+						  			<label for='field_qty'>${data[1]}: </label>
 						  			<input id='field_qty' type='number' name='field_qty' data-error='.error_qty' value='${data[2]}'>
 						  			<div class='error_qty'></div>
 						  		</div>
@@ -1899,12 +1899,27 @@ product = {
 			    }
 			}); 
 		}			
-		else if(data[1] == "Categories"){
+		else if(data[1] == "Category"){
+
+			let productCategory = product.getCategory();
+			let categoryContent = "";
+			productCategory = JSON.parse(productCategory);
+
+			for(let c of productCategory){
+				if(data[2] == c[1]){
+					categoryContent += `<option selected>${c[1]}</option>`;
+				}
+				else{
+					categoryContent += `<option>${c[1]}</option>`;
+				}
+			}
+			$("#field_category").html(categoryContent);
+
 			var content = `<h4>Change ${data[1]}</h4>
 						  <form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>
 						  		<div class='col s12'>
-						  			<label for='field_categories'>Price: </label>
-						  			<input id='field_categories' type='text' length='100' name='field_categories' data-error='.error_categories' value='${data[2]}'>
+						  			<label for='field_categories'>${data[1]}: </label>
+						  			<select id='field_categories' type='text' length='100' name='field_categories' data-error='.error_categories'>${categoryContent}</select>
 						  			<div class='error_categories'></div>
 						  		</div>
 						  		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>
@@ -1912,12 +1927,7 @@ product = {
 						  </form>`;
 			$("#modal_confirm .modal-content").html(content);
 			$('#modal_confirm').modal('open');		
-
-			$('input#field_categories').materialtags();
-		    $('.chip i').removeClass('material-icons').addClass('mdi-navigation-close').html("");
-			$('input#field_categories').on('itemAdded', function(event) {
-			    $('.chip i').removeClass('material-icons').addClass('mdi-navigation-close').html("");
-			});
+		    $("select").material_select();
 
 			$("#form_update").validate({
 			    rules: {
@@ -1934,13 +1944,12 @@ product = {
 					}
 				},
 				submitHandler: function (form) {
-					$('input.n-tag').val("");
-					var _form = $('input#field_categories').materialtags('items');
-					if((_form.length == 1) && (data[2] == _form[0])){
-						Materialize.toast('You did not even change the product name.',4000);
+					var _form = $(form).serializeArray();
+					if(data[2] == _form[0]['value']){
+						Materialize.toast('You did not even change the category.',4000);
 					}
 					else{
-						var ajax = system.ajax('../assets/harmony/Process.php?update-product',[id,[{'name':'field_categories','value':JSON.stringify(_form)}]]);
+						var ajax = system.ajax('../assets/harmony/Process.php?update-product',[id,_form]);
 						ajax.done(function(ajax){
 							console.log(ajax);
 							if(ajax == 1){
@@ -1962,7 +1971,7 @@ product = {
 						  <form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>
 						  		<div class='row'>
 						  			<div class='col s12'>
-						  				<label for='field_price'>Price: </label>
+						  				<label for='field_price'>${data[1]}: </label>
 						  				<textarea class='materialize-textarea' id='field_description' data-field='field_description' data-error='.error_description' name='field_description'>${data[2]}</textarea>
 						  				<div class='error_description'></div>
 						  			</div>
@@ -2016,7 +2025,7 @@ product = {
 			var content = `<h4>Change Status</h4>
 						  <form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>
 						  		<div class='col s12'>
-						  		<label for='field_status' class='active'>Gender: </label>
+						  		<label for='field_status' class='active'>${data[1]}: </label>
 						  		<select name='field_status'>
 						  			<option selected>Published</option>
 						  			<option>Pending</option>
@@ -2171,7 +2180,7 @@ product = {
 							<td>published</td>
 							<td width='1px'>
 								<a href='#cmd=index;content=focusProduct;${v[0]}' class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='0' data-tooltip='Show Details' data-cmd='update'>
-								<i class='material-icons right hover black-text'>more_vert</i>
+									<i class='material-icons right hover black-text'>more_vert</i>
 								</a>
 							</td>
 						</tr>`;
@@ -2216,6 +2225,27 @@ product = {
 				$("#modal_popUp .modal-content").html(content);
 				$('#modal_popUp').modal('open');
 
+				let productCategory = product.getCategory();
+				let categoryContent = "";
+				productCategory = JSON.parse(productCategory);
+
+				for(let c of productCategory){
+					categoryContent += `<option>${c[1]}</option>`;
+				}
+				$("#field_category").html(categoryContent);
+
+				let productBrand = product.getBrands();
+				let brandContent = "";
+				productBrand = JSON.parse(productBrand);
+				console.log(productBrand);
+
+				for(let b of productBrand){
+					brandContent += `<option>${b[1]}</option>`;
+				}
+
+				$("#field_brand").html(brandContent);
+			    $("select").material_select();
+
 				$("#form_addProduct").validate({
 				    rules: {
 				        field_productName: {required: true,maxlength: 50},
@@ -2223,6 +2253,7 @@ product = {
 				        field_price: {required: true,maxlength: 50,checkCurrency:true},
 				        field_description: {required: true,maxlength: 900},
 				        field_category: {required: false},
+				        field_brand: {required: false},
 				    },
 				    errorElement : 'div',
 				    errorPlacement: function(error, element) {
@@ -2236,14 +2267,15 @@ product = {
 					},
 					submitHandler: function (form) {
 						var _form = $(form).serializeArray();
+						console.log(_form);
 						var data = system.ajax('../assets/harmony/Process.php?set-newProductAdmin',_form);
 						data.done(function(data){
-							data = JSON.parse(data);
-							if(data[0] == 1){
+							console.log(data);
+							if(data == 1){
 								$('#modal_popUp').modal('close');	
 								Materialize.toast('Saved.',4000);
 								system.clearForm();
-						    	$(location).attr('href',`#cmd=index;content=focusProduct;${data[1]}`);			
+								product.ini();
 							}
 							else{
 								Materialize.toast('Cannot process request.',4000);
@@ -4025,18 +4057,89 @@ request = {
 sales = {
 	ini:function(){
 		const list = this.get();
+		console.log(JSON.parse(list));
 		this.list(list);
 	},
 	get:function(){
 		const data = system.html('../assets/harmony/Process.php?get-sales');
 		return data.responseText;
 	},
-	viewOrders:function(){
+	viewOrders:function(data){
+		let subTotal = 0;
+		let status = ["Pending","Place Order","For Delivery","Closed","Canceled"];
+		let statusContent = "";
+		$("#modal table").remove();
 
+		let content = `<thead><tr>
+					  <th class='center'></th>
+					  <th class='center'>Product</th>
+					  <th class='center'>Quantity</th>
+					  <th class='center'>Price</th>
+					  <th class='center'>Total</th>
+				  </tr></thead>`;						
+
+		$.each(data[1],function(i,v){
+			var product = ((v[17] == "") || (v[17] == null))?"default.png":v[17];
+			subTotal = subTotal + (v[10]*v[1]);
+			content += `<tr>
+						  <td class='center'><img src='../assets/images/products/${product}' alt='Thumbnail' class='valign profile-image' width='80px'></td>
+						  <td class='center'>${v[8]}</td>
+						  <td class='center'>${v[1]}</td>
+						  <td class='center'>${v[10]}</td>
+						  <td class='center'>${(v[10]*v[1])}</td>
+					  </tr>`;						
+		});
+
+		for(let s of status){
+			if(s == data[0].meta[3]){
+				statusContent += `<option selected>${s}</option>`;
+			}
+			else{
+				statusContent += `<option>${s}</option>`;
+			}
+		}
+
+		$('#modal .modal-content').html(`<div class='row'>
+											<div class='col s3'>
+												<table>
+													<tr>
+														<td class='bold'>Order ID:</td>
+														<td>${(data[0].meta[0].substring(0,8))}</td>
+													</tr>
+													<tr>
+														<td class='bold'>Order Date:</td>
+														<td>${data[0].meta[1]}</td>
+													</tr>
+													<tr>
+														<td class='bold'>Order Delivered:</td>
+														<td>${data[0].meta[2]}</td>
+													</tr>
+													<tr>
+														<td class='bold'>Status:</td>
+														<td><select id="field_status">${statusContent}</select></td>
+													</tr>
+												</table>
+											</div>
+											<div class='col s9'>
+												<div class='card'>
+													<table class='striped bordered highlight'>${content}
+														<tr><td colspan='4'><strong class='right'>Total</strong></td><td class='center'>${subTotal}</td></tr>
+													</table>
+												</div>
+											</div>`);
+
+	    $("select").material_select();
+		$('#modal').modal('open');
+		// $('#modal').attr({"max-height":"80%"});
+
+		$("#field_status").on('change',function(){
+			console.log(data);
+			let statusData = $(this).val();
+			sales.updateStatus([data[0].meta[0],statusData]);
+		});
 	},
 	list:function(data){
 		const list = JSON.parse(data);
-		console.log(list);
 		let content = "";
 
 		if(data.length<=0){
@@ -4044,7 +4147,6 @@ sales = {
 		}
 		else{
 			$.each(list,function(i,v){
-				console.log(v);
 				profile = (v[17] == "")?'avatar.jpg':v[17];
 				content += `<tr>
 								<td width='1px'>${(i+1)}. </td>
@@ -4062,8 +4164,24 @@ sales = {
 									</a>
 								</td>
 							</tr>`;
-			})					
-			$("#display_orderList table tbody").html(content);
+			});
+
+			content = `<table class='display dataTable bordered' width="100%">
+				            <thead>
+				                <tr>	
+				                    <td width='1%'>#</td>
+				                    <td>Ordered By</td>
+				                    <td>Order ID</td>
+				                    <td>Order Date</td>
+				                    <td>Order Delivered</td>
+				                    <td>Status</td>
+				                    <td></td>
+				                </tr>
+				            </thead>
+				            <tbody>${content}</tbody>
+				        </table>`;
+
+			$("#display_orderList").html(content);
 		    $("select").material_select();
 		    $(".dropdown-button").dropdown();
 
@@ -4079,39 +4197,26 @@ sales = {
 
 			$("a[data-cmd='showOrder']").on('click',function(){
 				var data = $(this).data();
-				var content = "";
-				$("#modal table").remove();
-
-				var subTotal = 0;
 				var orders = system.ajax('../assets/harmony/Process.php?get-orders',data.node);
 				orders.done(function(orders){
 					var orders = JSON.parse(orders);
-					content = `<thead><tr>
-								  <th class='center'></th>
-								  <th class='center'>Product</th>
-								  <th class='center'>Quantity</th>
-								  <th class='center'>Price</th>
-								  <th class='center'>Total</th>
-							  </tr></thead>`;						
-
-					$.each(orders,function(i,v){
-						console.log(v);
-						var product = ((v[17] == "") || (v[17] == null))?"default.png":v[17];
-						subTotal = subTotal + (v[10]*v[1]);
-						content += `<tr>
-									  <td class='center'><img src='../assets/images/products/${product}' alt='Thumbnail' class='valign profile-image' width='80px'></td>
-									  <td class='center'>${v[8]}</td>
-									  <td class='center'>${v[1]}</td>
-									  <td class='center'>${v[10]}</td>
-									  <td class='center'>${(v[10]*v[1])}</td>
-								  </tr>`;						
-					})
-					$('#modal .modal-content').html(`<strong>Order ID:</strong> ${(data.meta[0].substring(0,8))}<br/><strong>Order Date:</strong> ${data.meta[1]}<br/>\n<strong>Order Delivered:</strong> ${data.meta[2]}<br/>\n<strong>Status:</strong> ${data.meta[3]}`);			
-					$("#modal .modal-footer").before(`<table class='striped bordered highlight'>${content}<tr><td colspan='4'><strong class='right' >Total</strong></td><td class='center'>${subTotal}</td></tr></table>`);
-					$("#modal .modal-footer").html("<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Close</a>");
-					$('#modal').modal('open');			
+					sales.viewOrders([data,orders]);
 				});
 			});
 		}
 	},
+	updateStatus:function(statusData){
+		const data = system.ajax('../assets/harmony/Process.php?update-orderStatus',statusData);
+		data.done(function(returnData){
+			console.log(returnData);
+			if(returnData == 1){
+				Materialize.toast(`Order has been ${statusData[1]}.`,4000);
+				$('#modal').modal('close');	
+				sales.ini();
+			}
+			else{
+				Materialize.toast('Cannot process request.',4000);
+			}
+		});
+	}
 }

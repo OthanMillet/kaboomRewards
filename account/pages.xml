@@ -140,7 +140,7 @@
 	<addProduct>
 		<form id='form_addProduct' class='formValidate' method='get' action='' novalidate='novalidate'>
 			<div class='row'>
-				<div class='col offset-m3 offset-l3 s12 m6 l6'>
+				<div class='col s12'>
 					<h4 class="">Add Product</h4>
 					<div class='row'>
 						<div class='input-field col s12'>
@@ -149,7 +149,7 @@
 							<div class='error_productName'></div>	
 						</div>
 						<div class='input-field col s6'>
-							<label for='field_qty'>SKU: </label>
+							<label for='field_qty'>Quantity: </label>
 				            <input id='field_qty' type='text' name='field_qty' data-error='.error_qty'>
 							<div class='error_qty'></div>	
 						</div>
@@ -163,10 +163,15 @@
 				            <textarea class='materialize-textarea' id='field_description' type='text' name='field_description' data-error='.error_description'></textarea>
 							<div class='error_description'></div>	
 						</div>
-						<div class='input-field col s12'>
-							<label for='field_category'>Category: </label>
-				            <input id='field_category' type='text' name='field_category' data-error='.error_category'>
+						<div class='input-field col s6'>
+							<label for='field_category' class='active'>Category: </label>
+							<select id='field_category' type='text' name='field_category' data-error='.error_category'></select>
 							<div class='error_category'></div>	
+						</div>
+						<div class='input-field col s6'>
+							<label for='field_category' class='active'>Brand: </label>
+							<select id='field_brand' type='text' name='field_brand' data-error='.error_brand'></select>
+							<div class='error_brand'></div>	
 						</div>
 					</div>
 					<div class='row'>

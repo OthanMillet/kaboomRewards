@@ -201,3 +201,12 @@ footer.example {
 table .truncate{
     display: table-cell !important;
 }
+
+.select-wrapper input.select-dropdown{
+    margin:0px;
+}
+
+.modal.bottom-sheet{
+    max-height: 80% !important;
+    height: 80% !important;
+}

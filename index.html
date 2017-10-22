@@ -19,41 +19,43 @@
             <div class="loader-section section-left"></div>
             <div class="loader-section section-right"></div>
         </div>
-        <nav class="nav-extended">
-            <div class="nav-background">
-                <div class="ea k" style="background-image: url('assets/images/icon-seamless.png');"></div>
-            </div>
-            <div class="nav-wrapper db">
-                <a class="brand-logo" href="index.html"><img src="assets/images/logo.png" draggable='false' alt="" class="circle responsive-img valign profile-image" id='display_logo' style="width:80px;"></a>
-                <a class="button-collapse show-on-small hide-on-med-and-down" data-activates="nav-mobile" href="#"><i class="material-icons">menu</i></a>
-                <ul class="right hide-on-small-only">
-                    <li>
-                        <a href="#" data-activates="signIn" class="btn-sideNav grey-text darken-4">Sign In</a>
-                    </li>
-                    <li>
-                        <a href="#" class="hidden pink-text darken-2 chat-collapse" data-activates="account">My Account <i class="mdi-action-account-circle right"></i></a>
-                    </li>
-                    <li class="pink darken-2">
-                        <a href="cart.html"><i class="material-icons white-text">shopping_cart</i><small class="notification-badge white-text" id="display_cartTotal">100</small></a>
-                    </li>
-                </ul>
-            </div>
-            <div class="nav-content" style='overflow: hidden;'>
-                <div class="container">
-                    <div class="row hide" id="display_headerAccount">
-                        <div class="right" style="padding-right: 20px;">
-                            <h5>
-                                <span class="cyan-text darken-1 display_accountName">Welcome, Rufo Gabrillo<br/></span><br/>
-                                <small class="pink-text accent-4">You have <span class="display_points"></span> points</small>
-                            </h5>
+        <div class="">
+            <nav class="nav-extended">
+                <div class="nav-background">
+                    <div class="ea k" style="background-image: url('assets/images/icon-seamless.png');"></div>
+                </div>
+                <div class="nav-wrapper db">
+                    <a class="brand-logo" href="index.html"><img src="assets/images/logo.png" draggable='false' alt="" class="circle responsive-img valign profile-image" id='display_logo' style="width:80px;"></a>
+                    <a class="button-collapse show-on-small hide-on-med-and-down" data-activates="nav-mobile" href="#"><i class="material-icons">menu</i></a>
+                    <ul class="right hide-on-small-only">
+                        <li>
+                            <a href="#" data-activates="signIn" class="btn-sideNav grey-text darken-4">Sign In</a>
+                        </li>
+                        <li>
+                            <a href="#" class="hidden pink-text darken-2 chat-collapse" data-activates="account">My Account <i class="mdi-action-account-circle right"></i></a>
+                        </li>
+                        <li class="pink darken-2">
+                            <a href="cart.html"><i class="material-icons white-text">shopping_cart</i><small class="notification-badge white-text" id="display_cartTotal">100</small></a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="nav-content" style='overflow: hidden;'>
+                    <div class="container">
+                        <div class="row hide" id="display_headerAccount">
+                            <div class="right" style="padding-right: 20px;">
+                                <h5>
+                                    <span class="cyan-text darken-1 display_accountName">Welcome, Rufo Gabrillo<br/></span><br/>
+                                    <small class="pink-text accent-4">You have <span class="display_points"></span> points</small>
+                                </h5>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="categories-wrapper teal lighten-2" style="height: 4px;">
-                <div class="categories-container pin-top"></div>
-            </div>
-        </nav>
+                <div class="categories-wrapper teal lighten-2" style="height: 4px;">
+                    <div class="categories-container pin-top"></div>
+                </div>
+            </nav>
+        </div>
         <section class='row' style='margin-bottom: 0px;'>
             <div class="slider">
                 <ul class="slides">
@@ -171,12 +173,12 @@
                                     <div class="input-field col s12 m12 l12">
                                         <input id="field_empID" name="field_empID" type="text" data-error=".error_field_empID" value='2017-1091'>
                                         <label for="field_empID" class="center-align">Employee ID</label>  
-                                        <div class="error_field_empID"></div>  
+                                        <div class="error_field_empID"></div>
                                     </div>
                                     <div class="input-field col s12 m12 l12">
                                         <input id="field_password" name="field_password" type="password" data-error=".error_field_password" value="Password2017!">
                                         <label for="field_password" class="">Password</label>
-                                        <div class="error_field_password"></div>  
+                                        <div class="error_field_password"></div>
                                     </div>
                                     <div class="input-field col s12 m12 l12">
                                         <button class="btn waves-effect waves-light col s12" type='submit'>Login</button>
@@ -206,11 +208,11 @@
                                 </div>
                                 <div class="col s12 m12 l12">
                                     <div class="center">
-                                        <img src="assets/images/company/startek.png" draggable='false' alt="" class="responsive-img valign profile-image">
+                                        <img src="assets/images/company/logoClient.png" draggable='false' alt="" class="responsive-img valign profile-image">
                                     </div>
                                     <h5>Name Here</h5>
-                                    <p><span class="pink-text">Position: </span><br/>Call Center<br/>
-                                    <span class="pink-text">Address: </span><br/>Philippines</p>
+                                    <p><span class="pink-text hide">Position: </span><br/>Call Center<br/>
+                                    <span class="pink-text hide">Address: </span><br/>Philippines</p>
                                 </div>
                             </div>
                         </div>  
@@ -225,17 +227,23 @@
                                 <li class="collection-item avatar">
                                     <i class="material-icons circle pink">shopping_basket</i> <a class="white-text title" href="sale.html">Shop Now</a>
                                 </li>
-                                <li class="collection-item avatar">
+                                <li class="collection-item avatar hide">
                                     <i class="material-icons circle pink">mail</i> <a class="white-text title">Inbox</a>
                                 </li>
                                 <li class="collection-item avatar">
-                                    <i class="material-icons circle pink">bookmark</i> <a class="white-text title" href="account/#cmd=index;content=list_points">My Reward History</a>
+                                    <i class="material-icons circle pink">bookmark</i> <a class="white-text title" href="account/#cmd=index;content=list_points">Reward History</a>
                                 </li>
                                 <li class="collection-item avatar">
                                     <i class="material-icons circle pink">trending_up</i> <a class="white-text title" href="account/#cmd=index;content=list_points">Order Tracker</a>
                                 </li>
-                                <li class="collection-item avatar">
+                                <li class="collection-item avatar hide">
                                     <i class="material-icons circle pink">headset_mic</i> <a class="white-text title" href="account/">Contact Support</a>
+                                </li>
+                                <li class="collection-item avatar">
+                                    <i class="material-icons circle pink">mail</i> <a class="white-text title" data-cmd="account">Account</a>
+                                </li>
+                                <li class="collection-item avatar">
+                                    <i class="material-icons circle pink">mail</i> <a class="white-text title" data-cmd="logout">Sign Out</a>
                                 </li>
                             </ul>
                         </div>

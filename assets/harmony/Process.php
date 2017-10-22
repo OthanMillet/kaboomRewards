@@ -208,7 +208,7 @@ $function = new DatabaseClasses;
 		}
 
 		if(isset($_GET['get-sales'])){
-			$query = $function->PDO("SELECT tbl_orders.id, tbl_orders.employee_id, tbl_orders.order_date, tbl_orders.date_delivered, tbl_orders.status, tbl_employee.id, tbl_employee.employee_id, tbl_employee.company_id, tbl_employee.family_name, tbl_employee.given_name, tbl_employee.middle_name, tbl_employee.nickname, tbl_employee.gender, tbl_employee.date_of_birth, tbl_employee.contact_number, tbl_employee.email_address, tbl_employee.address, tbl_employee.picture, tbl_employee.position, tbl_company.id, tbl_company.company_name, tbl_company.logo FROM tbl_orders INNER JOIN tbl_employee ON tbl_orders.employee_id = tbl_employee.id INNER JOIN tbl_company ON tbl_employee.company_id = tbl_company.id ORDER BY tbl_orders.order_date DESC");
+			$query = $function->PDO("SELECT DISTINCT tbl_orders.id, tbl_orders.employee_id, tbl_orders.order_date, tbl_orders.date_delivered, tbl_orders.status, tbl_employee.id, tbl_employee.employee_id, tbl_employee.company_id, tbl_employee.family_name, tbl_employee.given_name, tbl_employee.middle_name, tbl_employee.nickname, tbl_employee.gender, tbl_employee.date_of_birth, tbl_employee.contact_number, tbl_employee.email_address, tbl_employee.address, tbl_employee.picture, tbl_employee.position, tbl_company.id, tbl_company.company_name, tbl_company.logo FROM tbl_orders INNER JOIN tbl_employee ON tbl_orders.employee_id = tbl_employee.id INNER JOIN tbl_company ON tbl_employee.company_id = tbl_company.id ORDER BY tbl_orders.order_date DESC");
 			print_r(json_encode($query));
 		}
 
@@ -236,7 +236,7 @@ $function = new DatabaseClasses;
 				}
 			}
 
-			$suggestions = $function->PDO("SELECT * FROM tbl_product WHERE (id != '{$data}') AND ({$search}) AND (qty>0) AND (status = 1) LIMIT 0,3");
+			$suggestions = $function->PDO("SELECT * FROM tbl_product WHERE (id != '{$data}') AND ({$search}) AND (qty>0) AND (status = 'Published') LIMIT 0,3");
 			print_r(json_encode($suggestions));
 		}
 
@@ -256,13 +256,13 @@ $function = new DatabaseClasses;
 		}
 
 		if(isset($_GET['get-availableProducts'])){
-			$query = $function->PDO("SELECT * FROM tbl_product WHERE qty>0 AND status = 1 ORDER BY `product_name`");
+			$query = $function->PDO("SELECT * FROM tbl_product WHERE qty>0 AND status = 'Published' ORDER BY `product_name`");
 			print_r(json_encode($query));
 		}
 
 		if(isset($_GET['get-searchProducts'])){
 			$data = $_POST['data'];
-			$query = $function->PDO("SELECT * FROM tbl_product WHERE product_name LIKE '{$data}%' AND (qty>0 AND status = 1) ORDER BY `product_name`");
+			$query = $function->PDO("SELECT * FROM tbl_product WHERE product_name LIKE '{$data}%' AND (qty>0 AND status = 'Published') ORDER BY `product_name`");
 			print_r(json_encode($query));
 		}
 
@@ -271,19 +271,19 @@ $function = new DatabaseClasses;
 			// print_r($data);
 			switch($data){
 				case "Price ascending":
-					$query = $function->PDO("SELECT * FROM tbl_product WHERE (qty>0 AND status = 1) ORDER BY `price` ASC");
+					$query = $function->PDO("SELECT * FROM tbl_product WHERE (qty>0 AND status = 'Published') ORDER BY `price` ASC");
 					break;
 				case "Price descending":
-					$query = $function->PDO("SELECT * FROM tbl_product WHERE (qty>0 AND status = 1) ORDER BY `price` DESC");
+					$query = $function->PDO("SELECT * FROM tbl_product WHERE (qty>0 AND status = 'Published') ORDER BY `price` DESC");
 					break;
 				case "Newly arrived":
-					$query = $function->PDO("SELECT * FROM tbl_product WHERE (qty>0 AND status = 1) ORDER BY `date` DESC");
+					$query = $function->PDO("SELECT * FROM tbl_product WHERE (qty>0 AND status = 'Published') ORDER BY `date` DESC");
 					break;
 				case "Popularity":
-					$query = $function->PDO("SELECT * FROM tbl_product WHERE (qty>0 AND status = 1) ORDER BY `product_name`");
+					$query = $function->PDO("SELECT * FROM tbl_product WHERE (qty>0 AND status = 'Published') ORDER BY `product_name`");
 					break;
 				default:
-					$query = $function->PDO("SELECT * FROM tbl_product WHERE (qty>0 AND status = 1) ORDER BY `product_name`");
+					$query = $function->PDO("SELECT * FROM tbl_product WHERE (qty>0 AND status = 'Published') ORDER BY `product_name`");
 			};
 
 			print_r(json_encode($query));
@@ -293,12 +293,12 @@ $function = new DatabaseClasses;
 			$data = $_POST['data'];
 			$min = $data[0];
 			$max = $data[1];
-			$query = $function->PDO("SELECT * FROM tbl_product WHERE (price BETWEEN '{$min}' AND '{$max}') AND (qty>0 AND status = 1) ORDER BY `product_name`");
+			$query = $function->PDO("SELECT * FROM tbl_product WHERE (price BETWEEN '{$min}' AND '{$max}') AND (qty>0 AND status = 'Published') ORDER BY `product_name`");
 			print_r(json_encode($query));
 		}
 
 		if(isset($_GET['get-minMaxPricedProducts'])){
-			$query = $function->PDO("SELECT min(price),max(price) FROM tbl_product WHERE (qty>0 AND status = 1) ORDER BY `product_name`");
+			$query = $function->PDO("SELECT min(price),max(price) FROM tbl_product WHERE (qty>0 AND status = 'Published') ORDER BY `product_name`");
 
 			print_r(json_encode($query[0]));
 		}
@@ -472,10 +472,10 @@ $function = new DatabaseClasses;
 			$date = $function->PDO_DateAndTime();
 
 			$user = $function->getAdmin();
-			$query = $function->PDO("INSERT INTO tbl_product(id,product_name,qty,price,category,description,image,status,`date`,addedby,lastupdateby) VALUES ('{$id}','{$data[0]['value']}','{$data[1]['value']}','{$data[2]['value']}','{$data[4]['value']}','{$data[3]['value']}','default.jpg','0','{$date}','{$user}','{$user}')");
+			$query = $function->PDO("INSERT INTO tbl_product(id,product_name,qty,price,category,description,picture,brand,status,`date`,addedby,lastupdateby) VALUES ('{$id}','{$data[0]['value']}','{$data[1]['value']}','{$data[2]['value']}','{$data[4]['value']}','{$data[3]['value']}','default.png','{$data[5]['value']}','Published','{$date}','{$user}','{$user}')");
 			if($query->execute()){
 				$function->log("add",$user,"Added product with an ID of ".$id);
-				echo json_encode([1,$id]);
+				echo 1;
 			}
 			else{
 				$Data = $query->errorInfo();
@@ -1589,6 +1589,20 @@ $function = new DatabaseClasses;
 			$query = $function->PDO("UPDATE tbl_product SET status = '0' WHERE id = '{$id}';");
 			if($query->execute()){
 				$log = $function->log2($id,"Removed wishlist with an id of '{$id}","Wishlist");
+				echo 1;
+			}
+			else{
+				$Data = $query->errorInfo();
+				print_r($Data);
+			}
+		}
+
+		if(isset($_GET['update-orderStatus'])){
+			$data = $_POST['data'];
+			$date = $function->PDO_DateAndTime();
+			$query = $function->PDO("UPDATE tbl_orders SET status = '{$data[1]}' WHERE id = '{$data[0]}';");
+			if($query->execute()){
+				$log = $function->log2($data[0],"Updated order with an id of '{$data[0]}'","Orders");
 				echo 1;
 			}
 			else{

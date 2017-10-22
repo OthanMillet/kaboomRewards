@@ -176,7 +176,6 @@ market = {
 		    $('.tooltipped').tooltip({delay: 1});
 		});
 
-		$("#display_cartTotal").html(market.getCart().length);
 		setTimeout(function(){
 			system.loading(true);
 			$('#content-login').addClass('animated slideInUp');
@@ -199,6 +198,8 @@ market = {
 				market.sort();
 			}
 		});	
+
+		$("#display_cartTotal").html(market.getCart().length);
 	},
 	products:function(list){
 		var content = "",search = [], disabled = "", category = "", categoryList = "";
