@@ -22,14 +22,11 @@ var App = function () {
                 $(location).attr('href','../');                         
             }
 
-            console.log(node);
-
             var targetUrl = newhash[0].replace('#cmd=','../pages/'+node+'/')+".html";
 
             $('.jvectormap-label, .jvector-label, .AutoFill_border ,#gritter-notice-wrapper, .ui-autocomplete, .colorpicker, .FixedHeader_Header, .FixedHeader_Cloned .lightboxOverlay, .lightbox').remove();
 
             var content = system.html(targetUrl);
-            console.log(targetUrl);
             content.done(function(data){
                 $('#content').html(data);
                 $('#content').addClass('animated zoomIn');

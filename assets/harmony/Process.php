@@ -297,6 +297,33 @@ $function = new DatabaseClasses;
 			print_r(json_encode($query));
 		}
 
+		if(isset($_GET['get-filteredProducts'])){
+			$data = $_POST['data'];
+			$min = $data[0][0];
+			$max = $data[0][1];
+			$search = $data[1];
+			$sort = $data[2];
+
+			switch($sort){
+				case "Price ascending":
+					$query = $function->PDO("SELECT * FROM tbl_product WHERE (qty>0 AND status = 'Published') AND (price BETWEEN '{$min}' AND '{$max}') AND (product_name LIKE '{$search}%') AND (qty>0 AND status = 'Published') ORDER BY `price` ASC");
+					break;
+				case "Price descending":
+					$query = $function->PDO("SELECT * FROM tbl_product WHERE (qty>0 AND status = 'Published') AND (price BETWEEN '{$min}' AND '{$max}') AND (product_name LIKE '{$search}%') AND (qty>0 AND status = 'Published') ORDER BY `price` DESC");
+					break;
+				case "Newly arrived":
+					$query = $function->PDO("SELECT * FROM tbl_product WHERE (qty>0 AND status = 'Published') AND (price BETWEEN '{$min}' AND '{$max}') AND (product_name LIKE '{$search}%') AND (qty>0 AND status = 'Published') ORDER BY `date` DESC");
+					break;
+				case "Popularity":
+					$query = $function->PDO("SELECT * FROM tbl_product WHERE (qty>0 AND status = 'Published') AND (price BETWEEN '{$min}' AND '{$max}') AND (product_name LIKE '{$search}%') AND (qty>0 AND status = 'Published') ORDER BY `product_name`");
+					break;
+				default:
+					$query = $function->PDO("SELECT * FROM tbl_product WHERE (qty>0 AND status = 'Published') AND (price BETWEEN '{$min}' AND '{$max}') AND (product_name LIKE '{$search}%') AND (qty>0 AND status = 'Published') ORDER BY `product_name`");
+			};
+
+			print_r(json_encode($query));
+		}
+
 		if(isset($_GET['get-minMaxPricedProducts'])){
 			$query = $function->PDO("SELECT min(price),max(price) FROM tbl_product WHERE (qty>0 AND status = 'Published') ORDER BY `product_name`");
 

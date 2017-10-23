@@ -60,50 +60,49 @@
                 <div class="db">
                     <div class="b e">
                         <div class="col s3">
-                            <div class="filter-container">
-                                <strong class="big-font">Filter for<br/></strong>
-                                <div class="row" style="margin-bottom: 30px; margin-top: 30px;">
-                                    <div class="input-field">
+                            <form id='form_productFilter'>
+                                <div class="filter-container">
+                                    <div class="row">
+                                        <div class="input-field">
+                                            <input name="search" name='field_searchProduct' id='field_searchProduct' type="text" >
+                                            <label for="search">Search</label>
+                                        </div>
+                                        <div class="input-field">
+                                            <select class="initialized" name="field_sortProduct" id='field_sortProduct'>
+                                                <option disabled selected>Sort By</option>
+                                                <option >Price ascending</option>
+                                                <option >Price descending</option>
+                                                <option >Newly arrived</option>
+                                                <!-- <option >Popularity</option> -->
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row" style="margin-bottom: 30px; margin-top: 30px;">
                                         <label for="price-slider" class="active">Price Range</label><br/>
-                                        <div id="price-slider"></div>
-                                        <div class="col-s6 left" id='price-min' style="margin-top: 5px;">0</div>
-                                        <div class="col-s6 right" id='price-max' style="margin-top: 5px;">100</div>
+                                        <div class='col s12'>
+                                            <div class="input-field">
+                                                <div id="price-slider"></div>
+                                                <div class="col-s6 left" id='price-min' style="margin-top: 5px;">0</div>
+                                                <div class="col-s6 right" id='price-max' style="margin-top: 5px;">100</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row hide">
+                                        <ul id='display_brands'>
+                                            <li>
+                                                <input id="field_brand1" name="field_brand1" type="checkbox">
+                                                <label for="field_brand1">Brand A (100)</label>
+                                            </li>
+                                            <li>
+                                                <input id="field_brand2" name="field_brand2" type="checkbox">
+                                                <label for="field_brand2">Brand B (74)</label>
+                                            </li>
+                                        </ul>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <ul id='display_brands'>
-                                        <li>
-                                            <input id="allergic" name="allergic" type="checkbox" value="1">
-                                            <label for="allergic">Brand A (100)</label>
-                                        </li>
-                                        <li>
-                                            <input id="pet" name="pet" type="checkbox" value="1">
-                                            <label for="pet">Brand B (74)</label>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
+                            </form>
                         </div>
                         <div class="col s9">
-                            <div class="row">
-                                <div class="col m5 s12">
-                                    <div class="input-field">
-                                        <input name="search" type="text" class="search-product">
-                                        <label for="search">Search</label>
-                                    </div>
-                                </div>
-                                <div class="col m4 offset-m3 s12">
-                                    <div class="input-field">
-                                        <select class="initialized" name="field_sortProduct" id='field_sortProduct'>
-                                            <option disabled selected>Sort By</option>
-                                            <option >Price ascending</option>
-                                            <option >Price descending</option>
-                                            <option >Newly arrived</option>
-                                            <!-- <option >Popularity</option> -->
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
                             <div id='products'></div>
                         </div>
                     </div>

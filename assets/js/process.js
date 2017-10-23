@@ -26,7 +26,6 @@ var system = function(){
 		    });
 		},
 		html:function(url){
-			console.log(url);
 	        return $.ajax({
 		        type: "POST",
 		        url: url,

@@ -193,8 +193,8 @@ market = {
 				profile.ini();
 				wishlist.ini();
 				market.products();
-				market.search();
-				market.sort();
+				// market.search();
+				market.filter();
 			}
 		});	
 	},
@@ -270,46 +270,17 @@ market = {
 	    	$(location).attr('href',"product.html?id="+data.node);
 		});
 	},
-	search:function(){
-		$(".search-product").on('keyup',function(){
-			var search = $(this).val();
-			if(search != ''){
-				var data = system.ajax('assets/harmony/Process.php?get-searchProducts',search);
-				data.done(function(data){
-					// console.log(data);
-					data = JSON.parse(data);
-					if(data.length > 0){
-						market.products(data);
-					}
-					else{
-						$("#products").html("<h4 class='center grey-text'>Search yield no result</h4>");
-					}
-				});				
-			}
-			else{
-				market.products();
-			}
-		})
+	getFilterField:function(){
+        let a = document.getElementById('price-slider');
+		let search = $("#field_searchProduct").val();
+		let sort = $("#field_sortProduct").val();
+		return [a.noUiSlider.get(),search,sort];
 	},
 	sort:function(){
-		var priceRange = market.minMaxPricedProducts();
+		let priceRange = market.minMaxPricedProducts();
 		priceRange = JSON.parse(priceRange);
-		$("#field_sortProduct").on("change",function(){
-			var sort = $(this).val();
-			var data = system.ajax('assets/harmony/Process.php?get-sortProducts',sort);
-			data.done(function(data){
-				// console.log(data);
-				data = JSON.parse(data);
-				if(data.length > 0){
-					market.products(data);
-				}
-				else{
-					$("#products").html("<h4 class='center grey-text'>Search yield no result</h4>");
-				}
-			});				
-		});
 
-        var price = document.getElementById('price-slider');
+        let price = document.getElementById('price-slider');
         noUiSlider.create(price,{
             start: priceRange,
             connect: true,
@@ -323,6 +294,27 @@ market = {
         });
 
         market.sortUpdatePriceRange(price);
+		price.noUiSlider.on('slide', function(){
+	        market.sortUpdatePriceRange(price);
+		});
+
+		console.log("xx");
+		$("#field_sortProduct").on("change",function(){
+			let sort = $(this).val();
+
+			console.log(market.getFilterField());
+			// var data = system.ajax('assets/harmony/Process.php?get-sortProducts',sort);
+			// data.done(function(data){
+			// 	// console.log(data);
+			// 	data = JSON.parse(data);
+			// 	if(data.length > 0){
+			// 		market.products(data);
+			// 	}
+			// 	else{
+			// 		$("#products").html("<h4 class='center grey-text'>Search yield no result</h4>");
+			// 	}
+			// });				
+		});
 
 		price.noUiSlider.on('change', function(){
 			var priceRange = price.noUiSlider.get();
@@ -337,15 +329,74 @@ market = {
 				}
 			});				
 		});
+	},
+	filter:function(){
+		let priceRange = market.minMaxPricedProducts();
+		priceRange = JSON.parse(priceRange);
+
+        let price = document.getElementById('price-slider');
+        noUiSlider.create(price,{
+            start: priceRange,
+            connect: true,
+            step: 1,
+            margin: (Number(priceRange[1])*0.10),
+            orientation: 'horizontal',
+            range: {
+                'min': 0,
+                'max': Number(priceRange[1])
+            },
+        });
+
+        market.sortUpdatePriceRange(price);
 		price.noUiSlider.on('slide', function(){
 	        market.sortUpdatePriceRange(price);
 		});
-	},
-	getCategory:function(){
 
-	},
-	listCategory:function(){
-		
+		price.noUiSlider.on('change', function(){
+			var data = system.ajax('assets/harmony/Process.php?get-filteredProducts',market.getFilterField());
+			data.done(function(data){
+				data = JSON.parse(data);
+				if(data.length > 0){
+					market.products(data);
+				}
+				else{
+					$("#products").html("<h4 class='center grey-text'>Search yield no result</h4>");
+				}
+			});				
+		});
+
+		$("#field_sortProduct").on("change",function(){
+			let sort = $(this).val();
+				var data = system.ajax('assets/harmony/Process.php?get-filteredProducts',market.getFilterField());
+				data.done(function(data){
+					data = JSON.parse(data);
+					if(data.length > 0){
+						market.products(data);
+					}
+					else{
+						$("#products").html("<h4 class='center grey-text'>Search yield no result</h4>");
+					}
+				});				
+		});
+
+		$("#field_searchProduct").on('keyup',function(){
+			var search = $(this).val();
+			if(search != ''){
+				var data = system.ajax('assets/harmony/Process.php?get-filteredProducts',market.getFilterField());
+				data.done(function(data){
+					data = JSON.parse(data);
+					if(data.length > 0){
+						market.products(data);
+					}
+					else{
+						$("#products").html("<h4 class='center grey-text'>Search yield no result</h4>");
+					}
+				});
+			}
+			else{
+				market.products();
+			}
+		})
 	},
 	sortUpdatePriceRange:function(price){
 		var priceRange = price.noUiSlider.get();
