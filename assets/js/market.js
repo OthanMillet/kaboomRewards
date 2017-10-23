@@ -34,35 +34,35 @@ product = {
 		console.log(data_wishlist);
 		$.each(suggestions,function(i,v){
 			var search = system.searchJSON(data_wishlist,1,v[0]);
-			content = "<div class='row'>"+
-						"    <div class='card'>"+
-						"        <div class='card-image waves-effect waves-block waves-light'><img alt='product-img' class='activator' draggable='false' src='assets/images/products/"+v[10]+"'></div>"+
-						"        <ul class='card-action-buttons'>"+
-						"            <li>"+
-						"				<button class='btn-floating waves-effect shopping' data-cmd='addWishlist' data-wishlist='"+v[0]+"' data-node='"+v[0]+"'>"+
-						"					<i class='mdi-action-favorite'></i>"+
-						"				</button>"+
-						"				<button class='btn-floating waves-effect shopping cyan' data-cmd='addCart' data-node='"+v[0]+"'>"+
-						"					<i class='mdi-action-shopping-cart'></i>"+
-						"				</button>"+
-						"            </li>"+
-						"        </ul>"+
-						"        <div class='card-content'>"+
-						"            <div class='row'>"+
-						"                <div class='col s8'>"+
-						"                    <p class='card-title grey-text text-darken-4'><a class='grey-text text-darken-4' href='#'>"+v[1]+"</a></p>"+
-						"                </div>"+
-						"                <div class='col s4'>"+
-						"                    <p class='right' style='font-size: 24px;line-height: 32px;'>"+v[3]+"</p>"+
-						"                </div>"+
-						"            </div>"+
-						"        </div>"+
-						"        <div class='card-reveal grey darken-4'>"+
-						"            <p class='card-title'><a class='white-text' href='#'>"+v[1]+"</a><i class='mdi-navigation-close right white-text'></i></p>"+
-						"            <p class='white-text'>"+v[5]+"</p>"+
-						"        </div>"+
-						"    </div>"+
-						"</div>";
+			content = `<div class='row'>
+						    <div class='card'>
+						        <div class='card-image waves-effect waves-block waves-light'><img alt='product-img' class='activator' draggable='false' src='assets/images/products/${v[10]}'></div>
+						        <ul class='card-action-buttons'>
+						            <li>
+										<button class='btn-floating waves-effect shopping' data-cmd='addWishlist' data-wishlist='${v[0]}' data-node='${v[0]}'>
+											<i class='mdi-action-favorite'></i>
+										</button>
+										<button class='btn-floating waves-effect shopping cyan' data-cmd='addCart' data-node='${v[0]}'>
+											<i class='mdi-action-shopping-cart'></i>
+										</button>
+						            </li>
+						        </ul>
+						        <div class='card-content'>
+						            <div class='row'>
+						                <div class='col s8'>
+						                    <p class='card-title grey-text text-darken-4'><a class='grey-text text-darken-4' href='#'>${v[1]}</a></p>
+						                </div>
+						                <div class='col s4'>
+						                    <p class='right' style='font-size: 24px;line-height: 32px;'>${v[3]}</p>
+						                </div>
+						            </div>
+						        </div>
+						        <div class='card-reveal grey darken-4'>
+						            <p class='card-title'><a class='white-text' href='#'>${v[1]}</a><i class='mdi-navigation-close right white-text'></i></p>
+						            <p class='white-text'>${v[5]}</p>
+						        </div>
+						    </div>
+						</div>`;
 			$(".product").append(content);
 
 			if(search.length>0){
@@ -76,33 +76,31 @@ product = {
 		var data = product.get();
 		data = JSON.parse(data.responseText);
 		$.each(data,function(i,v){
-			content += "<tr>"+
-						"	<td width='1px'>"+(i+1)+". </td>"+
-						"	<td><img src='../assets/images/img3.jpg' alt='Thumbnail' class='responsive-img valign profile-image' width='100px'></td>"+
-						"	<td width='300px'>"+v[1]+"</td>"+
-						"	<td>"+v[5]+"</td>"+
-						"	<td>"+v[4]+"</td>"+
-						"	<td>"+v[2]+"</td>"+
-						"	<td>"+v[3]+"</td>"+
-						"	<td>published</td>"+
-						"	<td width='1px'>"+
-						"		<a class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='50' data-tooltip='Show' data-cmd='update'>"+
-						"			<i class='mdi-navigation-more-vert right black-text'></i>"+
-						"		</a>"+
-						"	</td>"+
-						"</tr>";
+			content += `<tr>
+							<td width='1px'>${(i+1)}. </td>
+							<td><img src='../assets/images/img3.jpg' alt='Thumbnail' class='responsive-img valign profile-image' width='100px'></td>
+							<td width='300px'>${v[1]}</td>
+							<td>${v[5]}</td>
+							<td>${v[4]}</td>
+							<td>${v[2]}</td>
+							<td>${v[3]}</td>
+							<td>published</td>
+							<td width='1px'>
+								<a class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='50' data-tooltip='Show' data-cmd='update'>
+									<i class='mdi-navigation-more-vert right black-text'></i>
+								</a>
+							</td>
+						</tr>`;
 		})	
 
-		content = "<table class='table bordered' id='products'>"+
-					"<thead>"+
-					"	<tr>"+
-					"		<th>#</th><th>Thumbnail</th><th>Product</th><th>Description</th><th>Category</th><th>Qty</th><th>Price</th><th>Status</th><th></th>"+
-					"	</tr>"+
-					"</thead>"+
-					"</tbody>"+
-						content+
-					"</tbody>"+
-					"</table>";
+		content = `<table class='table bordered' id='products'>
+						<thead>
+							<tr>
+								<th>#</th><th>Thumbnail</th><th>Product</th><th>Description</th><th>Category</th><th>Qty</th><th>Price</th><th>Status</th><th></th>
+							</tr>
+						</thead>
+						</tbody>${content}</tbody>
+					</table>`;
 		$("#display_productList").html(content);
 
 		var table = $('#products').DataTable({
@@ -212,41 +210,41 @@ market = {
 			else
 				disabled = "";
 
-				content += "<div class='col l4 m6 s12 gallery-item gallery-expand gallery-filter product "+v[4]+"'>"+
-				            "	<div class='gallery-curve-wrapper'>"+
-				            "	    <a class='gallery-cover gray'>"+
-				            "	        <img alt='placeholder' src='assets/images/products/"+v[10]+"' style='width:100%'>"+
-				            "	    </a>"+
-				            "	    <div class='gallery-header'>"+
-				            "	        <span>"+v[1]+"</span>"+
-				            "	        <span class='gj right' style='font-size: 24px;line-height: 32px;'>"+v[3]+"</span>"+
-				            "	    </div>"+
-				            "	    <div class='gallery-body'>"+
-				            "	        <div class='title-wrapper'>"+
-				            "	            <h3>"+v[1]+"</h3>"+
-				            "	            <span class='gj'>"+v[3]+"</span>"+
-				            "	        </div>"+
-				            "	        <p class='fi'>"+v[5]+"</p>"+
-				            "	        <div class='carousel-wrapper'>"+
-				            "	            <div class='t carousel initialized'>"+
-				            "	                <a class='carousel-item active' href='#one!'>"+
-				            "	                    <img src='assets/images/logo.png'>"+
-				            "	                </a>"+
-				            "	                <a class='carousel-item' href='#two!'>"+
-				            "	                    <img src='assets/images/logo.png'>"+
-				            "	                </a> "+
-				            "	                <a class='carousel-item' href='#three!'>"+
-				            "	                    <img src='assets/images/logo.png'>"+
-				            "	                </a> "+
-				            "	            </div>"+
-				            "	        </div>"+
-				            "	    </div>"+
-				            "	    <div class='gallery-action'>"+
-				            "	        <a class='btn-floating btn-large waves-effect waves-light shopping' data-cmd='addWishlist' data-wishlist='"+v[0]+"' data-node='"+v[0]+"'><i class='material-icons'>favorite</i></a>"+
-				            "	        <a class='btn-floating btn-large waves-effect waves-light shopping cyan' data-cmd='addCart' "+disabled+" data-node='"+v[0]+"'><i class='material-icons'>shopping_cart</i></a>"+
-				            "		</div>"+
-				            "	</div>"+
-				            "</div>";
+				content += `<div class='col l4 m6 s12 gallery-item gallery-expand gallery-filter product ${v[4]}'>
+				            	<div class='gallery-curve-wrapper'>
+				            	    <a class='gallery-cover gray'>
+				            	        <img alt='placeholder' src='assets/images/products/${v[10]}' style='width:100%'>
+				            	    </a>
+				            	    <div class='gallery-header'>
+				            	        <span>${v[1]}</span>
+				            	        <span class='gj right' style='font-size: 24px;line-height: 32px;'>${v[3]}</span>
+				            	    </div>
+				            	    <div class='gallery-body'>
+				            	        <div class='title-wrapper'>
+				            	            <h3>${v[1]}</h3>
+				            	            <span class='gj'>${v[3]}</span>
+				            	        </div>
+				            	        <p class='fi'>${v[5]}</p>
+				            	        <div class='carousel-wrapper'>
+				            	            <div class='t carousel initialized'>
+				            	                <a class='carousel-item active' href='#one!'>
+				            	                    <img src='assets/images/logo.png'>
+				            	                </a>
+				            	                <a class='carousel-item' href='#two!'>
+				            	                    <img src='assets/images/logo.png'>
+				            	                </a> 
+				            	                <a class='carousel-item' href='#three!'>
+				            	                    <img src='assets/images/logo.png'>
+				            	                </a> 
+				            	            </div>
+				            	        </div>
+				            	    </div>
+				            	    <div class='gallery-action'>
+				            	        <a class='btn-floating btn-large waves-effect waves-light shopping' data-cmd='addWishlist' data-wishlist='${v[0]}' data-node='${v[0]}'><i class='material-icons'>favorite</i></a>
+				            	        <a class='btn-floating btn-large waves-effect waves-light shopping cyan' data-cmd='addCart' ${disabled} data-node='${v[0]}'><i class='material-icons'>shopping_cart</i></a>
+				            		</div>
+				            	</div>
+				            </div>`;
 		});
 
 		$("#products").html(content);
@@ -343,7 +341,10 @@ market = {
 	        market.sortUpdatePriceRange(price);
 		});
 	},
-	category:function(){
+	getCategory:function(){
+
+	},
+	listCategory:function(){
 		
 	},
 	sortUpdatePriceRange:function(price){
@@ -374,15 +375,15 @@ market = {
 				search = system.searchJSON(products,0,v[1][0]);
 				if(search.length>0){
 					total = total+Number(search[0][3]);
-					content += "<tr class='animated'>"+
-							"	<td class='center'><img src='assets/images/products/"+search[0][10]+"' alt='' class='circle' style='width: 100px;' /></td>"+
-							"	<td class='center'><span class='title'>"+search[0][1]+"  <span class='grey-text'>"+search[0][3]+"pts<span></span></td>"+
-							"	<td class='center'>"+
-							"		<input data-cmd='input' data-cart='"+v[0]+"' data-limit='"+search[0][2]+"' data-cost='"+search[0][3]+"' value='1' type='number' pattern='[1-9]*' class='validate valid' style='width: 40px;height: 35px;text-align: center;'/>"+
-							"	</td>"+
-							"	<td class='center'><p class='count' style='font-size: 20px;'>"+(Number(search[0][3])*1)+"</p></td>"+
-							"	<td class='center'><button data-cmd='removeCart' data-cart='"+v[0]+"' class='btn-floating grey'><i class='mdi-navigation-close'></i></button></td>"+
-							"</tr>";					
+					content += `<tr class='animated'>
+									<td class='center'><img src='assets/images/products/${search[0][10]}' alt='' class='circle' style='width: 100px;' /></td>
+									<td class='center'><span class='title'>${search[0][1]}  <span class='grey-text'>${search[0][3]}pts<span></span></td>
+									<td class='center'>
+										<input data-cmd='input' data-cart='${v[0]}' data-limit='${search[0][2]}' data-cost='${search[0][3]}' value='1' type='number' pattern='[1-9]*' class='validate valid' style='width: 40px;height: 35px;text-align: center;'/>
+									</td>
+									<td class='center'><p class='count' style='font-size: 20px;'>${(Number(search[0][3])*1)}</p></td>
+									<td class='center'><button data-cmd='removeCart' data-cart='${v[0]}' class='btn-floating grey'><i class='mdi-navigation-close'></i></button></td>
+								</tr>`;					
 				}
 			});
 			$("#display_productInCart table tbody").html(content);
@@ -489,24 +490,24 @@ market = {
 		var search_wihlist = system.searchJSON(data_wishlist,1,id);
 		var search_cart = system.searchJSON(data_wishlist,1,id);
 
-		var content = "<div class='row'>"+
-						"	<div class='col s12 m6 l6'>"+
-						"		<div class='card'>"+
-						"			<div class='card-image'>"+
-						"			<img alt='' class='responsive-img valign' draggable='false' src='assets/images/products/"+data[10]+"'>"+
-						"			</div>"+
-						"		</div>"+
-						"	</div>"+
-						"	<div class='col s12 m6 l6'>"+
-						"		<h4>"+data[1]+"</h4>"+
-						"		<h2 class='pink-text'>K "+data[3]+"</h2>"+
-						"		<button class='btn-floating waves-effect' data-cmd='addWishlist' data-wishlist='"+data[0]+"' data-node='"+data[0]+"'><i class='mdi-action-favorite'></i></button>"+
-						"		<button class='btn waves-effect cyan' data-cmd='addCart' data-node='"+data[0]+"' data-price='"+data[3]+"' data-qty='1'>Add to cart</button>"+
-						"	</div>"+
-						"</div>"+
-						"<div class='row'>"+
-						"	<p>"+data[5]+"</p>"+
-						"</div>";
+		var content = `<div class='row'>
+							<div class='col s12 m6 l6'>
+								<div class='card'>
+									<div class='card-image'>
+									<img alt='' class='responsive-img valign' draggable='false' src='assets/images/products/${data[10]}'>
+									</div>
+								</div>
+							</div>
+							<div class='col s12 m6 l6'>
+								<h4>${data[1]}</h4>
+								<h2 class='pink-text'>K ${data[3]}</h2>
+								<button class='btn-floating waves-effect' data-cmd='addWishlist' data-wishlist='${data[0]}' data-node='${data[0]}'><i class='mdi-action-favorite'></i></button>
+								<button class='btn waves-effect cyan' data-cmd='addCart' data-node='${data[0]}' data-price='${data[3]}' data-qty='1'>Add to cart</button>
+							</div>
+						</div>
+						<div class='row'>
+							<p>${data[5]}</p>
+						</div>`;
 		$("#display_product").html(content);
 
 		if(search_wihlist.length>0){
@@ -518,25 +519,25 @@ market = {
 			var product = [$(this).data('node'),Number($(this).data('price')),Number($(this).data('qty'))];
 			market.addToCart(product);
 
-			var content = "<div class='row'>"+
-							"	<div class='col s12 m4 l4'>"+
-							"		<div class='card'>"+
-							"			<div class='card-image'>"+
-							"			<img alt='' class='responsive-img valign' draggable='false' src='assets/images/products/"+data[10]+"'>"+
-							"			</div>"+
-							"		</div>"+
-							"	</div>"+
-							"	<div class='col s12 m8 l8'>"+
-							"		<h4 class='white-text'>"+data[1]+"</h4>"+
-							"		<h2 class='cyan-text'>K "+data[3]+"</h2>"+
-							"	</div>"+
-							"</div>"+
-							"<div class='row'>"+
-							"	<div class='col s12'>"+
-							"		<a class='btn waves-effect pink' href='cart.html'>View my cart</a>"+
-							"		<a class='right' href='sale.html'>Continue shoping</a>"+
-							"	<div>"+
-							"</div>";
+			var content = `<div class='row'>
+								<div class='col s12 m4 l4'>
+									<div class='card'>
+										<div class='card-image'>
+										<img alt='' class='responsive-img valign' draggable='false' src='assets/images/products/${data[10]}'>
+										</div>
+									</div>
+								</div>
+								<div class='col s12 m8 l8'>
+									<h4 class='white-text'>${data[1]}</h4>
+									<h2 class='cyan-text'>K ${data[3]}</h2>
+								</div>
+							</div>
+							<div class='row'>
+								<div class='col s12'>
+									<a class='btn waves-effect pink' href='cart.html'>View my cart</a>
+									<a class='right' href='sale.html'>Continue shoping</a>
+								<div>
+							</div>`;
 
 			$("#modal .modal-content").html(content);
 			$('#modal').openModal('show');			
@@ -548,7 +549,6 @@ market = {
 profile = {
 	ini:function(){
 		profile.getAccount();
-
         system.forceLogout(function(){
         	profile.logout();
         });
@@ -580,7 +580,7 @@ profile = {
 		data.done(function(data){
 			data = JSON.parse(data);
 			// localStorage.setItem('points',data[0][2]);
-			$("#display_points .cart_bigNumber").html(data[0][2]+"<small> points<span style='display: block;'></span></small>");
+			$("#display_points .cart_bigNumber").html(`${data[0][2]}<small> points<span style='display: block;'></span></small>`);
 			$(".display_points").html(data[0][2]);
 		});
 	},
@@ -591,8 +591,8 @@ profile = {
 		if(data.length>0){
 			$("#display_logo").attr({"style":"width:200px;"});
 			$("#display_headerAccount").removeClass('hide');
-			$("#display_account h5").html("<strong>WELCOME,<br/> <i class='pink-text'>"+data[0][4]+" "+data[0][5].substring(0,1)+". "+data[0][3]+"</i></strong>");
-			$(".display_accountName").html("WELCOME, "+data[0][4]+" "+data[0][5].substring(0,1)+". "+data[0][3]+"");
+			$("#display_account h5").html(`<strong>WELCOME,<br/> <i class='pink-text'>${data[0][4]} ${data[0][5].substring(0,1)}. ${data[0][3]}</i></strong>`);
+			$(".display_accountName").html(`WELCOME, ${data[0][4]} ${data[0][5].substring(0,1)}. ${data[0][3]}`);
 			profile.getPoints(data[0][0]);
 		}
 		else{
@@ -650,7 +650,7 @@ wishlist = {
 			} 
 			else{
 				Materialize.toast('Cannot process. Try some other time.',4000);
-				$("button[data-node='"+product+"']").removeAttr('disabled');
+				$(`button[data-node='${product}']`).removeAttr('disabled');
 			}
 		});
 	},	
@@ -659,18 +659,18 @@ wishlist = {
 		data.done(function(data){
 			if(data == 1){
 				Materialize.toast('This product has been removed to your wishlist.',4000);
-				$("button[data-node='"+product+"']").removeAttr('disabled');
+				$(`button[data-node='${product}']`).removeAttr('disabled');
 			} 
 			else{
 				Materialize.toast('Cannot process. Try some other time.',4000);
-				$("button[data-node='"+product+"']").attr({'disabled':"true"});
+				$(`button[data-node='${product}']`).attr({'disabled':"true"});
 			}
 		});
 	},
 	disableButton:function(id){
 		var data = wishlist.get(id);
 		$.each(data,function(i,v){
-			$("button[data-wishlist='"+v[1]+"']").attr({"disabled":"true"});
+			$(`button[data-wishlist='${v[1]}']`).attr({"disabled":"true"});
 		});
 	}
 };

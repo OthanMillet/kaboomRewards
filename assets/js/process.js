@@ -26,6 +26,7 @@ var system = function(){
 		    });
 		},
 		html:function(url){
+			console.log(url);
 	        return $.ajax({
 		        type: "POST",
 		        url: url,
@@ -225,7 +226,7 @@ login = {
 				var data = system.ajax('assets/harmony/Process.php?marketLogin',_form);
 				data.done(function(data){
 					if(data == "Active"){
-						localStorage.setItem("hash",data);
+						localStorage.setItem("hash","employee");
 						Materialize.toast('Success.',4000);
 
 						$("a[data-activates='signIn']").addClass("hidden");

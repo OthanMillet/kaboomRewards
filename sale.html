@@ -35,7 +35,7 @@
                         <a href="#" class="hidden pink-text darken-2 chat-collapse" data-activates="account">My Account <i class="mdi-action-account-circle right"></i></a>
                     </li>
                     <li class="pink darken-2">
-                        <a href="cart.html"><i class="material-icons white-text">shopping_cart</i><small class="notification-badge white-text" id="display_cartTotal">0</small></a>
+                        <a href="cart.html"><i class="material-icons white-text">shopping_cart</i><small class="notification-badge white-text" id="display_cartTotal">100</small></a>
                     </li>
                 </ul>
             </div>
@@ -66,12 +66,12 @@
                                     <div class="input-field">
                                         <label for="price-slider" class="active">Price Range</label><br/>
                                         <div id="price-slider"></div>
-                                        <div class="col-s6 left" id='price-min'>0</div>
-                                        <div class="col-s6 right" id='price-max'>100</div>
+                                        <div class="col-s6 left" id='price-min' style="margin-top: 5px;">0</div>
+                                        <div class="col-s6 right" id='price-max' style="margin-top: 5px;">100</div>
                                     </div>
                                 </div>
-                                <div class="row hide">
-                                    <ul>
+                                <div class="row">
+                                    <ul id='display_brands'>
                                         <li>
                                             <input id="allergic" name="allergic" type="checkbox" value="1">
                                             <label for="allergic">Brand A (100)</label>
