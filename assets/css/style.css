@@ -337,3 +337,7 @@ nav ul:not(.indicators) li.no-border::before{
 nav .brand-logo {
     left: 5% !important;
 }
+
+.side-nav li>a:hover {
+    background-color: rgba(192, 192, 192, 0.05) !important;
+}

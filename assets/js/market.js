@@ -641,8 +641,7 @@ cart = {
 
 		$("button[data-cmd='checkOut']").on('click',function(){
 			let cartList = cart.get();
-			console.log(cartList);
-			// cart.checkout(cartList);
+			cart.checkout(cartList);
 		});
 	},
 }

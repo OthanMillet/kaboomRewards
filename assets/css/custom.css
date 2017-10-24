@@ -210,3 +210,7 @@ table .truncate{
     max-height: 80% !important;
     height: 80% !important;
 }
+
+.side-nav li>a:hover {
+    background-color: rgba(192, 192, 192, 0.05);
+}

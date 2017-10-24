@@ -839,7 +839,7 @@ $function = new DatabaseClasses;
 			$count = $numProd[0][0];
 
 			foreach ($data as $key => $value) {
-				$qty = $value[1][2];
+				$qty = $value[1][1];
 				$points = $points + $qty;
 		        $id = $user.'-'.($count++);
 				$prodQty = $function->PDO("SELECT * FROM tbl_product WHERE id = '{$value[1][0]}';");
