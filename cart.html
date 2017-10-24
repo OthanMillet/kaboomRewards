@@ -198,13 +198,12 @@
         <script src="assets/js/gallery.js"></script> 
         <script type="text/javascript">
             $(".dropdown-button").dropdown();
-
             if(profile.check() == 0){
                 $(location).attr('href','index.html');
             }
             else{
-                console.log("xx");
                 market.ini();
+                cart.ini();
             }
         </script>
     </body>
