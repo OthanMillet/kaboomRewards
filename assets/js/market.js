@@ -509,19 +509,14 @@ cart = {
 		}
 		return data;
 	},
-	check:function(){
-		var data = $(".count"), point = localStorage.getItem('points');
-		var count = 0;
-		$.each(data,function(i,v){
-			count = count + Number($(v).html());
-		})
-
-		if(count>point)
+	check:function(total){
+		let points = profile.getPoints();
+		if(total>points)
 			$("button[data-cmd='checkOut']").attr({'disabled':true});
 		else
 			$("button[data-cmd='checkOut']").removeAttr('disabled');
 
-		return count;
+		return total;
 	},
 	checkout:function(data){
 		var data = system.ajax('assets/harmony/Process.php?set-orders',data);
@@ -552,42 +547,53 @@ cart = {
 		localStorage.setItem('cart-'+currentCount,JSON.stringify(data));
 	},
 	showCart:function(){
-		var count = 0, total = 0, content = "xx";
-		var search = [];
-		var products = product.get();
-		var cartList = cart.get(), _cart = "";
-		var points = Number(localStorage.getItem('points'));
+		let count = 0;
+		let total = 0, subtotal = 0;
+		let content = "";
+		let search = [];
+		let products = product.get();
+		let cartList = cart.get(), _cart = "";
+		let account = profile.get();
+		let id = profile.get()[0][0];
 		products = JSON.parse(products);
 
 		if(cartList.length > 0){
 			$.each(cartList,function(i,v){
-				console.log(v);
 				search = system.searchJSON(products,0,v[1][0]);
 				if(search.length>0){
-					total = total+Number(search[0][3]);
+					// console.log(total);
+					total = ((search[0][3]*1)*(v[1][1]*1));
+					subtotal = subtotal + total;
 					content += `<tr class='animated'>
-									<td class='center'>
-										<img src='assets/images/products/${search[0][10]}' alt='' class='circle' style='width: 100px;' />
+									<td>
+										<div class='row'>
+											<div class='col s4'>
+												<img src='assets/images/products/${search[0][10]}' alt='' style='width: 100px;' />
+											</div>
+											<div class='col s8'>
+												<span class='title'><b style='font-size:20px;'>${search[0][1]}</b><br/><span class='grey-text'>${search[0][3]}pts<span></span><br/><br/>
+												<button data-cmd='removeCart' data-cart='${v[0]}' class='btn-floating btn-flat tiny grey lighten-4'><i class='material-icons right hover black-text'>close</i></button> remove
+											</div>
+										</div>
 									</td>
-									<td class='center'>
-										<span class='title'>${search[0][1]}  <span class='grey-text'>${search[0][3]}pts<span></span>
+									<td>
+										<input data-cmd='input' data-cart='${v[0]}' data-limit='${search[0][2]}' data-cost='${search[0][3]}' value='${v[1][1]}' type='number' pattern='[1-9]*' class='validate valid' style='width: 40px;height: 35px;text-align: center;'/>
 									</td>
-									<td class='center'>
-										<input data-cmd='input' data-cart='${v[0]}' data-limit='${search[0][2]}' data-cost='${search[0][3]}' value='1' type='number' pattern='[1-9]*' class='validate valid' style='width: 40px;height: 35px;text-align: center;'/>
+									<td style='text-align:right;'>
+										<div class='row'>
+											<div class='col s12'>
+												<p class='count' style='font-size: 20px;'>${total}</p>
+											</div>
+										</div>
 									</td>
-									<td class='center'>
-										<p class='count' style='font-size: 20px;'>${(Number(search[0][3])*1)}</p>
-									</td>
-									<td class='center'>
-										<button data-cmd='removeCart' data-cart='${v[0]}' class='btn-floating btn-flat grey lighten-4'><i class='material-icons right hover black-text'>close</i></button>
-									</td>
-								</tr>`;					
+								</tr>`;
 				}
 			});
+
 			$("#display_productInCart table tbody").html(content);
-			$("#display_total span").html(total);
+			$("#display_total span").html(subtotal);
 			cart.options();
-			cart.check(cartList);			
+			cart.check(cartList);
 			$("button[data-cmd='checkOut']").removeAttr('disabled');
 		}
 		else{
@@ -595,20 +601,25 @@ cart = {
 		}
 	},
 	options:function(){
-		var points = localStorage.getItem('points');
-		$("input[data-cmd='input']").on('change',function(){
-			var data = $(this).data();
-			count = Number($(this).val()) + 1;
-			var cartList = JSON.parse(localStorage.getItem(data.cart));
+		let points = profile.getPoints();
+		$("input[data-cmd='input']").on('input',function(){
+			let total = 0;
+			let data = $(this).data();
+			let count = Number($(this).val());
+			let cartList = JSON.parse(localStorage.getItem(data.cart));
 
-			if(($(this).val() < data.limit) && ((points-(count*data.cost)) >= 0)){
+
+			if(($(this).val() < data.limit) && ((points-(count*data.cost)) >= 0) && ($(this).val()>0)){
+				$.each($("input[data-cmd='input']"),function(i,v){
+					total = total + ((v.value*1)*(v.dataset.cost*1));
+				});
+
 				cartList = JSON.stringify([cartList[0],Number($(this).val())]);
 				localStorage.setItem(data.cart,cartList);
+				$(this).parent().parent().find('.count').html(count*data.cost);
+				cart.check(total);
 
-				$(this).parent().find('input').val(count);				
-				$(this).parent().find('a.secondary-content').html(count*data.cost);
-
-				cart.check(cartList);
+				$("#display_total span").html(total);
 			}
 			else{
 				$(this).val(cartList[1]);
@@ -630,7 +641,8 @@ cart = {
 
 		$("button[data-cmd='checkOut']").on('click',function(){
 			let cartList = cart.get();
-			cart.checkout(cartList);
+			console.log(cartList);
+			// cart.checkout(cartList);
 		});
 	},
 }
@@ -643,16 +655,16 @@ profile = {
         });
 	},
 	check:function(){
-		var retData;
-		var data = system.ajax('assets/harmony/Process.php?chkUserLogin',"");
+		let retData;
+		let data = system.ajax('assets/harmony/Process.php?chkUserLogin',"");
 		data.done(function(data){
 			retData = data;
 		});
 		return retData;
 	},
 	get:function(){
-		var ret = [];
-		var data = system.html('assets/harmony/Process.php?get-employeeAccount');
+		let ret = [];
+		let data = system.html('assets/harmony/Process.php?get-employeeAccount');
 		data.done(function(data){
 			data = JSON.parse(data);
 			if(data.length <= 0){
@@ -664,25 +676,28 @@ profile = {
 		});
 		return ret;
 	},
-	getPoints:function(id){
-		var data = system.ajax('assets/harmony/Process.php?get-employeePoints',id);
-		data.done(function(data){
-			data = JSON.parse(data);
-			// localStorage.setItem('points',data[0][2]);
-			$("#display_points .cart_bigNumber").html(`${data[0][2]}<small> points<span style='display: block;'></span></small>`);
-			$(".display_points").html(data[0][2]);
-		});
+	getPoints:function(){
+		let id = profile.get()[0][0];
+		let data = system.ajax('assets/harmony/Process.php?get-employeePoints',id);
+		data = JSON.parse(data.responseText);
+
+		return data[0][2];
+	},
+	displayPoints:function(){
+		let points = profile.getPoints();
+		$("#display_points .cart_bigNumber").html(`${points}<small> points<span style='display: block;'></span></small>`);
+		$(".display_points").html(points);
 	},
 	getAccount:function(){
-		var content = "";
-		var data = this.get();
+		let content = "";
+		let data = this.get();
 
 		if(data.length>0){
 			$("#display_logo").attr({"style":"width:200px;"});
 			$("#display_headerAccount").removeClass('hide');
 			$("#display_account h5").html(`<strong>WELCOME,<br/> <i class='pink-text'>${data[0][4]} ${data[0][5].substring(0,1)}. ${data[0][3]}</i></strong>`);
 			$(".display_accountName").html(`WELCOME, ${data[0][4]} ${data[0][5].substring(0,1)}. ${data[0][3]}`);
-			profile.getPoints(data[0][0]);
+			profile.displayPoints(data[0][0]);
 		}
 		else{
 	    	$("#display_cart").removeClass('bounceInUp').addClass("bounceOutUp");
@@ -699,7 +714,7 @@ profile = {
 		});			
 	},
 	logout:function(){
-		var data = system.ajax('assets/harmony/Process.php?kill-session',"");
+		let data = system.ajax('assets/harmony/Process.php?kill-session',"");
 		data.done(function(data){
 			if(data == 1){
 				$(location)[0].reload()	

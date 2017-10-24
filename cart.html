@@ -45,7 +45,7 @@
                     <div class="row hide" id="display_headerAccount">
                         <div class="right" style="padding-right: 20px;">
                             <h5>
-                                <span class="cyan-text darken-1 display_accountName">Welcome, Rufo Gabrillo<br/></span><br/>
+                                <span class="cyan-text darken-1 display_accountName">Welcome, Rufo Gabrillo</span>
                                 <small class="pink-text accent-4">You have <span class="display_points"></span> points</small>
                             </h5>
                         </div>
@@ -65,30 +65,36 @@
                                 <div class="card-header pink white-text" style="padding:10px;">
                                     Order Summary
                                 </div>                            
-                                <div class="card-content" id="display_productInCart">
+                                <div id="display_productInCart">
                                     <table class="table bordered stripped">
-                                        <thead>
+                                        <tfoot>
                                             <tr>
-                                                <th class='center'>Product Picture</th>
-                                                <th class='center'>Product Name</th>
-                                                <th class='center'>Quantity</th>
-                                                <th class='center'>Total Points</th>
-                                                <th class='center'></th>
+                                                <th colspan="2"></th>
+                                                <th id='display_total' style='text-align:right; font-size: 20px;' colspan="2">
+                                                    <div class="row">
+                                                        <div class="col s6">
+                                                            Total: 
+                                                        </div>
+                                                        <div class="col s6">
+                                                            <span class="bold">0</span>
+                                                        </div>
+                                                        <div class="divider"></div>
+                                                        <div class="col s12">
+                                                            <button class='btn waves-effect cyan' data-cmd='checkOut'>Place Order</button>
+                                                        </div>
+                                                    </div>
+                                                </th>
                                             </tr>
-                                        </thead>
+                                        </tfoot>
                                         <tbody></tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
-                        <div class="col s12">
-                            <button class='btn waves-effect cyan' data-cmd='checkOut'>Checkout</button>
-                        </div>
                     </section>
                 </div>
             </div>
         </div>
-
         <footer class="page-footer grey darken-3" style="padding-bottom:20px; ">
             <div class="container">
                 Copyright Kaboom Rewards @ 2017
