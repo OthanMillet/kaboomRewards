@@ -557,6 +557,7 @@ cart = {
 		let id = profile.get()[0][0];
 		products = JSON.parse(products);
 
+		console.log("xx");
 		if(cartList.length > 0){
 			$.each(cartList,function(i,v){
 				search = system.searchJSON(products,0,v[1][0]);
@@ -597,7 +598,9 @@ cart = {
 			$("button[data-cmd='checkOut']").removeAttr('disabled');
 		}
 		else{
+			console.log("xxx");
 			$("button[data-cmd='checkOut']").attr({'disabled':true});
+			$("#display_productInCart").html(`<div class='row'><h5 class='center grey-text'>You dont have any products.</h5></div>`);
 		}
 	},
 	options:function(){
@@ -690,7 +693,6 @@ profile = {
 	getAccount:function(){
 		let content = "";
 		let data = this.get();
-
 		if(data.length>0){
 			$("#display_logo").attr({"style":"width:200px;"});
 			$("#display_headerAccount").removeClass('hide');
@@ -706,11 +708,6 @@ profile = {
 		$("a[data-cmd='logout']").on("click",function(){
         	profile.logout();
 		});
-
-		$("a[data-cmd='account']").on("click",function(){
-			localStorage.setItem("hash",'employee');
-	    	$(location).attr('href','account/');
-		});			
 	},
 	logout:function(){
 		let data = system.ajax('assets/harmony/Process.php?kill-session',"");

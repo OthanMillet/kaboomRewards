@@ -1,5 +1,4 @@
 <?php
-
 if (isset($_SERVER['HTTP_ORIGIN'])) {
     header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
     header('Access-Control-Allow-Credentials: true');
@@ -13,6 +12,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
         header("Access-Control-Allow-Headers: {$_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']}");
 }
 
+ini_set('memory_limit','512M');
+ini_set('max_input_vars','10000');
+ini_set('post_max_size','512M');
 //secure this file
 include("Functions.php");
 session_start();
@@ -92,8 +94,10 @@ $function = new DatabaseClasses;
 			}
 		}
 	}
+	// print_r($_GET);
 
 	if(isset($_GET['marketLogin'])){
+		print_r($data);
 		$data = $_POST['data'];
 		$username = $data[0]['value'];
 		$password = sha1($data[1]['value']);
@@ -180,6 +184,7 @@ $function = new DatabaseClasses;
 		}
 
 		if(isset($_GET['get-employeeAccount'])){
+			print_r($_SESSION);
 			if(count($_SESSION)>0){
 				$query = $function->PDO("SELECT * FROM tbl_employee WHERE employee_id = '{$_SESSION['kaboom'][0]}' AND password = '{$_SESSION['kaboom'][1]}'");
 				print_r(json_encode($query));				

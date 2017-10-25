@@ -224,6 +224,7 @@ login = {
 				var _form = $(form).serializeArray();
 				var data = system.ajax('assets/harmony/Process.php?marketLogin',_form);
 				data.done(function(data){
+					console.log(data);
 					if(data == "Active"){
 						localStorage.setItem("hash","employee");
 						Materialize.toast('Success.',4000);
@@ -246,16 +247,3 @@ login = {
 		}); 
 	}
 };
-
-$(document).on('ready',function(){
-	let content = `<div class="progress" style="margin: 0;">
-                    <div class="indeterminate"></div>
-                </div>
-                <div class="red" style="text-align: center;line-height: 20px;">
-                    <div class="col s12 white-text">
-                        The site is currently undergoing a series of updates. Some functionality might not work.
-                    </div>
-                </div>`;
-
-    $("body").prepend(content);
-})
