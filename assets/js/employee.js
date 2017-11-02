@@ -13,15 +13,18 @@ account = {
 			$("#user-account div div a span.display_name").html(data[0][4]);
 
 			$("#log-out").on('click',function(){
-			    login.kill();
+				login.kill();
 			})
 		});
 	},
-	details:function(){
+	get:function(){
 		var data = system.ajax('../assets/harmony/Process.php?get-employeeAccount',"");
-		data = JSON.parse(data.responseText);
+		return JSON.parse(data.responseText);
+	},
+	details:function(){
+		var data = this.get();
 		var id = data[0][0];
-	    points.get(id);
+		points.display(id);
 		var content = "";
 		var data = system.ajax('../assets/harmony/Process.php?get-employeeDetails',id);
 		data.done(function(data){
@@ -57,19 +60,19 @@ account = {
 
 				var profile = ((data[0][12] == "") || (data[0][12] == null))?"avatar.jpg":data[0][12];
 				content = `<div id='profile-card' class='card'>
-						    <div class='card-image waves-effect waves-block waves-light' style='max-height: 70px;'>
-						        <img class='activator' src='../assets/images/user-bg.jpg' alt='user background'>
-						    </div>
-						    <div class='card-stacked'>
-							    <div class='card-content'>
-							        <div class=' responsive-img activator card-profile-image circle' style='margin-top: -65px;'>
-							        	<img src='../assets/images/profile/${profile}' alt='' class='circle'>
-							        	<a data-value='${profile}' data-cmd='updateEmployeePicture' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-prop='Picture' class='btn waves-effect white-text no-shadow black' style='font-size: 10px;z-index: 1;padding: 0 12px;top:40px;'>Change</a>
+							<div class='card-image waves-effect waves-block waves-light' style='max-height: 70px;'>
+								<img class='activator' src='../assets/images/user-bg.jpg' alt='user background'>
+							</div>
+							<div class='card-stacked'>
+								<div class='card-content'>
+									<div class=' responsive-img activator card-profile-image circle' style='margin-top: -65px;'>
+										<img src='../assets/images/profile/${profile}' alt='' class='circle'>
+										<a data-value='${profile}' data-cmd='updateEmployeePicture' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-prop='Picture' class='btn waves-effect white-text no-shadow black' style='font-size: 10px;z-index: 1;padding: 0 12px;top:40px;'>Change</a>
 									</div>
 									<a data-value='${JSON.stringify([data[0][4],data[0][5],data[0][3]])}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-prop='Name' class='tooltipped waves-effect black-text no-shadow right' data-position='left' data-delay='50' data-tooltip='Update account'>
 										<i class='material-icons right hover black-text'>mode_edit</i>
 									</a>
-							        <span class='card-title activator grey-text text-darken-4 bold'>${data[0][4]} ${data[0][5]} ${data[0][3]} </span>
+									<span class='card-title activator grey-text text-darken-4 bold'>${data[0][4]} ${data[0][5]} ${data[0][3]} </span>
 									<div class='divider'></div>
 									<table>
 										<tr>
@@ -152,8 +155,8 @@ account = {
 											</td>
 										</tr>
 									</table>
-							    </div>
-						    </div>
+								</div>
+							</div>
 						</div>`;
 				$("#profile").html(content);
 
@@ -202,13 +205,13 @@ account = {
 				$("#modal_confirm .modal-content").html(content);
 				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
-				    rules: {
-				        field_gname: {required: true,maxlength: 50},
-				        field_mname: {required: true,maxlength: 50},
-				        field_fname: {required: true,maxlength: 50},
-				    },
-				    errorElement : 'div',
-				    errorPlacement: function(error, element) {
+					rules: {
+						field_gname: {required: true,maxlength: 50},
+						field_mname: {required: true,maxlength: 50},
+						field_fname: {required: true,maxlength: 50},
+					},
+					errorElement : 'div',
+					errorPlacement: function(error, element) {
 						var placement = $(element).data('error');
 						if(placement){
 							$(placement).append(error);
@@ -232,17 +235,17 @@ account = {
 								Materialize.toast('Cannot process request.',4000);
 							}
 						});
-				    }
+					}
 				}); 
 			}			
 			else if(data.prop == "Nickname"){
 				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
-				    rules: {
-				        field_Nickname: {required: true,maxlength: 50},
-				    },
-				    errorElement : 'div',
-				    errorPlacement: function(error, element) {
+					rules: {
+						field_Nickname: {required: true,maxlength: 50},
+					},
+					errorElement : 'div',
+					errorPlacement: function(error, element) {
 						var placement = $(element).data('error');
 						if(placement){
 							$(placement).append(error)
@@ -266,17 +269,17 @@ account = {
 								Materialize.toast('Cannot process request.',4000);
 							}
 						});
-				    }
+					}
 				}); 
 			}			
 			else if(data.prop == "Position"){
 				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
-				    rules: {
-				        field_Nickname: {required: true,maxlength: 50},
-				    },
-				    errorElement : 'div',
-				    errorPlacement: function(error, element) {
+					rules: {
+						field_Nickname: {required: true,maxlength: 50},
+					},
+					errorElement : 'div',
+					errorPlacement: function(error, element) {
 						var placement = $(element).data('error');
 						if(placement){
 							$(placement).append(error)
@@ -300,17 +303,17 @@ account = {
 								Materialize.toast('Cannot process request.',4000);
 							}
 						});
-				    }
+					}
 				}); 
 			}			
 			else if(data.prop == "Phone"){
 				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
-				    rules: {
-				        field_Name: {required: true,maxlength: 50},
-				    },
-				    errorElement : 'div',
-				    errorPlacement: function(error, element) {
+					rules: {
+						field_Name: {required: true,maxlength: 50},
+					},
+					errorElement : 'div',
+					errorPlacement: function(error, element) {
 						var placement = $(element).data('error');
 						if(placement){
 							$(placement).append(error)
@@ -334,17 +337,17 @@ account = {
 								Materialize.toast('Cannot process request.',4000);
 							}
 						});
-				    }
+					}
 				}); 
 			}			
 			else if(data.prop == "Email"){
 				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
-				    rules: {
-				        field_Email: {required: true,maxlength: 50,checkEmail:true},
-				    },
-				    errorElement : 'div',
-				    errorPlacement: function(error, element) {
+					rules: {
+						field_Email: {required: true,maxlength: 50,checkEmail:true},
+					},
+					errorElement : 'div',
+					errorPlacement: function(error, element) {
 						var placement = $(element).data('error');
 						if(placement){
 							$(placement).append(error)
@@ -368,17 +371,17 @@ account = {
 								Materialize.toast('Cannot process request.',4000);
 							}
 						});
-				    }
+					}
 				}); 
 			}
 			else if(data.prop == "Address"){
 				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
-				    rules: {
-				        field_Email: {required: true,maxlength: 50,checkEmail:true},
-				    },
-				    errorElement : 'div',
-				    errorPlacement: function(error, element) {
+					rules: {
+						field_Email: {required: true,maxlength: 50,checkEmail:true},
+					},
+					errorElement : 'div',
+					errorPlacement: function(error, element) {
 						var placement = $(element).data('error');
 						if(placement){
 							$(placement).append(error)
@@ -402,7 +405,7 @@ account = {
 								Materialize.toast('Cannot process request.',4000);
 							}
 						});
-				    }
+					}
 				}); 
 			}
 			else if(data.prop == "Gender"){
@@ -420,13 +423,13 @@ account = {
 							  </form>`;
 				$("#modal_confirm .modal-content").html(content);
 				$('#modal_confirm').modal('open');			
-			    $("select").material_select();
+				$("select").material_select();
 				$("#form_update").validate({
-				    rules: {
-				        field_Email: {required: true,maxlength: 50,checkEmail:true},
-				    },
-				    errorElement : 'div',
-				    errorPlacement: function(error, element) {
+					rules: {
+						field_Email: {required: true,maxlength: 50,checkEmail:true},
+					},
+					errorElement : 'div',
+					errorPlacement: function(error, element) {
 						var placement = $(element).data('error');
 						if(placement){
 							$(placement).append(error)
@@ -450,7 +453,7 @@ account = {
 								Materialize.toast('Cannot process request.',4000);
 							}
 						});
-				    }
+					}
 				}); 
 			}
 			else if(data.prop == "Date of Birth"){
@@ -466,11 +469,11 @@ account = {
 
 				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
-				    rules: {
-				        field_dob: {required: true,maxlength: 50,checkDate:true},
-				    },
-				    errorElement : 'div',
-				    errorPlacement: function(error, element) {
+					rules: {
+						field_dob: {required: true,maxlength: 50,checkDate:true},
+					},
+					errorElement : 'div',
+					errorPlacement: function(error, element) {
 						var placement = $(element).data('error');
 						if(placement){
 							$(placement).append(error)
@@ -494,7 +497,7 @@ account = {
 								Materialize.toast('Cannot process request.',4000);
 							}
 						});
-				    }
+					}
 				}); 
 			}
 			else if(data.prop == "Password"){
@@ -513,11 +516,11 @@ account = {
 				})
 
 				$("#form_update").validate({
-				    rules: {
-				        field_Password: {required: true,maxlength: 50,checkPassword:true,validatePassword:true},
-				    },
-				    errorElement : 'div',
-				    errorPlacement: function(error, element) {
+					rules: {
+						field_Password: {required: true,maxlength: 50,checkPassword:true,validatePassword:true},
+					},
+					errorElement : 'div',
+					errorPlacement: function(error, element) {
 						var placement = $(element).data('error');
 						if(placement){
 							$(placement).append(error)
@@ -541,7 +544,7 @@ account = {
 								Materialize.toast('Cannot process request.',4000);
 							}
 						});
-				    }
+					}
 				}); 
 			}
 		});
@@ -562,7 +565,7 @@ account = {
 			$('#modal_confirm .modal-footer').remove();			
 			$('#modal_confirm').modal('open');			
 
-    		var content =   `<div class='image-crop col s12' style='margin-bottom:5px;'>
+			var content =   `<div class='image-crop col s12' style='margin-bottom:5px;'>
 								<img width='100%' src='${picture}'>
 							</div>
 							<div class='btn-group col s12'>
@@ -577,37 +580,37 @@ account = {
 									<i class='material-icons right hover white-text'>save</i>
 								</button>
 							</div>`;
-    		$("#profile_picture2").html(content);
+			$("#profile_picture2").html(content);
 			$('.tooltipped').tooltip({delay: 50});
 
-            var $inputImage = $("#inputImage");
-            var status = true;
-            if(window.FileReader){
-                $inputImage.change(function() {
-                    var fileReader = new FileReader(),
-                            files = this.files,
-                            file;
-                    file = files[0];
+			var $inputImage = $("#inputImage");
+			var status = true;
+			if(window.FileReader){
+				$inputImage.change(function() {
+					var fileReader = new FileReader(),
+							files = this.files,
+							file;
+					file = files[0];
 
-                    if (/^image\/\w+$/.test(file.type)) {
-                        fileReader.readAsDataURL(file);
-                        fileReader.onload = function () {
-                            $inputImage.val("");
+					if (/^image\/\w+$/.test(file.type)) {
+						fileReader.readAsDataURL(file);
+						fileReader.onload = function () {
+							$inputImage.val("");
 
-				            var $image = $(".image-crop > img")
-				            $($image).cropper({
-				            	aspectRatio: 1/1,
-							    autoCropArea: 0.80,
-							    preview: ".avatar-preview",
-							    built: function () {
-			    		    		$(".cropper-container").attr({'style':'left:0px !important;top:0px;width:100%;height:100%;'});
+							var $image = $(".image-crop > img")
+							$($image).cropper({
+								aspectRatio: 1/1,
+								autoCropArea: 0.80,
+								preview: ".avatar-preview",
+								built: function () {
+									$(".cropper-container").attr({'style':'left:0px !important;top:0px;width:100%;height:100%;'});
 
-							    	$("button[data-cmd='save']").removeClass('hidden');
-							    	$("button[data-cmd='rotate']").removeClass('hidden');
-							    	
-						            $("button[data-cmd='save']").click(function(){									    	
-								    	$(this).html("<i class='mdi-action-cached icon-spin'></i>").addClass('disabled');
-								    	if(status){
+									$("button[data-cmd='save']").removeClass('hidden');
+									$("button[data-cmd='rotate']").removeClass('hidden');
+									
+									$("button[data-cmd='save']").click(function(){											
+										$(this).html("<i class='mdi-action-cached icon-spin'></i>").addClass('disabled');
+										if(status){
 											var data = system.ajax('../assets/harmony/Process.php?update-requestEmployeePicture',[id,$image.cropper("getDataURL")]); // 
 											data.done(function(data){
 												Materialize.toast('Request sent. Wait for admin\'s approval',4000);
@@ -615,48 +618,48 @@ account = {
 												App.handleLoadPage("#cmd=index;content=account");
 												$('#modal_confirm').modal('close');	
 											});
-								    		status = false;
-								    	}
-						            });
-							    }
+											status = false;
+										}
+									});
+								}
 							});
 
-                            $image.cropper("reset", true).cropper("replace", this.result);
+							$image.cropper("reset", true).cropper("replace", this.result);
 
-				            $("button[data-cmd='rotate']").click(function(){
-				            	var data = $(this).data('option');
-					        	$image.cropper('rotate', data);
-				            });
+							$("button[data-cmd='rotate']").click(function(){
+								var data = $(this).data('option');
+								$image.cropper('rotate', data);
+							});
 
-                        };
-                    }
-                    else{
-                        showMessage("Please choose an image file.");
-                    }
-                });
-            }
-            else{
-                $inputImage.addClass("hide");
-            }	            
-            $("button[data-cmd='cancel']").click(function(){
+						};
+					}
+					else{
+						showMessage("Please choose an image file.");
+					}
+				});
+			}
+			else{
+				$inputImage.addClass("hide");
+			}				
+			$("button[data-cmd='cancel']").click(function(){
 				$('#modal_confirm').modal('close');	
-            });
+			});
 		});
 	},
 	upload:function(){
-        var $inputImage = $("#field_file"), status = true, res = "";
-        if(window.FileReader){
-            $inputImage.on('change',function(){
-            	$("#field_file").addClass("disabled");
-                var files = this.files, file = files[0].name.split('.');
-                if((file[1] == "csv") || (file[1] == "xlsx")){ // 
+		var $inputImage = $("#field_file"), status = true, res = "";
+		if(window.FileReader){
+			$inputImage.on('change',function(){
+				$("#field_file").addClass("disabled");
+				var files = this.files, file = files[0].name.split('.');
+				if((file[1] == "csv") || (file[1] == "xlsx")){ // 
 					var data = system.xml("pages.xml");
 					$(data.responseText).find("tableEmployeePreview").each(function(i,content){
 						$("#field_file").parse({
 							config: {
 								complete: function(results, file) {
 									$("#display_importLoading").removeClass('zoomOut').html("");
-							    	system.preloader("#display_importLoading");
+									system.preloader("#display_importLoading");
 									system.loading(true);
 									var data = [],count = 0, search = [];
 									var employeeList = [];
@@ -668,7 +671,7 @@ account = {
 										Materialize.toast("Removing duplicated entries.",2000);
 										setTimeout(function(){
 											$("#importPreview").html(content);
-						                	$("#display_import").removeClass('hidden');
+											$("#display_import").removeClass('hidden');
 
 											for(var x=1;x<(results['data'].length-1);x++){
 												if(results['data'][x][0] != ""){
@@ -678,58 +681,58 @@ account = {
 												}
 											}
 
-							                var table = $('#importPreview table').DataTable({
-							                    data: data,
-										        "order": [[ 0, 'asc' ]],
-										        deferRender:    true,
-										        iDisplayLength: 100,
-												sScrollY:        "300px",
-												sScrollX:        "100%",
+											var table = $('#importPreview table').DataTable({
+												data: data,
+												"order": [[ 0, 'asc' ]],
+												deferRender:	true,
+												iDisplayLength: 100,
+												sScrollY:		"300px",
+												sScrollX:		"100%",
 												bScrollCollapse: true,
-							                    columns: [
-							                        {data: "",
-							                            render: function ( data, type, full ){
-							                            	count++;
-							                                return count+".";
-							                            }
-							                        },
-							                        {data: "",
-							                            render: function ( data, type, full ){
-							                                return (full[0]!="")?`<span>${full[0]}</span>`:null;
-							                            }
-							                        },
-							                        {data: "",
-							                            render: function ( data, type, full ){
-							                                return (full[2]!="")?`<span>${full[2]}</span>`:null;
-							                            }
-							                        },
-							                        {data: "",
-							                            render: function ( data, type, full ){
-							                                return (full[1]!="")?`<span>${full[1]}</span>`:null;
-							                            }
-							                        },
-							                        {data: "",
-							                            render: function ( data, type, full ){
-							                                return (full[3]!="")?`<span>${full[3]}</span>`:null;
-							                            }
-							                        },
-							                        {data: "",
-							                            render: function ( data, type, full ){
-							                                return (full[4]!="")?`<span>${full[4]}</span>`:null;
-							                            }
-							                        },
-							                        {data: "",
-							                            render: function ( data, type, full ){
-							                                return (full[5]!="")?`<span>${full[5]}</span>`:null;
-							                            }
-							                        },
-							                    ],
-							                });
+												columns: [
+													{data: "",
+														render: function ( data, type, full ){
+															count++;
+															return count+".";
+														}
+													},
+													{data: "",
+														render: function ( data, type, full ){
+															return (full[0]!="")?`<span>${full[0]}</span>`:null;
+														}
+													},
+													{data: "",
+														render: function ( data, type, full ){
+															return (full[2]!="")?`<span>${full[2]}</span>`:null;
+														}
+													},
+													{data: "",
+														render: function ( data, type, full ){
+															return (full[1]!="")?`<span>${full[1]}</span>`:null;
+														}
+													},
+													{data: "",
+														render: function ( data, type, full ){
+															return (full[3]!="")?`<span>${full[3]}</span>`:null;
+														}
+													},
+													{data: "",
+														render: function ( data, type, full ){
+															return (full[4]!="")?`<span>${full[4]}</span>`:null;
+														}
+													},
+													{data: "",
+														render: function ( data, type, full ){
+															return (full[5]!="")?`<span>${full[5]}</span>`:null;
+														}
+													},
+												],
+											});
 
 											table.on( 'order.dt search.dt', function () {
-											    table.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
-											        cell.innerHTML = i+1;
-											    } );
+												table.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+													cell.innerHTML = i+1;
+												} );
 											} ).draw();
 
 
@@ -740,13 +743,13 @@ account = {
 												$(".display_loading").html("<span class='red-text'>All data are already in the system.</span>");
 											}
 
-						                	$("#display_import").removeClass('hidden');
+											$("#display_import").removeClass('hidden');
 											$("#display_importLoading").addClass('animated zoomOut').html("");
 										},1000)
 									}
 									else{
 										Materialize.toast("Too much information. Try uploading up to 2000 rows. ",4000);
-					                	$("#display_import").addClass('hidden');
+										$("#display_import").addClass('hidden');
 										$("#display_importLoading").addClass('animated zoomOut').html("");
 									}
 								}
@@ -756,33 +759,33 @@ account = {
 							},
 							error: function(err, file, inputElem, reason){
 								Materialize.toast("MS Excel file is corrupted.",4000);
-			                	$("#display_import").addClass('hidden');
+								$("#display_import").addClass('hidden');
 								$("#display_importLoading").html("");
 							},
 						});
 					});
-                }
-                else{
-                	$("#display_import").addClass('hidden');
+				}
+				else{
+					$("#display_import").addClass('hidden');
 					$("#display_excelFile").html("");
 					Materialize.toast("MS Excel file is not valid. Try a CSV file.",4000);
-                }
-            });
-        }
-        else{
-            $inputImage.addClass("hide");
-        }	 			
+				}
+			});
+		}
+		else{
+			$inputImage.addClass("hide");
+		}	 			
 	},
 	saveUpload:function(_data){
-        $("#save_import").on("click",function(){
+		$("#save_import").on("click",function(){
 			Materialize.toast('Importing...',4000);
-        	$(this).addClass('disabled');
+			$(this).addClass('disabled');
 			var data = system.xml("pages.xml");
 			$(data.responseText).find("loader2").each(function(i,content){
 				$(".display_loading").html(content);
-	        	setTimeout(function(){
-	        		_data = ($.type(_data) == "array")?JSON.stringify(_data):_data;
-        			var client = localStorage.getItem('client_id')
+				setTimeout(function(){
+					_data = ($.type(_data) == "array")?JSON.stringify(_data):_data;
+					var client = localStorage.getItem('client_id')
 					var data = system.ajax('../assets/harmony/Process.php?set-newBulkEmployeeAdmin',[_data,client]);
 					data.done(function(data){
 						if(data == 1){
@@ -794,10 +797,10 @@ account = {
 							$(".display_loading").html("");
 						}
 					});
-	        	},1000);
+				},1000);
 			});
 
-        });
+		});
 	},
 }
 
@@ -823,13 +826,14 @@ activity = {
 				$("#pointsActivity table tbody").html(content);
 
 				var table = $('#pointsActivity table').DataTable({
-			        "order": [[ 0, 'asc' ]],
-			        "drawCallback": function ( settings ) {
-			            var api = this.api();
-			            var rows = api.rows( {page:'current'} ).nodes();
-			            var last=null;
-			        }
-			    });
+					"order": [[ 0, 'asc' ]],
+					"bLengthChange":false,
+					"drawCallback": function ( settings ) {
+						var api = this.api();
+						var rows = api.rows( {page:'current'} ).nodes();
+						var last=null;
+					}
+				});
 			}
 		});
 	},
@@ -845,13 +849,13 @@ activity = {
 				$.each(data,function(i,v){
 					content += `<tr>
 									<td width='1px'>${(i+1)}. </td>
-									<td width='20%'>${v[0].substring(0,6)}...</td>
+									<td width='20%'>${v[0].substring(0,6)}</td>
 									<td width='30%'>${v[2]}</td>
 									<td width='30%'>${v[3]}</td>
-									<td width='30%'>For Delivery</td>
+									<td width='30%'>${v[4]}</td>
 									<td width='9%'>
-										<a data-cmd='showOrder' data-node='${v[0]}' data-meta='${JSON.stringify([v[0],v[2],v[3],"For Delivery"])}' class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='0' data-tooltip='Show details'>
-											<i class='mdi-navigation-more-vert right black-text'></i>
+										<a data-cmd='showOrder' data-node='${v[0]}' data-meta='${JSON.stringify([v[0],v[2],v[3],v[4]])}' class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-4 right' data-position='left' data-delay='0' data-tooltip='Show details'>
+											<i class='material-icons right hover black-text'>more_vert</i>
 										</a>
 									</td>
 								</tr>`;
@@ -859,13 +863,14 @@ activity = {
 				$("#buyingActivity table tbody").html(content);
 
 				var table = $('#buyingActivity table').DataTable({
-			        "order": [[ 0, 'asc' ]],
-			        "drawCallback": function ( settings ) {
-			            var api = this.api();
-			            var rows = api.rows( {page:'current'} ).nodes();
-			            var last=null;
-			        }
-			    });
+					"order": [[ 0, 'asc' ]],
+					"bLengthChange":false,
+					"drawCallback": function ( settings ) {
+						var api = this.api();
+						var rows = api.rows( {page:'current'} ).nodes();
+						var last=null;
+					}
+				});
 
 				$("a[data-cmd='showOrder']").on('click',function(){
 					var data = $(this).data();
@@ -896,7 +901,7 @@ activity = {
 									  <td class='center'>${(v[10]*v[1])}</td>
 									  </tr>`;						
 						})
-						$('#modal_popUp .modal-content').html(`<strong>Order ID:</strong> ${data.meta[0]}<br/><strong>Order Date:</strong> ${data.meta[1]}<br/>\n<strong>Order Delivered:</strong> ${data.meta[2]}<br/>\n<strong>Status:</strong> ${data.meta[3]}`);			
+						$('#modal_popUp .modal-content').html(`<strong>Order ID:</strong> ${data.meta[0].substring(0,6)}<br/><strong>Order Date:</strong> ${data.meta[1]}<br/>\n<strong>Order Delivered:</strong> ${data.meta[2]}<br/>\n<strong>Status:</strong> ${data.meta[3]}`);			
 						$("#modal_popUp .modal-footer").before(`<table class='striped bordered highlight'>${content}<tr><td colspan='4'><strong class='right' >Total</strong></td><td class='center'>${subTotal}</td></tr></table>`);
 						$("#modal_popUp .modal-footer").html("<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Close</a>");
 						$('#modal_popUp').modal('open');			
@@ -914,16 +919,151 @@ points = {
 		var data = system.ajax('../assets/harmony/Process.php?get-employeeAccount',"");
 		data = JSON.parse(data.responseText);
 		var id = data[0][0];
-		this.get(id);
+		this.display(id);
 		activity.getPointsActivity(id);
 		activity.getBuysActivity(id);
+		let wish = wishlist.get(id);
+		wishlist.list(wish);
+	},
+	display:function(id){
+		let data = this.get(id);
+		data = (data.length<=0)?0:data[0][2];
+		$("#display_points span").html(data);
 	},
 	get:function(id){
 		var data = system.ajax('../assets/harmony/Process.php?get-employeePointsAdmin',id);
+		return JSON.parse(data.responseText);
+	}
+}
+
+wishlist = {
+	ini:function(){
+		let id = profile.get()[0][0];
+		this.get(id);
+	},
+	get:function(id){
+		let ret = [];
+		let data = system.ajax('../assets/harmony/Process.php?get-wishlistDetail',id);
 		data.done(function(data){
-			data = JSON.parse(data);
-			data = (data.length<=0)?0:data[0][2];
-			$("#display_points span").html(data)
+			ret = JSON.parse(data);
+		});
+		return ret;
+	},
+	remove:function(id){
+		let data = system.ajax('../assets/harmony/Process.php?update-removeWishlist',id);
+		return data.responseText;
+	},
+	list:function(list){
+		let acct = account.get();
+		let pts = points.get(acct[0][0]);
+		pts = (pts[0][2]*1);
+		let content = "",search = [], disabled = "", category = "", categoryList = "";
+		let cartList = cart.get();
+
+		// let id = profile.get()[0][0];
+		// let wishItems = wishlist.get(id);
+		// list = ((list == "") || (list == null))?JSON.parse(product.get()):list;
+
+		$.each(list,function(i,v){
+			search = system.searchJSON(cartList,0,v[0]);
+			if((search.length<=0) && (pts > (v[8]*1)))
+				disabled = `<li>
+								<a data-cmd='addCart' data-node='${v[0]}' data-meta='${JSON.stringify([v[0],v[2],v[3],v[4]])}'>
+									Add to cart
+								</a>
+							</li>`;
+
+			content += `<div class='col l4 m4 s12' id='cart_${v[0]}'>
+							<div class='card' style='overflow:hidden;'>
+								<div class='card-image'>
+									<img alt='placeholder' src='../assets/images/products/${v[15]}' style='width:100%'>
+									<span class='card-title' style='width:100%;'>
+										<a class='dropdown-button btn-floating btn-flat waves-effect grey lighten-4 right' data-position='left' data-tooltip='Details' data-activates='dropdown_${v[0]}'>
+											<i class="material-icons hover black-text">more_vert</i>
+										</a>
+										<ul class='dropdown-content' id='dropdown_${v[0]}'>
+											<li>
+												<a class='activator'>
+													Details
+												</a>
+											</li>
+											${disabled}
+											<li>
+												<a data-cmd='removeWishlist' data-node='${v[0]}' data-meta='${JSON.stringify([v[0],v[2],v[3],v[4]])}'>
+													Remove
+												</a>
+											</li>
+										</ul>
+									</span>
+								</div>
+								<div class='card-content'>
+									<span class="card-title grey-text text-darken-4 ">${v[6]}</span>
+									<span class=''>${v[8]} points</span>
+								</div>
+								<div class="card-reveal" style='overflow-y:scroll;'>
+									<span class="card-title grey-text text-darken-4">${v[6]}<i class="material-icons right">close</i></span>
+									<p>${v[10]}</p>
+								</div>
+							</div>
+						</div>`; 
+		});
+
+		$("#wishlist").html(content);
+
+		$('.dropdown-button').dropdown({
+			inDuration: 300,
+			outDuration: 225,
+			constrainWidth: false,
+			hover: true,
+			gutter: 0,
+			belowOrigin: false, 
+			alignment: 'right',
+		});
+
+		$("a[data-cmd='removeWishlist']").on('click',function(){
+			$(this).attr({"disabled":true});
+			let data = $(this).data();
+			if(wishlist.remove(data.node) == 1){
+				Materialize.toast('Success.',4000);
+				$(`#cart_${[data.node]}`).remove();
+			}
+			else{
+				Materialize.toast('Cannot remove this list. Try again later.',4000);
+			}
+		});
+
+		$("a[data-cmd='addCart']").on('click',function(){
+			$(this).parent().remove();
+			let data = $(this).data();
+			let cartCount = cart.count();
+			localStorage.setItem(`cartCount`,((cartCount*1)+1));
+			localStorage.setItem(`cart-${((cartCount*1)+1)}`,JSON.stringify([data.node,0]));
+			Materialize.toast('Thanks! You bought 1 product.',4000);
 		});
 	},
-}
+};
+
+cart = {
+	count:function(){
+		let cartList = 0;
+		if((localStorage.getItem('cartCount') == null) || (typeof localStorage.getItem('cartCount') == undefined)){
+			localStorage.setItem('cartCount',0);
+		}
+		else{
+			cartList= localStorage.getItem('cartCount');
+		}
+		return cartList;
+	},	
+	get:function(){
+		let data = [];
+		let cartList;
+		let count = localStorage.getItem('cartCount');
+		for(x=1;x<=count;x++){
+			cartList = localStorage.getItem('cart-'+x);
+			if(cartList != null){
+				data.push(["cart-"+x,JSON.parse(cartList)]);
+			}
+		}
+		return data;
+	},
+};

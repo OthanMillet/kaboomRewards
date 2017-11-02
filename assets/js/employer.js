@@ -223,6 +223,7 @@ account = {
 		var content = "";
 		var getEmployer = system.ajax('../assets/harmony/Process.php?get-employerAccount',"");
 		getEmployer.done(function(data_getEmployer){
+
 			data_getEmployer = JSON.parse(data_getEmployer);
 			var id = data_getEmployer[0][1];
 
@@ -248,6 +249,10 @@ account = {
 	    	$(location).attr('href',`#cmd=index;content=upload_points;${id}`);			
 		});
 
+		$("#log-out").on('click',function(){
+		    login.kill();
+		});
+
 		_this.deactivate();
 		_this.activate();
 		_this.update();
@@ -257,9 +262,6 @@ account = {
 		$("a[data-cmd='updateEmployer']").on('click',function(){
 			var data = $(this).data();
 			var id = data.node;
-
-			console.log(data);
-
 			var content = `<h5>Change ${data.prop}</h5>
 						  <form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>
 						  		<label for='field_${data.prop}'>${data.prop}: </label>
@@ -448,7 +450,6 @@ account = {
 						else{
 							var ajax = system.ajax('../assets/harmony/Process.php?update-employerProfile',[id,_form]);
 							ajax.done(function(ajax){
-								console.log(ajax);
 								if(ajax == 1){
 									Materialize.toast('Username updated.',4000);
 									$('#modal_confirm').modal('close');	
@@ -495,7 +496,6 @@ account = {
 						var _form = $(form).serializeArray();
 						var ajax = system.ajax('../assets/harmony/Process.php?update-employerProfile',[id,_form]);
 						ajax.done(function(ajax){
-							console.log(ajax);
 							if(ajax == 1){
 								Materialize.toast('Password updated.',4000);
 								$('#modal_confirm').modal('close');	
@@ -549,7 +549,6 @@ account = {
 						else{
 							var ajax = system.ajax('../assets/harmony/Process.php?update-company',[id,_form]);
 							ajax.done(function(ajax){
-								console.log(ajax);
 								if(ajax == 1){
 									system.clearForm();
 									Materialize.toast('Name updated.',4000);
@@ -664,7 +663,6 @@ account = {
 						else{
 							var ajax = system.ajax('../assets/harmony/Process.php?update-company',[id,_form]);
 							ajax.done(function(ajax){
-								console.log(ajax);
 								if(ajax == 1){
 									system.clearForm();
 									Materialize.toast('Address updated.',4000);
@@ -684,7 +682,6 @@ account = {
 	updatePicture:function(){
 		$("a[data-cmd='updateEmployerPicture']").on('click',function(){
 			var data = $(this).data();
-			console.log(data);
 			var id = data.node;
 			var picture = "../assets/images/profile/avatar.jpg";
 			var content = `<h4>Change ${data.prop}</h4>
@@ -782,7 +779,6 @@ account = {
 
 		$("a[data-cmd='updateCompanyLogo']").on('click',function(){
 			var data = $(this).data();
-			console.log(data);
 			var id = data.node;
 			var picture = "../assets/images/profile/avatar.jpg";
 			var content = `<h4>Change ${data.prop}</h4>
@@ -990,10 +986,8 @@ employee = {
 				submitHandler: function (form) {
 					var _form = $(form).serializeArray();
         			var client = localStorage.getItem('client_id')
-        			console.log();
 					var data = system.ajax('../assets/harmony/Process.php?set-newPendingEmployee',[_form,id]);
 					data.done(function(data){
-						console.log(data);
 						if(data == 1){
 							var text = `<h1>Congratulations</h1>, you are now registered. You can login using <u>${_form[2]['value']}</u> as you username and <u>
 										${_form[5]['value']}</u> as your password. <a href='http://loginocalhost/kaboomRewards/login.html'>Just follow this link</a>`;
@@ -1098,110 +1092,109 @@ employee = {
 
 				var profile = ((data[0][12] == "") || (data[0][12] == null))?"avatar.jpg":data[0][12];
 				content = `<div id='profile-card' class='card'>
-						    <div class='card-image waves-effect waves-block waves-light' style='max-height: 70px;'>
-						        <img class='activator' src='../assets/images/user-bg.jpg' alt='user background'>
-						    </div>
-						    <div class='card-content'>
-						        <div class=' responsive-img activator card-profile-image circle' style='margin-top: -65px;'>
-						        	<img src='../assets/images/profile/${profile}' alt='' class='circle'>
-						        	<a data-value='${profile}' data-cmd='updateEmployeePicture' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-prop='Picture' class='btn waves-effect white-text no-shadow black' style='font-size: 10px;z-index: 1;padding: 0 12px;top:40px;'>Change</a>
-								</div>
-								<a data-value='${JSON.stringify([data[0][4],data[0][5],data[0][3]])}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-prop='Name' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update account'>
-									<i class='material-icons right black-text hover'>mode_edit</i>
-								</a>
-						        <span class='card-title activator grey-text text-darken-4'>${data[0][4]} ${data[0][5]} ${data[0][3]} </span>
-								<div class='divider'></div>
-
-								<table>
-									<tr>
-										<td class='bold truncate'><i class='mdi-action-info-outline cyan-text text-darken-2'></i> Status:</td>
-										<td class='grey-text truncate'>${status}</td>
-										<td>${actions}</td>
-									</tr>
-									<tr>
-										<td class='bold truncate'><i class='mdi-action-perm-identity cyan-text text-darken-2'></i> Nickname: </td>
-										<td class='grey-text truncate'>${data[0][6]}</td>
-										<td>
-											<a data-value='${data[0][6]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Nickname' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
-												<i class='material-icons right black-text hover'>mode_edit</i>
-											</a>
-										</td>
-									</tr>
-									<tr>
-										<td class='bold truncate'><i class='mdi-action-work cyan-text text-darken-2'></i> Position: </td>
-										<td class='grey-text truncate'>${data[0][13]}</td>
-										<td>
-											<a data-value='${data[0][13]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Position' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
-												<i class='material-icons right black-text hover'>mode_edit</i>
-											</a>
-										</td>
-									</tr>
-									<tr>
-										<td class='bold truncate'><i class='mdi-action-perm-phone-msg cyan-text text-darken-2'></i> Phone: </td>
-										<td class='grey-text truncate'>${data[0][9]}</td>
-										<td>
-											<a data-value='${data[0][9]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Phone' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
-												<i class='material-icons right black-text hover'>mode_edit</i>
-											</a>
-										</td>
-									</tr>
-									<tr>
-										<td class='bold truncate'><i class='mdi-communication-email cyan-text text-darken-2'></i> Email:</td>
-										<td class='grey-text truncate'> ${data[0][10]}</td>
-										<td>
-											<a data-value='${data[0][10]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Email' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
-												<i class='material-icons right black-text hover'>mode_edit</i>
-											</a>
-										</td>
-									</tr>
-									<tr>
-										<td class='bold truncate'><i class='mdi-maps-map cyan-text text-darken-2'></i> Address: </td>
-										<td class='grey-text truncate'>${data[0][11]}</td>
-										<td>
-											<a data-value='${data[0][11]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Address' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
-												<i class='material-icons right black-text hover'>mode_edit</i>
-											</a>
-										</td>
-									</tr>
-									<tr>
-										<td class='bold truncate'><i class='mdi-action-cached cyan-text text-darken-2'></i> Gender:</td>
-										<td class='grey-text truncate'>${data[0][7]}</td>
-										<td>
-											<a data-value='${data[0][7]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Gender' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
-												<i class='material-icons right black-text hover'>mode_edit</i>
-											</a>
-										</td>
-									</tr>
-									<tr>
-										<td class='bold truncate'><i class='mdi-action-event cyan-text text-darken-2'></i> Date of Birth: </td>
-										<td class='grey-text truncate'>${data[0][8]}</td>
-										<td>
-											<a data-value='${data[0][8]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Date of Birth' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
-												<i class='material-icons right black-text hover'>mode_edit</i>
-											</a>
-										</td>
-									</tr>
-									<tr>
-										<td class='bold truncate'><i class='mdi-action-account-box cyan-text text-darken-2'></i> Employee ID: </td>
-										<td class='grey-text truncate'>${data[0][1]}</td>
-										<td>
-											<button disabled data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Employee ID' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
-												<i class='material-icons right black-text hover'>mode_edit</i>
-											</button>
-										</td>
-									</tr>
-									<tr>
-										<td class='bold truncate'><i class='mdi-action-verified-user cyan-text text-darken-2'></i> Password</td>
-										<td class='grey-text truncate'></td>
-										<td>
-											<button disabled data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Password' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update password'>
-												<i class='material-icons right black-text hover'>mode_edit</i>
-											</button>
-										</td>
-									</tr>
-								</table>
-						    </div>
-						</div>`;
+							    <div class='card-image waves-effect waves-block waves-light' style='max-height: 70px;'>
+							        <img class='activator' src='../assets/images/user-bg.jpg' alt='user background'>
+							    </div>
+							    <div class='card-content'>
+							        <div class=' responsive-img activator card-profile-image circle' style='margin-top: -65px;'>
+							        	<img src='../assets/images/profile/${profile}' alt='' class='circle'>
+							        	<a data-value='${profile}' data-cmd='updateEmployeePicture' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-prop='Picture' class='btn waves-effect white-text no-shadow black' style='font-size: 10px;z-index: 1;padding: 0 12px;top:40px;'>Change</a>
+									</div>
+									<a data-value='${JSON.stringify([data[0][4],data[0][5],data[0][3]])}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-prop='Name' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update account'>
+										<i class='material-icons right black-text hover'>mode_edit</i>
+									</a>
+							        <span class='card-title activator grey-text text-darken-4'>${data[0][4]} ${data[0][5]} ${data[0][3]} </span>
+									<div class='divider'></div>
+									<table>
+										<tr>
+											<td class='bold truncate'><i class='mdi-action-info-outline cyan-text text-darken-2'></i> Status:</td>
+											<td class='grey-text truncate'>${status}</td>
+											<td>${actions}</td>
+										</tr>
+										<tr>
+											<td class='bold truncate'><i class='mdi-action-perm-identity cyan-text text-darken-2'></i> Nickname: </td>
+											<td class='grey-text truncate'>${data[0][6]}</td>
+											<td>
+												<a data-value='${data[0][6]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Nickname' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
+													<i class='material-icons right black-text hover'>mode_edit</i>
+												</a>
+											</td>
+										</tr>
+										<tr>
+											<td class='bold truncate'><i class='mdi-action-work cyan-text text-darken-2'></i> Position: </td>
+											<td class='grey-text truncate'>${data[0][13]}</td>
+											<td>
+												<a data-value='${data[0][13]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Position' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
+													<i class='material-icons right black-text hover'>mode_edit</i>
+												</a>
+											</td>
+										</tr>
+										<tr>
+											<td class='bold truncate'><i class='mdi-action-perm-phone-msg cyan-text text-darken-2'></i> Phone: </td>
+											<td class='grey-text truncate'>${data[0][9]}</td>
+											<td>
+												<a data-value='${data[0][9]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Phone' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
+													<i class='material-icons right black-text hover'>mode_edit</i>
+												</a>
+											</td>
+										</tr>
+										<tr>
+											<td class='bold truncate'><i class='mdi-communication-email cyan-text text-darken-2'></i> Email:</td>
+											<td class='grey-text truncate'> ${data[0][10]}</td>
+											<td>
+												<a data-value='${data[0][10]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Email' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
+													<i class='material-icons right black-text hover'>mode_edit</i>
+												</a>
+											</td>
+										</tr>
+										<tr>
+											<td class='bold truncate'><i class='mdi-maps-map cyan-text text-darken-2'></i> Address: </td>
+											<td class='grey-text truncate'>${data[0][11]}</td>
+											<td>
+												<a data-value='${data[0][11]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Address' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
+													<i class='material-icons right black-text hover'>mode_edit</i>
+												</a>
+											</td>
+										</tr>
+										<tr>
+											<td class='bold truncate'><i class='mdi-action-cached cyan-text text-darken-2'></i> Gender:</td>
+											<td class='grey-text truncate'>${data[0][7]}</td>
+											<td>
+												<a data-value='${data[0][7]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Gender' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
+													<i class='material-icons right black-text hover'>mode_edit</i>
+												</a>
+											</td>
+										</tr>
+										<tr>
+											<td class='bold truncate'><i class='mdi-action-event cyan-text text-darken-2'></i> Date of Birth: </td>
+											<td class='grey-text truncate'>${data[0][8]}</td>
+											<td>
+												<a data-value='${data[0][8]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Date of Birth' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
+													<i class='material-icons right black-text hover'>mode_edit</i>
+												</a>
+											</td>
+										</tr>
+										<tr>
+											<td class='bold truncate'><i class='mdi-action-account-box cyan-text text-darken-2'></i> Employee ID: </td>
+											<td class='grey-text truncate'>${data[0][1]}</td>
+											<td>
+												<button disabled data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Employee ID' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
+													<i class='material-icons right black-text hover'>mode_edit</i>
+												</button>
+											</td>
+										</tr>
+										<tr>
+											<td class='bold truncate'><i class='mdi-action-verified-user cyan-text text-darken-2'></i> Password</td>
+											<td class='grey-text truncate'></td>
+											<td>
+												<button disabled data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Password' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update password'>
+													<i class='material-icons right black-text hover'>mode_edit</i>
+												</button>
+											</td>
+										</tr>
+									</table>
+							    </div>
+							</div>`;
 				$("#profile").html(content);
 
 				employee.deactivate();
@@ -1304,7 +1297,6 @@ employee = {
 						var _form = $(form).serializeArray();
 						var data = system.ajax('../assets/harmony/Process.php?update-employee',[id,_form]);
 						data.done(function(data){
-							console.log(data);
 							if(data == 1){
 								system.clearForm();
 								Materialize.toast('Name updated.',4000);
@@ -1372,7 +1364,6 @@ employee = {
 						var _form = $(form).serializeArray();
 						var data = system.ajax('../assets/harmony/Process.php?update-employee',[id,_form]);
 						data.done(function(data){
-							console.log(data);
 							if(data == 1){
 								system.clearForm();
 								Materialize.toast('Name updated.',4000);
@@ -1440,7 +1431,6 @@ employee = {
 						var _form = $(form).serializeArray();
 						var data = system.ajax('../assets/harmony/Process.php?update-employee',[id,_form]);
 						data.done(function(data){
-							console.log(data);
 							if(data == 1){
 								system.clearForm();
 								Materialize.toast('Address updated.',4000);
@@ -1488,7 +1478,6 @@ employee = {
 						var _form = $(form).serializeArray();
 						var data = system.ajax('../assets/harmony/Process.php?update-employee',[id,_form]);
 						data.done(function(data){
-							console.log(data);
 							if(data == 1){
 								system.clearForm();
 								Materialize.toast('Gender updated.',4000);
@@ -1531,7 +1520,6 @@ employee = {
 						var _form = $(form).serializeArray();
 						var data = system.ajax('../assets/harmony/Process.php?update-employee',[id,_form]);
 						data.done(function(data){
-							console.log(data);
 							if(data == 1){
 								system.clearForm();
 								Materialize.toast('Date of birth updated.',4000);
@@ -1550,7 +1538,6 @@ employee = {
 	updatePicture:function(){
 		$("a[data-cmd='updateEmployeePicture']").on('click',function(){
 			var data = $(this).data();
-			console.log(data);
 			var id = data.node;
 			var picture = "../assets/images/profile/avatar.jpg";
 			var content = `<h4>Change ${data.prop}</h4>
@@ -1762,9 +1749,9 @@ employee = {
 									<td width='20%'>${v[0].substring(0,6)}...</td>
 									<td width='30%'>${v[2]}</td>
 									<td width='30%'>${v[3]}</td>
-									<td width='30%'>For Delivery</td>
+									<td width='30%'>${v[4]}</td>
 									<td width='9%'>
-										<a data-cmd='showOrder' data-node='${v[0]}' data-meta='${JSON.stringify([v[0],v[2],v[3],"For Delivery"])}' class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='0' data-tooltip='Show details'>
+										<a data-cmd='showOrder' data-node='${v[0]}' data-meta='${JSON.stringify([v[0],v[2],v[3],v[4]])}' class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='0' data-tooltip='Show details'>
 											<i class='material-icons right hover black-text'>more_vert</i>
 										</a>
 									</td>

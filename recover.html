@@ -15,7 +15,6 @@
     <link rel="stylesheet" href="assets/css/gallery.css">
     <!-- <link rel="stylesheet" href="assets/css/animate.css"> -->
   </head>
-
     <body class='bg'>
         <div id='block-control' class=''></div>
         <div class="progress hide-on-med-and-up hide-on-med-and-down" style="margin: 0rem 0 1rem 0;">
@@ -33,34 +32,8 @@
                         <div class="card" style="border-top: solid #f00480 10px;">
                             <div class="card-content center">
                                 <img src="assets/images/logo.png" style='width: 150px;'><br/>
-                                <span class="card-title">Log in and get started</span>
-
-                                <form id="form_login" method="get" action="" novalidate="novalidate">
-                                    <div class="row">
-                                        <div class="input-field col s12 m12 l12">
-                                            <input id="field_empID" name="field_empID" type="text" data-error=".error_field_empID" value="Admin2017">
-                                            <label for="field_empID" class="center-align">Username</label>  
-                                            <div class="error_field_empID"></div>  
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="input-field col s12 m12 l12">
-                                            <input id="field_password" name="field_password" type="password" data-error=".error_field_password" value="password">
-                                            <label for="field_password" class="">Password</label>
-                                            <div class="error_field_password"></div>  
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="input-field col s12 m12 l12">
-                                            <button class="btn waves-effect waves-light col s12 pink" type='submit'>Login</button>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="input-field col s12 m12 l12">
-                                            <p class="margin right-align medium-small"><a href="recover.html">Forgot password?</a></p>
-                                        </div>          
-                                    </div>
-                                </form>
+                                <span class="card-title" id='display_cardTitle'>Enter your email to recover your account</span>
+                                <div id='display_form'></div>
                             </div>
                         </div>
                     </div>
@@ -77,6 +50,7 @@
         <script src="assets/js/process.js"></script>
         <script type="text/javascript">
             system.ini();
+            recover.ini();
         </script>
     </body>
 </html>

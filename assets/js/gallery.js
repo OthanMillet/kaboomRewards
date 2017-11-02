@@ -1269,6 +1269,9 @@ var MMCQ = function() {
 			return this.each(function(c) {
 				function e() {
 					if (G) {
+						console.log('xx');
+						
+
 						G = !1, b.dynamicRouting && (window.location.hash = "!");
 						var c = !I;
 						window.clearTimeout(C), C = null, O.stop(), I = !0, u = void 0;
@@ -1432,7 +1435,7 @@ var MMCQ = function() {
 					var ha = a('<nav id="placeholder-navbar"></nav>'),
 						ia = a('<div class="nav-wrapper"></div>'),
 						ja = a('<div class="db"></div>'),
-						ka = a('<button class="back-btn"><i class="material-icons">arrow_back</i><span>Back</span></button>'),
+						ka = a('<button class="back-btn black-text"><i class="material-icons">close</i><span>Close</span></button>'),
 						la = "";
 					if (a("nav").length && (la = a("nav").css("background-color"), a("nav").addClass("ed")), ha.css({
 							"background-color": la
@@ -1617,6 +1620,7 @@ function(a) {
 		});
 		var e = function(a) {
 			var b = a.find(".t.initialized");
+
 			b.carousel({
 				dist: 0,
 				padding: 10

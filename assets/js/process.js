@@ -157,7 +157,6 @@ login = {
 				var data = system.ajax('assets/harmony/Process.php?login',_form);
 				data.done(function(data){
 					data = JSON.parse(data);
-					console.log(data);
 					if(data[0] == 'Deactivated'){
 						Materialize.toast('Account Deactivated.',4000);
 					}
@@ -246,4 +245,197 @@ login = {
 	        }
 		}); 
 	}
-};
+}
+
+recover = {
+	ini:function(){
+		this.sendCode();
+	},
+	sendCode:function(){
+		$("#display_form").html(`<form id="form_forgot" method="get" action="" novalidate="novalidate">
+                                    <div class="row">
+                                        <div class="input-field col s12 m12 l12">
+                                            <input id="field_email" name="field_email" type="text" data-error=".error_field_email" value="rufo.gabrillo@gmail.com">
+                                            <label for="field_email" class="center-align">Email</label>  
+                                            <div class="error_field_email"></div>  
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="input-field col s12 m12 l12">
+                                            <button class="btn waves-effect waves-light col s12 pink" type='submit'>Recover password</button>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="input-field col s12 m6 l6">
+                                            <p class="margin medium-small"><a data-cmd='redirect'>Enter recovery code</a></p>
+                                        </div>          
+                                        <div class="input-field col s12 m6 l6">
+                                            <p class="margin right-align medium-small"><a href="login.html">Back to login page</a></p>
+                                        </div>          
+                                    </div>
+                                </form>`);
+
+	    $("#form_forgot").validate({
+	        rules: {
+	            field_email: {required: true,maxlength: 100},
+	        },
+	        errorElement : 'div',
+	        errorPlacement: function(error, element) {
+				let placement = $(element).data('error');
+				if(placement){
+					$(placement).append(error)
+				} 
+				else{
+					error.insertAfter(element);
+				}
+			},
+			submitHandler: function (form) {
+				let _form = $(form).serializeArray();
+				let data = system.ajax('assets/harmony/Process.php?validateEmail',_form[0]['value']);
+				data.done(function(data){
+					if(data[0] == 1){
+						let codeData = system.ajax('assets/harmony/Process.php?email-code',_form[0]['value']);
+						codeData.done(function(data){
+							Materialize.toast('Recovery code is sent.',4000);
+							$(location).attr('href',`recover.html#code`);
+						});
+					}
+					else{
+						Materialize.toast(`Email doesn't belong to someone else.`,4000);
+					}
+				});
+	        }
+		});
+
+		$("a[data-cmd='redirect']").on('click',function(){
+			recover.validateCode();
+		});
+	},
+	validateCode:function(){
+		$("#display_form").html(`<form id="form_code" method="get" action="" novalidate="novalidate">
+                                    <div class="row">
+                                        <div class="input-field col s12 m12 l12">
+                                            <input id="field_recoveryCode" name="field_recoveryCode" type="text" data-error=".error_field_recoveryCode">
+                                            <label for="field_recoveryCode" class="center-align">Recovery Code</label>  
+                                            <div class="error_field_recoveryCode"></div>  
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="input-field col s12 m12 l12">
+                                            <button class="btn waves-effect waves-light col s12 pink" type='submit'>Recover password</button>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="input-field col s12 m6 l6">
+                                        </div>          
+                                        <div class="input-field col s12 m6 l6">
+                                            <p class="margin right-align medium-small"><a href="login.html">Back to login page</a></p>
+                                        </div>          
+                                    </div>
+                                </form>`);
+
+	    $("#form_code").validate({
+	        rules: {
+	            field_recoveryCode: {required: true,maxlength: 100},
+	        },
+	        errorElement : 'div',
+	        errorPlacement: function(error, element) {
+				let placement = $(element).data('error');
+				if(placement){
+					$(placement).append(error)
+				} 
+				else{
+					error.insertAfter(element);
+				}
+			},
+			submitHandler: function (form) {
+				let _form = $(form).serializeArray();
+				let data = system.ajax('assets/harmony/Process.php?validate-code',_form[0]['value']);
+				data.done(function(data){
+					console.log(data);
+					if(data[0] == 1){
+						recover.final(_form[0]['value']);
+					}
+					else{
+						Materialize.toast(`Email doesn't belong to someone else.`,4000);
+					}
+				});
+	        }
+		}); 
+	},
+	final:function(code){
+		$("#display_form").html(`<form id="form_recover" method="get" action="" novalidate="novalidate">
+                                    <div class="row">
+                                        <div class="input-field col s12 m12 l12">
+                                            <input id="field_newPassword" name="field_newPassword" type="password" data-error=".error_field_newPassword" value="">
+                                            <label for="field_newPassword" class="center-align">New Password</label>  
+                                            <div class="error_field_newPassword"></div>  
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="input-field col s12 m12 l12">
+                                            <input id="field_rePassword" name="field_rePassword" type="password" data-error=".error_field_rePassword" value="">
+                                            <label for="field_rePassword" class="center-align">Confirm Password</label>  
+                                            <div class="error_field_rePassword"></div>  
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="input-field col s12 m12 l12">
+                                            <button class="btn waves-effect waves-light col s12 pink" type='submit'>Recover password</button>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="input-field col s12 m12 l12">
+											Password must contain atleast 1 number, 1 uppercase letter, 1 lowercare letter, 1 special character* and 6 character length. <br/>
+											<u>Special characters are ! @ $ % *</u>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="input-field col s12 m6 l6">
+                                            <p class="margin medium-small"><a href="recover.html">Resend code?</a></p>
+                                        </div>          
+                                        <div class="input-field col s12 m6 l6">
+                                            <p class="margin right-align medium-small"><a href="login.html">Back to login page</a></p>
+                                        </div>          
+                                    </div>
+                                </form>`);
+
+	    $("#form_recover").validate({
+	        rules: {
+	            field_newPassword: {required: true,maxlength: 100,checkPassword:true},
+	            field_rePassword: {required: true,maxlength: 100,checkPassword:true},
+	        },
+	        errorElement : 'div',
+	        errorPlacement: function(error, element) {
+				let placement = $(element).data('error');
+				if(placement){
+					$(placement).append(error)
+				} 
+				else{
+					error.insertAfter(element);
+				}
+			},
+			submitHandler: function (form) {
+				let _form = $(form).serializeArray();
+				console.log(_form);
+
+				if(_form[0]['value'] === _form[1]['value']){
+					let data = system.ajax('assets/harmony/Process.php?recover-password',[_form[0]['value'],code]);
+					data.done(function(data){
+						console.log(data);
+						if(data[0] == 1){
+							Materialize.toast(`Success! Account has been recovered.`,4000);
+							$(location).attr('href',`login.html`);
+						}
+						else{
+							Materialize.toast(`Please try again later.`,4000);
+						}
+					});
+				}
+				else{
+					Materialize.toast(`Passwords doesn't match.`,4000);
+				}
+	        }
+		}); 
+	},
+}

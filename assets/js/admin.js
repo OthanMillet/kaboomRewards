@@ -719,6 +719,7 @@ client = {
 		$("#companyProfile").html(content);	
 	},
 	accountProfile(data){
+		console.log(data);
 		data = data[0];
 		if(Number(data[8]) == 1){
 			status = "Active";
@@ -808,8 +809,11 @@ client = {
 		getEmployer.done(function(data_getEmployer){
 			data_getEmployer = JSON.parse(data_getEmployer);
 
+			console.log(id);
 			var getEmployer = system.ajax('../assets/harmony/Process.php?get-employerByID',id);
 			getEmployer = JSON.parse(getEmployer.responseText);
+
+			console.log(getEmployer);
 
 			var getEmployees = system.ajax('../assets/harmony/Process.php?get-employeeByID',id);
 			getEmployees = JSON.parse(getEmployees.responseText);
@@ -3392,7 +3396,7 @@ employee = {
 	},
 	getBuysActivity:function(id){
 		var content = "";
-		var data = system.ajax('../assets/harmony/Process.php?get-employeeBuysActivityByEmployee',id);
+		var data = system.ajax('../assets/harmony/Process.php?get-employeeBuysActivityAdmin',id);
 		data.done(function(data){
 			data = JSON.parse(data);
 			if(data.length<=0){
@@ -3406,16 +3410,9 @@ employee = {
 									<td width='20%'>${v[0].substring(0,8)}</td>
 									<td width='30%'>${v[2]}</td>
 									<td width='30%'>${v[3]}</td>
-									<td width='30%'>
-									<select>
-										<option selected>Place Order</option>
-										<option>For Deliveryelivery</option>
-										<option>Closed</option>
-										<option>Canceled</option>
-									</select>
-								</td>
+									<td width='30%'>${v[4]}</td>
 									<td width='9%'>
-										<a data-cmd='showOrder' data-node='${v[0]}' data-meta='${JSON.stringify([v[0],v[2],v[3],'For Delivery'])}' class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='0' data-tooltip='Show details'>
+										<a data-cmd='showOrder' data-node='${v[0]}' data-meta='${JSON.stringify([v[0],v[2],v[3],v[4]])}' class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='0' data-tooltip='Show details'>
 											<i class='material-icons right hover black-text'>more_vert</i>
 										</a>
 									</td>
@@ -3437,38 +3434,10 @@ employee = {
 
 				$("a[data-cmd='showOrder']").on('click',function(){
 					var data = $(this).data();
-					var content = "";
-					console.log(data);
-					$("#modal_popUp table").remove();
-
-					var subTotal = 0;
 					var orders = system.ajax('../assets/harmony/Process.php?get-orders',data.node);
 					orders.done(function(orders){
 						var orders = JSON.parse(orders);
-						content = `<thead><tr>
-								  <th class='center'></th>
-								  <th class='center'>Product</th>
-								  <th class='center'>Quantity</th>
-								  <th class='center'>Price</th>
-								  <th class='center'>Total</th>
-								  </tr></thead>`;						
-
-						$.each(orders,function(i,v){
-							console.log(v);
-							var product = ((v[17] == "") || (v[17] == null))?"default.png":v[17];
-							subTotal = subTotal + (v[10]*v[1]);
-							content += `<tr>
-										  <td class='center'><img src='../assets/images/products/${product}' alt='Thumbnail' class='valign profile-image' width='80px'></td>
-										  <td class='center'>${v[8]}</td>
-										  <td class='center'>${v[1]}</td>
-										  <td class='center'>${v[10]}</td>
-										  <td class='center'>${(v[10]*v[1])}</td>
-									  </tr>`;						
-						})
-						$('#modal_popUp .modal-content').html(`<strong>Order ID:</strong> ${(data.meta[0].substring(0,8))}<br/><strong>Order Date:</strong> ${data.meta[1]}<br/>\n<strong>Order Delivered:</strong> ${data.meta[2]}<br/>\n<strong>Status:</strong> ${data.meta[3]}`);			
-						$("#modal_popUp .modal-footer").before(`<table class='striped bordered highlight'>${content}<tr><td colspan='4'><strong class='right' >Total</strong></td><td class='center'>${subTotal}</td></tr></table>`);
-						$("#modal_popUp .modal-footer").html("<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Close</a>");
-						$('#modal_popUp').modal('open');			
+						sales.viewOrders([data,orders]);
 					});
 				});
 			}
@@ -4057,8 +4026,8 @@ request = {
 sales = {
 	ini:function(){
 		const list = this.get();
-		console.log(JSON.parse(list));
 		this.list(list);
+		console.log("xxx");
 	},
 	get:function(){
 		const data = system.html('../assets/harmony/Process.php?get-sales');
@@ -4130,10 +4099,8 @@ sales = {
 
 	    $("select").material_select();
 		$('#modal').modal('open');
-		// $('#modal').attr({"max-height":"80%"});
 
 		$("#field_status").on('change',function(){
-			console.log(data);
 			let statusData = $(this).val();
 			sales.updateStatus([data[0].meta[0],statusData]);
 		});
@@ -4208,7 +4175,6 @@ sales = {
 	updateStatus:function(statusData){
 		const data = system.ajax('../assets/harmony/Process.php?update-orderStatus',statusData);
 		data.done(function(returnData){
-			console.log(returnData);
 			if(returnData == 1){
 				Materialize.toast(`Order has been ${statusData[1]}.`,4000);
 				$('#modal').modal('close');	

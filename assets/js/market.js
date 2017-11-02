@@ -218,29 +218,33 @@ market = {
 				            	    <a class='gallery-cover gray'>
 				            	        <img alt='placeholder' src='assets/images/products/${v[10]}' style='width:100%'>
 				            	    </a>
-				            	    <div class='gallery-header'>
-				            	        <span>${v[1]}</span>
-				            	        <span class='gj right' style='font-size: 24px;line-height: 32px;'>${v[3]}</span>
+				            	    <div class='gallery-header row'>
+					            	        <span>${v[1]}</span>
+					            	        <span class='gj right'>${v[3]}</span>
 				            	    </div>
-				            	    <div class='gallery-body'>
-				            	        <div class='title-wrapper'>
-				            	            <h3>${v[1]}</h3>
-				            	            <span class='gj'>${v[3]}</span>
-				            	        </div>
-				            	        <p class='fi'>${v[5]}</p>
-				            	        <div class='carousel-wrapper'>
-				            	            <div class='t carousel initialized'>
-				            	                <a class='carousel-item active' href='#one!'>
-				            	                    <img src='assets/images/logo.png'>
-				            	                </a>
-				            	                <a class='carousel-item' href='#two!'>
-				            	                    <img src='assets/images/logo.png'>
-				            	                </a> 
-				            	                <a class='carousel-item' href='#three!'>
-				            	                    <img src='assets/images/logo.png'>
-				            	                </a> 
-				            	            </div>
-				            	        </div>
+				            	    <div class='gallery-body row'>
+				            	    	<div class='col s12'>
+					            	        <div class='title-wrapper'>
+					            	            <h3>${v[1]}</h3>
+					            	            <span class='gj'>${v[3]}</span>
+					            	        </div>
+					            	        <div style='top:30px; position:relative;'>
+						            	        <p class='fi'>${v[5]}</p>
+						            	        <div class='carousel-wrapper'>
+						            	            <div class='t carousel initialized'>
+						            	                <a class='carousel-item active' href='#one!'>
+						            	                    <img src='assets/images/logo.png'>
+						            	                </a>
+						            	                <a class='carousel-item' href='#two!'>
+						            	                    <img src='assets/images/logo.png'>
+						            	                </a> 
+						            	                <a class='carousel-item' href='#three!'>
+						            	                    <img src='assets/images/logo.png'>
+						            	                </a> 
+						            	            </div>
+						            	        </div>
+					            	        </div>
+				            	    	</div>
 				            	    </div>
 				            	    <div class='gallery-action'>
 				            	        <button class='btn-floating btn-large waves-effect waves-light shopping' data-cmd='addWishlist' data-wishlist='${v[0]}' data-node='${v[0]}'><i class='material-icons'>favorite</i></button>
@@ -696,7 +700,20 @@ profile = {
 		if(data.length>0){
 			$("#display_logo").attr({"style":"width:200px;"});
 			$("#display_headerAccount").removeClass('hide');
-			$("#display_account h5").html(`<strong>WELCOME,<br/> <i class='pink-text'>${data[0][4]} ${data[0][5].substring(0,1)}. ${data[0][3]}</i></strong>`);
+
+			console.log(data);
+
+			let content = `<div class="col s12 m12 l12">
+                                <div class="center">
+                                    <img src="assets/images/company/logoClient.png" draggable='false' alt="" class="responsive-img valign profile-image">
+                                </div>
+                                <h5><strong>WELCOME,<br/> <i class='pink-text'>${data[0][4]} ${data[0][5].substring(0,1)}. ${data[0][3]}</i></strong></h5>
+                                <p><span class="pink-text hide">Position: </span><br/>${data[0][13]}<br/>
+                                <span class="pink-text hide">Address: </span><br/>${data[0][11]}</p>
+                            </div>
+			`;
+
+			$("#display_account").html(content);
 			$(".display_accountName").html(`WELCOME, ${data[0][4]} ${data[0][5].substring(0,1)}. ${data[0][3]}`);
 			profile.displayPoints(data[0][0]);
 		}
@@ -705,7 +722,10 @@ profile = {
 	    	$("#display_login").removeClass("bounceOutUp").addClass('bounceInUp');
 		}
 
+
+			console.log('ss');
 		$("a[data-cmd='logout']").on("click",function(){
+			console.log('ss');
         	profile.logout();
 		});
 	},

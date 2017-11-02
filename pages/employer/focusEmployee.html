@@ -9,14 +9,15 @@
 		<div class='col s12' id="profile"></div>
 		<div id="employees">
 			<div class="divider"></div>
-			<div class="row">
-				<div id="pointsActivity" class="col s6  white">
-					<div id='profile-card' class='card'>
-					    <div class='card-image waves-effect waves-block waves-light' style='max-height: 70px;'>
-					        <img class='activator' src='../assets/images/user-bg.jpg' alt='user background'>
-							<h2><span style='font-size:15px'>Current points</span> <span class='actual-points'>0</span></h2>
-					    </div>
-					    <div class='card-content'>
+
+			
+			<ul class="collapsible" data-collapsible="accordion">
+				<li>
+					<div class="collapsible-header">
+						<i class="material-icons">control_point</i>Points Activity
+					</div>
+					<div class="collapsible-body">
+						<div id="pointsActivity">
 					        <table class='display dataTable bordered' width="100%">
 					            <thead>
 					                <tr>	
@@ -29,15 +30,15 @@
 					            </thead>
 					            <tbody></tbody>
 					        </table>
-					    </div>
+						</div>
 					</div>
-				</div>
-				<div id="buyingActivity" class="col s6  white">
-					<div id='profile-card' class='card'>
-					    <div class='card-image waves-effect waves-block waves-light' style='max-height: 70px;'>
-					        <img class='activator' src='../assets/images/user-bg.jpg' alt='user background'>
-					    </div>
-					    <div class='card-content'>
+				</li>
+				<li>
+					<div class="collapsible-header">
+						<i class="material-icons">shopping_basket</i>Buying Activity
+					</div>
+					<div class="collapsible-body">
+						<div id="buyingActivity">
 					        <table class='display dataTable bordered' width="100%">
 					            <thead>
 					                <tr>	
@@ -51,10 +52,10 @@
 					            </thead>
 					            <tbody></tbody>
 					        </table>
-					    </div>
+						</div>
 					</div>
-				</div>
-			</div>
+				</li>
+			</ul>
 		</div>
 	</div>
 	<div id='display_error' class="row margin"></div>

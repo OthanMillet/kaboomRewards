@@ -45,30 +45,16 @@ $function = new DatabaseClasses;
 		}
 	}
 
-    // if (isset($_GET['do-logIn'])){
-    //     $data = $_POST["data"];
-    //     $email = $data[0]['value'];
-    //     $password = $data[1]['value'];
-
-    //     $query = $Functions->PDO("SELECT * FROM tbl_applicant WHERE email = '{$email}'");
-    //     if($Functions->testPassword($password,$query[0][4])){
-    //         $queryApplicant = $Functions->PDO("SELECT * FROM tbl_applicant RIGHT JOIN tbl_personalinfo ON tbl_applicant.id = tbl_personalinfo.id WHERE tbl_applicant.id = '{$query[0][0]}' ");
-    //         print_r(json_encode($queryApplicant));
-    //     }
-    //     else{
-    //         echo 0;
-    //     }
-    // }
-
 	if(isset($_GET['login'])){
 		$data = $_POST['data'];
 		$username = $data[0]['value'];
-		$password = sha1($data[1]['value']);
+		$password = $data[1]['value'];
 		$date = new DateTime();
 		$hash = $date->getTimestamp();
-		$query = $function->PDO("SELECT * FROM tbl_admin WHERE username = '{$username}' AND password = '{$password}'");
+
+		$query = $function->PDO("SELECT * FROM tbl_admin WHERE username = '{$username}'");
 		if(count($query)>0){
-			if($query[0][6] == 1){
+			if($function->testPassword($password,$query[0][3]) && ($query[0][6] == 1)){
 				$_SESSION["kaboom"] = [$username,$password,$hash];
 				print_r(json_encode(["Active","admin"]));
 			}
@@ -77,14 +63,14 @@ $function = new DatabaseClasses;
 			}
 		}
 		else{
-			$query = $function->PDO("SELECT * FROM tbl_employer WHERE username = '{$username}' AND password = '{$password}'");
+			$query = $function->PDO("SELECT * FROM tbl_employer WHERE username = '{$username}'");
 			if(count($query)>0){
-				if($query[0][8] == 1){
+				if($function->testPassword($password,$query[0][6]) && ($query[0][8] == 1)){
 					$_SESSION["kaboom"] = [$username,$password,$hash];
 					print_r(json_encode(["Active","employer"]));
 				}
 				else{
-					print_r(json_encode(["Deactivated",2]));
+					print_r(json_encode(["Deactivated",1]));
 				}
 			}
 			else{
@@ -96,18 +82,18 @@ $function = new DatabaseClasses;
 	if(isset($_GET['marketLogin'])){
 		$data = $_POST['data'];
 		$username = $data[0]['value'];
-		$password = sha1($data[1]['value']);
+		$password = $data[1]['value'];
 		$date = new DateTime();
 		$hash = $date->getTimestamp();
-		$query = $function->PDO("SELECT * FROM tbl_employee WHERE employee_id = '{$username}' AND password = '{$password}'");
 
+		$query = $function->PDO("SELECT * FROM tbl_employee WHERE employee_id = '{$username}'");
 		if(count($query)>0){
-			if($query[0][15] == 0){
-				print_r("Deactivated");				
-			}
-			else{
+			if($function->testPassword($password,$query[0][14]) && ($query[0][15] == 1)){
 				$_SESSION["kaboom"] = [$username,$password,$hash];
 				print_r("Active");				
+			}
+			else{
+				print_r("Deactivated");				
 			}
 		}
 		else{
@@ -115,10 +101,22 @@ $function = new DatabaseClasses;
 		}
 	}
 
+    if(isset($_GET['validateEmail'])){
+        $data = $_POST['data'];
+		$count = 0;
+        $query = $function->PDO("SELECT count(*) FROM tbl_admin WHERE email = '{$data}'");
+		$count = $count + $query[0][0];
+        $query = $function->PDO("SELECT count(*) FROM tbl_employer WHERE email = '{$data}'");
+		$count = $count + $query[0][0];
+        $query = $function->PDO("SELECT count(*) FROM tbl_employee WHERE email = '{$data}'");
+		$count = $count + $query[0][0];
+		print_r($count);
+    }
+
 	if(isset($_GET['validatePassword'])){
 		$data = $_POST['data'];
 		$count = 0;
-		$password = sha1($data);
+		$password = $function->password($data);
 		$query = $function->PDO("SELECT count(*) FROM tbl_employee WHERE password = '{$password}'");
 		$count = $count + $query[0][0];
 		$query = $function->PDO("SELECT count(*) FROM tbl_admin WHERE password = '{$password}'");
@@ -175,13 +173,13 @@ $function = new DatabaseClasses;
 		}
 
 		if(isset($_GET['get-admin'])){
-			$query = $function->PDO("SELECT * FROM tbl_admin WHERE username = '{$_SESSION['kaboom'][0]}' AND password = '{$_SESSION['kaboom'][1]}'");
+			$query = $function->PDO("SELECT * FROM tbl_admin WHERE username = '{$_SESSION['kaboom'][0]}'");
 			print_r(json_encode($query));
 		}
 
 		if(isset($_GET['get-employeeAccount'])){
 			if(count($_SESSION)>0){
-				$query = $function->PDO("SELECT * FROM tbl_employee WHERE employee_id = '{$_SESSION['kaboom'][0]}' AND password = '{$_SESSION['kaboom'][1]}'");
+				$query = $function->PDO("SELECT * FROM tbl_employee WHERE employee_id = '{$_SESSION['kaboom'][0]}'");
 				print_r(json_encode($query));				
 			}
 			else{
@@ -222,7 +220,7 @@ $function = new DatabaseClasses;
 		}
 
 		if(isset($_GET['get-sales'])){
-			$query = $function->PDO("SELECT DISTINCT tbl_orders.id, tbl_orders.employee_id, tbl_orders.order_date, tbl_orders.date_delivered, tbl_orders.status, tbl_employee.id, tbl_employee.employee_id, tbl_employee.company_id, tbl_employee.family_name, tbl_employee.given_name, tbl_employee.middle_name, tbl_employee.nickname, tbl_employee.gender, tbl_employee.date_of_birth, tbl_employee.contact_number, tbl_employee.email_address, tbl_employee.address, tbl_employee.picture, tbl_employee.position, tbl_company.id, tbl_company.company_name, tbl_company.logo FROM tbl_orders INNER JOIN tbl_employee ON tbl_orders.employee_id = tbl_employee.id INNER JOIN tbl_company ON tbl_employee.company_id = tbl_company.id ORDER BY tbl_orders.order_date DESC");
+			$query = $function->PDO("SELECT DISTINCT tbl_orders.id, tbl_orders.employee_id, tbl_orders.order_date, tbl_orders.date_delivered, tbl_orders.status, tbl_employee.id, tbl_employee.employee_id, tbl_employee.company_id, tbl_employee.family_name, tbl_employee.given_name, tbl_employee.middle_name, tbl_employee.nickname, tbl_employee.gender, tbl_employee.date_of_birth, tbl_employee.contact_number, tbl_employee.email, tbl_employee.address, tbl_employee.picture, tbl_employee.position, tbl_company.id, tbl_company.company_name, tbl_company.logo FROM tbl_orders INNER JOIN tbl_employee ON tbl_orders.employee_id = tbl_employee.id INNER JOIN tbl_company ON tbl_employee.company_id = tbl_company.id ORDER BY tbl_orders.order_date DESC");
 			print_r(json_encode($query));
 		}
 
@@ -232,8 +230,14 @@ $function = new DatabaseClasses;
 			print_r(json_encode($query));
 		}
 
+		if(isset($_GET['get-wishlistDetail'])){
+			$data = $_POST['data'];
+			$query = $function->PDO("SELECT * FROM tbl_wishlist INNER JOIN tbl_product ON tbl_wishlist.product_id = tbl_product.id WHERE tbl_wishlist.employee_id = '{$data}' AND tbl_wishlist.status = 1");
+			print_r(json_encode($query));
+		}
+
 		if(isset($_GET['get-employerAccount'])){
-			$query = $function->PDO("SELECT * FROM tbl_employer WHERE username = '{$_SESSION['kaboom'][0]}' AND password = '{$_SESSION['kaboom'][1]}'");
+			$query = $function->PDO("SELECT * FROM tbl_employer WHERE username = '{$_SESSION['kaboom'][0]}'");
 			print_r(json_encode($query));
 		}
 
@@ -495,7 +499,7 @@ $function = new DatabaseClasses;
 			$date = $function->PDO_DateAndTime();
 			$data = $_POST['data'];
 
-			$password = sha1($data[3]['value']);
+			$password = $function->password($data[3]['value']);
 			$query = $function->PDO("INSERT INTO tbl_admin(id,name,username,password,email,status,`date`,capabilities,picture) VALUES ('{$id}','{$data[0]['value']}','{$data[2]['value']}','{$password}','{$data[1]['value']}','1','{$date}','admin','avatar.png')");
 			if($query->execute()){
 				$log = $function->log("add","admin","Added admin with an ID of ".$id);
@@ -529,7 +533,7 @@ $function = new DatabaseClasses;
 	        $companyID = $function->PDO_IDGenerator('tbl_company','id');
 			$date = $function->PDO_DateAndTime();
 		    $id = $companyID.'-0';
-			$password = sha1($data[8]['value']);
+			$password = $function->password($data[8]['value']);
 
 			$query = $function->PDO("INSERT INTO tbl_company(id,company_name,address,email,contact_number,logo,status,`date`) VALUES ('{$companyID}','{$data[0]['value']}','{$data[3]['value']}','{$data[2]['value']}','{$data[1]['value']}','logo.png','1','{$date}'); INSERT INTO tbl_employer(id,company_id,name,email,constact_number,picture,username,password,status,`date`) VALUES ('{$id}','{$companyID}','{$data[4]['value']}','{$data[6]['value']}','{$data[5]['value']}','avatar.png','{$data[7]['value']}','{$password}','1','{$date}')");
 			if($query->execute()){
@@ -549,9 +553,9 @@ $function = new DatabaseClasses;
 			$numEmployees = $function->PDO("SELECT COUNT(*) FROM tbl_employee WHERE company_id = '{$user}';");
 			$count = $numEmployees[0][0];
 		    $id = $user.'-'.($count++);
-			$password = sha1($data[0][11]['value']);
+			$password = $function->password($data[0][11]['value']);
 			
-			$query = $function->PDO("INSERT INTO tbl_employee(id,employee_id,company_id,family_name,given_name,middle_name,nickname,gender,date_of_birth,contact_number,	email_address,address,picture,position,password,status,`date`) VALUES ('{$id}','{$data[0][10]['value']}','{$user}','{$data[0][2]['value']}','{$data[0][0]['value']}','{$data[0][1]['value']}','{$data[0][3]['value']}','{$data[0][5]['value']}','{$data[0][4]['value']}','{$data[0][7]['value']}','{$data[0][8]['value']}','{$data[0][6]['value']}','avatar.png','{$data[0][9]['value']}','{$password}','1','{$date}')");
+			$query = $function->PDO("INSERT INTO tbl_employee(id,employee_id,company_id,family_name,given_name,middle_name,nickname,gender,date_of_birth,contact_number,	email,address,picture,position,password,status,`date`) VALUES ('{$id}','{$data[0][10]['value']}','{$user}','{$data[0][2]['value']}','{$data[0][0]['value']}','{$data[0][1]['value']}','{$data[0][3]['value']}','{$data[0][5]['value']}','{$data[0][4]['value']}','{$data[0][7]['value']}','{$data[0][8]['value']}','{$data[0][6]['value']}','avatar.png','{$data[0][9]['value']}','{$password}','1','{$date}')");
 			if($query->execute()){
 				$query2 = $function->PDO("INSERT INTO tbl_points(id,employee_id,company_id,points) VALUES ('{$id}',{$function->escape($data[0][10]['value'])},'{$user}',0)");
 				if($query2->execute()){
@@ -585,7 +589,7 @@ $function = new DatabaseClasses;
 				$dob = date("m/j/Y",strtotime($value[3]));
 				$email = (count($value)>5)?$function->escape($value[5]):"";
 		        $id = $user.'-'.($count++);
-		        $password = sha1($id);
+		        $password = $function->password($id);
 		        if((count($data)-1) <= $key){
 					$q1 .= "('{$id}',{$function->escape($value[0])},'{$user}','{$password}',{$function->escape($value[2])},{$function->escape($value[1])},{$function->escape($value[4])},'{$dob}',{$email},'1','{$date}')";
 		        }
@@ -596,7 +600,7 @@ $function = new DatabaseClasses;
 
 			$log = $function->log("add",$user,"adding bulk employee in tbl_employer.");
 
-			$query = $function->PDO("INSERT INTO  tbl_employee(id,employee_id,employer_id,password,family_name,given_name,gender,date_of_birth,email_address,status,`date`) VALUES".$q1);
+			$query = $function->PDO("INSERT INTO  tbl_employee(id,employee_id,employer_id,password,family_name,given_name,gender,date_of_birth,email,status,`date`) VALUES".$q1);
 			if($query->execute()){
 				$function->log($log,$user,"Added ".(count($data))." employee in tbl_employer.");
 				echo 1;
@@ -621,7 +625,7 @@ $function = new DatabaseClasses;
 				$dob = date("m/j/Y",strtotime($value[3]));
 				$email = (count($value)>5)?$function->escape($value[5]):"";
 		        $id = $user.'-'.($count++);
-		        $password = sha1($id);
+		        $password = $function->password($id);
 				$points = $function->PDO("SELECT * FROM tbl_points WHERE employee_id = {$function->escape($value[0])} AND company_id = '{$user}';");
 		        if((count($data)-1) <= $key){
 					$q1 .= "('{$id}',{$function->escape($value[0])},'{$user}','{$password}',{$function->escape($value[2])},{$function->escape($value[1])},{$function->escape($value[4])},'{$dob}',{$email},1,'{$date}')";
@@ -637,7 +641,7 @@ $function = new DatabaseClasses;
 		        }
 			}
 
-			$query = $function->PDO("INSERT INTO tbl_employee(id,empolyee_id,company_id,password,family_name,given_name,gender,date_of_birth,email_address,status,`date`) VALUES".$q1.";");
+			$query = $function->PDO("INSERT INTO tbl_employee(id,empolyee_id,company_id,password,family_name,given_name,gender,date_of_birth,email,status,`date`) VALUES".$q1.";");
 			if($query->execute()){
 				$query2 = $function->PDO("INSERT INTO tbl_points(id,employee_id,company_id,points) VALUES".$q2.";");
 				if($query2->execute()){
@@ -671,7 +675,7 @@ $function = new DatabaseClasses;
 				$dob = date("m/j/Y",strtotime($value[3]));
 				$email = (count($value)>5)?strtolower($function->escape($value[5])):"";
 		        $id = $company_id.'-'.($count++);
-		        $password = sha1($id);
+		        $password = $function->password($id);
 		        if((count($data)-1) <= $key){
 					$q1 .= "('{$id}',{$function->escape($value[0])},'{$company_id}',{$function->escape($value[2])},{$email},'',0)";
 		        }
@@ -891,35 +895,6 @@ $function = new DatabaseClasses;
 			else{
 				echo 2;
 			}
-		}
-
-		if(isset($_GET['set-newPendingEmployee'])){
-			$data = $_POST['data'];
-			$date = $function->PDO_DateAndTime();
-			$user = $data[1];
-			$numEmployees = $function->PDO("SELECT COUNT(*) FROM tbl_employee WHERE company_id = '{$user}';");
-			$count = $numEmployees[0][0];
-		    $id = $user.'-'.($count++);
-			$password = sha1($data[0][11]['value']);
-			
-			$query = $function->PDO("INSERT INTO tbl_employee(id,employee_id,company_id,family_name,given_name,middle_name,nickname,gender,date_of_birth,contact_number,	email_address,address,picture,position,password,status,`date`) VALUES ('{$id}','{$data[0][10]['value']}','{$user}','{$data[0][2]['value']}','{$data[0][0]['value']}','{$data[0][1]['value']}','{$data[0][3]['value']}','{$data[0][5]['value']}','{$data[0][4]['value']}','{$data[0][7]['value']}','{$data[0][8]['value']}','{$data[0][6]['value']}','avatar.jpg','{$data[0][9]['value']}','{$password}','2','{$date}')");
-			if($query->execute()){
-				$query2 = $function->PDO("INSERT INTO tbl_points(id,employee_id,company_id,points) VALUES ('{$id}',{$function->escape($data[0][10]['value'])},'{$user}',0)");
-				if($query2->execute()){
-					$function->log("add","Employer","Added employee with an id of \'".$id."\' in tbl_employee.");
-					echo 1;
-				}
-				else{
-					$query3 = $function->PDO("DELETE tbl_employee WHERE id = '{$id}';");
-					echo 0;
-					$Data = $query2->errorInfo();
-					print_r($Data);
-				}
-			}
-			else{
-				$Data = $query->errorInfo();
-				print_r($Data);
-			}
 		}	
 
 		if(isset($_GET['set-newPendingEmployee'])){
@@ -929,9 +904,9 @@ $function = new DatabaseClasses;
 			$numEmployees = $function->PDO("SELECT COUNT(*) FROM tbl_employee WHERE company_id = '{$user}';");
 			$count = $numEmployees[0][0];
 		    $id = $user.'-'.($count++);
-			$password = sha1($data[0][11]['value']);
+			$password = $function->password($data[0][11]['value']);
 			
-			$query = $function->PDO("INSERT INTO tbl_employee(id,employee_id,company_id,family_name,given_name,middle_name,nickname,gender,date_of_birth,contact_number,	email_address,address,picture,position,password,status,`date`) VALUES ('{$id}','{$data[0][10]['value']}','{$user}','{$data[0][2]['value']}','{$data[0][0]['value']}','{$data[0][1]['value']}','{$data[0][3]['value']}','{$data[0][5]['value']}','{$data[0][4]['value']}','{$data[0][7]['value']}','{$data[0][8]['value']}','{$data[0][6]['value']}','avatar.jpg','{$data[0][9]['value']}','{$password}','2','{$date}')");
+			$query = $function->PDO("INSERT INTO tbl_employee(id,employee_id,company_id,family_name,given_name,middle_name,nickname,gender,date_of_birth,contact_number,	email,address,picture,position,password,status,`date`) VALUES ('{$id}','{$data[0][10]['value']}','{$user}','{$data[0][2]['value']}','{$data[0][0]['value']}','{$data[0][1]['value']}','{$data[0][3]['value']}','{$data[0][5]['value']}','{$data[0][4]['value']}','{$data[0][7]['value']}','{$data[0][8]['value']}','{$data[0][6]['value']}','avatar.jpg','{$data[0][9]['value']}','{$password}','2','{$date}')");
 			if($query->execute()){
 				$query2 = $function->PDO("INSERT INTO tbl_points(id,employee_id,company_id,points) VALUES ('{$id}',{$function->escape($data[0][10]['value'])},'{$user}',0)");
 				if($query2->execute()){
@@ -1010,12 +985,12 @@ $function = new DatabaseClasses;
 			$company_id = $tempAccount[0][2];
 			$employee_id = $tempAccount[0][1];
 			$email = $function->escape($tempAccount[0][4]);
-			$password = sha1($data[0][8]['value']);
+			$password = $function->password($data[0][8]['value']);
 			$numEmployees = $function->PDO("SELECT COUNT(*) FROM tbl_employee WHERE company_id = '{$company_id}';");
 			$count = $numEmployees[0][0];
 		    $id = $company_id.'-'.($count++);
 
-			$query = $function->PDO("INSERT INTO tbl_employee(id,employee_id,company_id,family_name,given_name,middle_name,nickname,gender,date_of_birth,contact_number,	email_address,address,picture,position,password,status,`date`) VALUES ('{$id}','{$employee_id}','{$company_id}',{$function->escape($data[0][0]['value'])},{$function->escape($data[0][1]['value'])},{$function->escape($data[0][2]['value'])},{$function->escape($data[0][3]['value'])},{$function->escape($data[0][4]['value'])},{$function->escape($data[0][5]['value'])},{$function->escape($data[0][7]['value'])},{$email},{$function->escape($data[0][6]['value'])},'avatar.jpg','Employee','{$password}','1','{$date}'); INSERT INTO tbl_points(id,employee_id,company_id,points) VALUES ('{$id}','{$employee_id}','{$company_id}',0); DELETE FROM tbl_accountconfirmation WHERE id = '{$data[1]}'");
+			$query = $function->PDO("INSERT INTO tbl_employee(id,employee_id,company_id,family_name,given_name,middle_name,nickname,gender,date_of_birth,contact_number,	email,address,picture,position,password,status,`date`) VALUES ('{$id}','{$employee_id}','{$company_id}',{$function->escape($data[0][0]['value'])},{$function->escape($data[0][1]['value'])},{$function->escape($data[0][2]['value'])},{$function->escape($data[0][3]['value'])},{$function->escape($data[0][4]['value'])},{$function->escape($data[0][5]['value'])},{$function->escape($data[0][7]['value'])},{$email},{$function->escape($data[0][6]['value'])},'avatar.jpg','Employee','{$password}','1','{$date}'); INSERT INTO tbl_points(id,employee_id,company_id,points) VALUES ('{$id}','{$employee_id}','{$company_id}',0); DELETE FROM tbl_accountconfirmation WHERE id = '{$data[1]}'");
 			if($query->execute()){
 				$function->log("Confirmation",$id,"Confirmed account");
 				echo 1;
@@ -1069,7 +1044,7 @@ $function = new DatabaseClasses;
 				}
 			}
 			else if($data[0]['name'] == "field_Password"){
-				$password = sha1($data[0]['value']);
+				$password = $function->password($data[0]['value']);
 				$query = $function->PDO("UPDATE tbl_admin SET password = '{$password}' WHERE id = '{$user}';");
 				if($query->execute()){
 					$_SESSION["kaboom"] = [$session[0],$password,$session[2]];
@@ -1229,7 +1204,7 @@ $function = new DatabaseClasses;
 				}
 			}
 			else if($data[1][0]['name'] == "field_Password"){
-				$password = sha1($data[1][0]['value']);
+				$password = $function->password($data[1][0]['value']);
 				$query = $function->PDO("UPDATE tbl_employer SET password = '{$password}' WHERE id = '{$user}';");
 				if($query->execute()){
 					$_SESSION["kaboom"] = [$session[0],$password,$session[2]];
@@ -1331,7 +1306,7 @@ $function = new DatabaseClasses;
 			}
 			else if($data[1][0]['name'] == "field_Email"){
 				$email = $data[1][0]['value'];
-				$query = $function->PDO("UPDATE tbl_employee SET email_address = '{$email}' WHERE id = '{$user}';");
+				$query = $function->PDO("UPDATE tbl_employee SET email = '{$email}' WHERE id = '{$user}';");
 				if($query->execute()){
 					$log = $function->log2($user,"Email is updated to {$email}.","Update");
 					echo 1;
@@ -1501,7 +1476,7 @@ $function = new DatabaseClasses;
 			}
 			else if($data[1][0]['name'] == "field_Password"){
 				$session = $_SESSION['kaboom'];
-				$password = sha1($data[1][0]['value']);
+				$password = $function->password($data[1][0]['value']);
 				$query = $function->PDO("UPDATE tbl_employee SET password = '{$password}' WHERE id = '{$user}';");
 				if($query->execute()){
 					$_SESSION["kaboom"] = [$session[0],$password,$session[2]];
@@ -1630,6 +1605,19 @@ $function = new DatabaseClasses;
 			$query = $function->PDO("UPDATE tbl_product SET status = '0' WHERE id = '{$id}';");
 			if($query->execute()){
 				$log = $function->log2($id,"Removed wishlist with an id of '{$id}","Wishlist");
+				echo 1;
+			}
+			else{
+				$Data = $query->errorInfo();
+				print_r($Data);
+			}
+		}
+
+		if(isset($_GET['update-removeWishlist'])){
+			$data = $_POST['data'];
+			$query = $function->PDO("DELETE FROM `tbl_wishlist` WHERE id = '{$data}';");
+			if($query->execute()){
+				$log = $function->log2($data,"Removed wishlist with an id of '{$data}","Wishlist");
 				echo 1;
 			}
 			else{
@@ -1889,7 +1877,7 @@ $function = new DatabaseClasses;
 		    	else if($q1[0][5] == 'Email'){
 		    		$value = $q1[0][4];
 		    		$id = $q1[0][2];
-					$query = $function->PDO("UPDATE tbl_employee SET email_address = '{$value}' WHERE id = '{$id}'; UPDATE tbl_request SET status = '1' WHERE id = '{$data['request']}';");
+					$query = $function->PDO("UPDATE tbl_employee SET email = '{$value}' WHERE id = '{$id}'; UPDATE tbl_request SET status = '1' WHERE id = '{$data['request']}';");
 					if($query->execute()){
 						$log = $function->log2($id,"Email has been changed.","Accepted Request");
 						echo 1;
@@ -1998,6 +1986,93 @@ $function = new DatabaseClasses;
 				}
 		    }
 
+		// recover account
+
+			if(isset($_GET['email-code'])){
+		    	$data = $_POST['data'];
+				$id = $function->PDO_IDGenerator('tbl_forgotpassword','id');
+				$date = $function->PDO_DateAndTime();
+				$x = new DateTime();
+				$data = $function->escape($_POST['data']);
+				$code = substr(sha1($x->getTimestamp()),0,8);
+
+				$subject = 'Forgot password';
+				$message = "Here is your forgot password code: <u>{$code}</u><br/>
+							Disregard this email if you haven't request for password recovery";
+
+				$query = $function->PDO("SELECT COUNT(*) FROM tbl_forgotpassword WHERE email = {$data}");
+				if($query[0][0]>0){
+					$query = $function->PDO("DELETE FROM tbl_forgotpassword WHERE email = {$data}");
+					if($query->execute()){
+						$queryRecovery = $function->PDO("INSERT INTO tbl_forgotpassword(id,email,code,`date`) VALUES ('{$id}',{$data},'{$code}','{$date}')");
+						if($queryRecovery->execute()){
+					        $result = mail($_POST['data'],$subject,$message);
+					        print_r($result);
+						}
+						else{
+							$Data = $queryRecovery->errorInfo();
+							print_r($Data);
+						}
+					}
+				}
+				else{
+					$queryRecovery = $function->PDO("INSERT INTO tbl_forgotpassword(id,email,code,`date`) VALUES ('{$id}',{$data},'{$code}','{$date}')");
+					if($queryRecovery->execute()){
+				        $result = mail($_POST['data'],$subject,$message);
+				        print_r($result);
+					}
+					else{
+						$Data = $queryRecovery->errorInfo();
+						print_r($Data);
+					}
+				}
+			}
+
+			if(isset($_GET['validate-code'])){
+		    	$data = $_POST['data'];
+		    	$data = $function->escape($_POST['data']);
+				$query = $function->PDO("SELECT COUNT(*) FROM tbl_forgotpassword WHERE code = {$data}");
+
+				print_r($query[0][0]);
+			}
+
+			if(isset($_GET['recover-password'])){
+		    	$data = $_POST['data'];
+				$query = $function->PDO("SELECT email FROM tbl_forgotpassword WHERE code = '{$data[1]}'");
+				$email = $query[0][0];
+				$password = $function->password($data[0]);
+				$id = "";
+
+				$queryAdmin = $function->PDO("SELECT id FROM tbl_admin WHERE email = '{$email}'");
+				$queryEmployer = $function->PDO("SELECT id FROM tbl_employer WHERE email = '{$email}'");
+				$queryEmployee = $function->PDO("SELECT id FROM tbl_employee WHERE email = '{$email}'");
+
+				if(count($queryAdmin)>0){
+					$id = $queryAdmin[0][0];
+					$queryRecover = $function->PDO("UPDATE tbl_admin SET password = '{$password}' WHERE id = '{$id}'");
+				}
+				else if(count($queryEmployer)>0){
+					$id = $queryEmployer[0][0];
+					$queryRecover = $function->PDO("UPDATE tbl_employer SET password = '{$password}' WHERE id = '{$id}'");
+				}
+				else if(count($queryEmployee)>0){
+					$id = $queryEmployee[0][0];
+					$queryRecover = $function->PDO("UPDATE tbl_employee SET password = '{$password}' WHERE id = '{$id}'");
+				}
+
+
+				if($queryRecover->execute()){
+					$log = $function->log2($id,"Account has been recovered.","Account recovered.");
+					$query = $function->PDO("DELETE FROM tbl_forgotpassword WHERE code = '{$data[1]}'");
+					$query->execute();
+					echo 1;
+				}
+				else{
+					$Data = $query->errorInfo();
+					print_r($Data);
+				}
+			}
+
     //backups
 	    if(isset($_GET['buckup-db'])){
 			$db = $function->db_buckup();
@@ -2025,15 +2100,12 @@ $function = new DatabaseClasses;
 	    
 	    if(isset($_GET['send-mail'])){
 	    	$data = $_POST['data'];
-
-	        $headers  = 'MIME-Version: 1.0' . "\r\n";
-	        $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-	        $headers .= 'From: KABOOM REWARDS <kaboomrewards.com>' . "\r\n";
 	        $receiver = $data[0];
 	        $subject =  $data[1];
 	        $message = $data[2];
 
-	        $result = mail($data[0],$subject,$message,$headers);
+	        $result = mail($data[0],$subject,$message);
 	        print_r($result);
 	    }
+	    
 ?>
