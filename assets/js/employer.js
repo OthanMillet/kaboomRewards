@@ -467,6 +467,11 @@ account = {
 				$("#field_Password").val("");
 				$("#field_Password").attr({"type":"password"});
 				$("#form_update").append("<p><input type='checkbox' id='showPassword'><label for='showPassword'>Show password</label></p>");
+				$("#form_update").append(`<div class='display_notes'>
+								*<strong>Password</strong> must contain atleast 1 number, 1 uppercase letter, 1 lowercare letter, 1 special character* and 6 character length. <br/>
+								<u>Special characters are ! @ $ % *</u>
+							</div>`);
+
 				$('#modal_confirm').modal('open');			
 
 				$("#showPassword").on("click",function(){

@@ -131,6 +131,12 @@
 								<button class='btn blue waves-effect waves-light right' type='submit'>Save</button>
 							</div>
 						</div>
+						<div class='row'>
+							<div class='display_notes'>
+								*<strong>Password</strong> must contain atleast 1 number, 1 uppercase letter, 1 lowercare letter, 1 special character* and 6 character length. <br/>
+								<u>Special characters are ! @ $ % *</u>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -242,15 +248,17 @@
 							<label for='field_password'>Password: </label>
 				            <input id='field_password' type='password' name='field_password' data-error='.error_password'>
 							<div class='error_password'></div>	
-							<div id='note_password' class='hidden animated zoomOut'>
-								Password must contain atleast 1 number, 1 uppercase letter, 1 lowercare letter, 1 special character* and 6 character length. <br/>
-								<u>Special characters are ! @ $ % *</u>
-							</div>
 						</div>
 					</div>
 					<div class='row'>
 						<div class='input-field col s12'>
 							<button class='btn blue waves-effect waves-light right' type='submit'>Save</button>
+						</div>
+					</div>
+					<div class='row'>
+						<div class='display_notes'>
+							*<strong>Password</strong> must contain atleast 1 number, 1 uppercase letter, 1 lowercare letter, 1 special character* and 6 character length. <br/>
+							<u>Special characters are ! @ $ % *</u>
 						</div>
 					</div>
 				</div>
@@ -262,7 +270,7 @@
 		<form id='form_addEmployee' class='formValidate' method='get' action='' novalidate='novalidate'>
 			<div class='row'>
 				<div class='col offset-m1 offset-l1 s12 m10 l10'>
-					<h4 class="">Add Business Clients</h4>
+					<h4 class="">Add Employee</h4>
 					<div class='row'>
 						<div class='input-field col s12'>
 							<p>Personal Information</p>
@@ -337,15 +345,17 @@
 							<label for='field_password'>Password: </label>
 				            <input id='field_password' type='password' name='field_password' data-error='.error_password'>
 							<div class='error_password'></div>	
-							<div id='note_password' class='hidden animated zoomOut'>
-								Password must contain atleast 1 number, 1 uppercase letter, 1 lowercare letter, 1 special character* and 6 character length. <br/>
-								<u>Special characters are ! @ $ % *</u>
-							</div>
 						</div>
 					</div>
 					<div class='row'>
 						<div class='input-field col s12'>
 							<button class='btn blue waves-effect waves-light right' type='submit'>Save</button>
+						</div>
+					</div>
+					<div class='row'>
+						<div class='display_notes'>
+							*<strong>Password</strong> must contain atleast 1 number, 1 uppercase letter, 1 lowercare letter, 1 special character* and 6 character length. <br/>
+							<u>Special characters are ! @ $ % *</u>
 						</div>
 					</div>
 				</div>

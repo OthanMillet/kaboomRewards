@@ -59,7 +59,7 @@ $function = new DatabaseClasses;
 				print_r(json_encode(["Active","admin"]));
 			}
 			else{
-				print_r(json_encode(["Deactivated",1]));
+				print_r(json_encode(["Failed",1]));
 			}
 		}
 		else{
@@ -500,15 +500,18 @@ $function = new DatabaseClasses;
 			$data = $_POST['data'];
 
 			$password = $function->password($data[3]['value']);
-			$query = $function->PDO("INSERT INTO tbl_admin(id,name,username,password,email,status,`date`,capabilities,picture) VALUES ('{$id}','{$data[0]['value']}','{$data[2]['value']}','{$password}','{$data[1]['value']}','1','{$date}','admin','avatar.png')");
-			if($query->execute()){
-				$log = $function->log("add","admin","Added admin with an ID of ".$id);
-				echo 1;
-			}
-			else{
-				$Data = $query->errorInfo();
-				print_r($Data);
-			}
+
+			print_r($password);
+
+			// $query = $function->PDO("INSERT INTO tbl_admin(id,name,username,password,email,status,`date`,capabilities,picture) VALUES ('{$id}','{$data[0]['value']}','{$data[2]['value']}','{$password}','{$data[1]['value']}','1','{$date}','admin','avatar.png')");
+			// if($query->execute()){
+			// 	$log = $function->log("add","admin","Added admin with an ID of ".$id);
+			// 	echo 1;
+			// }
+			// else{
+			// 	$Data = $query->errorInfo();
+			// 	print_r($Data);
+			// }
 		}
 
 		if(isset($_GET['set-newProductAdmin'])){
@@ -675,7 +678,7 @@ $function = new DatabaseClasses;
 				$dob = date("m/j/Y",strtotime($value[3]));
 				$email = (count($value)>5)?strtolower($function->escape($value[5])):"";
 		        $id = $company_id.'-'.($count++);
-		        $password = $function->password($id);
+		        // $password = $function->password($id);
 		        if((count($data)-1) <= $key){
 					$q1 .= "('{$id}',{$function->escape($value[0])},'{$company_id}',{$function->escape($value[2])},{$email},'',0)";
 		        }
@@ -1997,8 +2000,7 @@ $function = new DatabaseClasses;
 				$code = substr(sha1($x->getTimestamp()),0,8);
 
 				$subject = 'Forgot password';
-				$message = "Here is your forgot password code: <u>{$code}</u><br/>
-							Disregard this email if you haven't request for password recovery";
+				$message = "Here is your forgot password code: {$code}. Disregard this email if you haven't request for password recovery";
 
 				$query = $function->PDO("SELECT COUNT(*) FROM tbl_forgotpassword WHERE email = {$data}");
 				if($query[0][0]>0){

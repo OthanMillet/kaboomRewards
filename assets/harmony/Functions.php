@@ -12,9 +12,9 @@ class DatabaseClasses extends DataClasses{
 
 	function DBCon(){
 		$host = "localhost";
-		$dataBase = "db_newkaboomrewards";
-		$user = "user_newkaboom";
-		$password = "user_newkaboom7836";
+		$dataBase = "db_kaboomrewards";
+		$user = "user_kaboom";
+		$password = "user_kaboom7836";
 		try{
 			$PDO = new PDO('mysql:host='.$host.';dbname='.$dataBase, $user, $password);
 			return $PDO; $PDO = null;
@@ -106,7 +106,7 @@ class DatabaseClasses extends DataClasses{
 	}
 
 	function password($string){
-		$options = ['cost' => 11,'salt' => mcrypt_create_iv(22, MCRYPT_DEV_URANDOM)];
+		$options = ['cost' => 11];
 		return password_hash($string,PASSWORD_BCRYPT, $options);		
 	}
 	

@@ -341,3 +341,8 @@ nav .brand-logo {
 .side-nav li>a:hover {
     background-color: rgba(192, 192, 192, 0.05) !important;
 }
+
+.display_notes{
+  font-size: 12px;
+  text-align: left;
+}

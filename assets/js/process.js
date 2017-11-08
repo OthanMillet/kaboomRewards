@@ -157,10 +157,7 @@ login = {
 				var data = system.ajax('assets/harmony/Process.php?login',_form);
 				data.done(function(data){
 					data = JSON.parse(data);
-					if(data[0] == 'Deactivated'){
-						Materialize.toast('Account Deactivated.',4000);
-					}
-					else if(data[0] == 'Active'){
+					if(data[0] == 'Active'){
 						localStorage.setItem("hash",data[1]);
 						Materialize.toast('Success. Please wait.',4000,'',function(){
 					    	$(location).attr('href','account/');
@@ -252,10 +249,11 @@ recover = {
 		this.sendCode();
 	},
 	sendCode:function(){
+		$("#display_cardTitle").html('Enter your email to recover your account');
 		$("#display_form").html(`<form id="form_forgot" method="get" action="" novalidate="novalidate">
                                     <div class="row">
                                         <div class="input-field col s12 m12 l12">
-                                            <input id="field_email" name="field_email" type="text" data-error=".error_field_email" value="rufo.gabrillo@gmail.com">
+                                            <input id="field_email" name="field_email" type="text" data-error=".error_field_email">
                                             <label for="field_email" class="center-align">Email</label>  
                                             <div class="error_field_email"></div>  
                                         </div>
@@ -296,8 +294,9 @@ recover = {
 					if(data[0] == 1){
 						let codeData = system.ajax('assets/harmony/Process.php?email-code',_form[0]['value']);
 						codeData.done(function(data){
+							console.log(data);
 							Materialize.toast('Recovery code is sent.',4000);
-							$(location).attr('href',`recover.html#code`);
+							recover.validateCode();
 						});
 					}
 					else{
@@ -312,6 +311,7 @@ recover = {
 		});
 	},
 	validateCode:function(){
+		$("#display_cardTitle").html('Check your email for the recovery code.');
 		$("#display_form").html(`<form id="form_code" method="get" action="" novalidate="novalidate">
                                     <div class="row">
                                         <div class="input-field col s12 m12 l12">
@@ -357,13 +357,14 @@ recover = {
 						recover.final(_form[0]['value']);
 					}
 					else{
-						Materialize.toast(`Email doesn't belong to someone else.`,4000);
+						Materialize.toast(`Code is incorrect.`,4000);
 					}
 				});
 	        }
 		}); 
 	},
 	final:function(code){
+		$("#display_cardTitle").html('Enter your new password.');
 		$("#display_form").html(`<form id="form_recover" method="get" action="" novalidate="novalidate">
                                     <div class="row">
                                         <div class="input-field col s12 m12 l12">

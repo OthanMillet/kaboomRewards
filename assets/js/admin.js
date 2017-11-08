@@ -117,7 +117,7 @@ account = {
 		});
 	},
 	add:function(){
-		$("#add_client").on('click',function(){
+		$("#add_admin").on('click',function(){
 			var data = system.xml("pages.xml");
 			$(data.responseText).find("addAccount").each(function(i,content){
 				$("#modal_popUp .modal-content").html(content);
@@ -126,7 +126,7 @@ account = {
 				$("#form_registerAdmin").validate({
 				    rules: {
 				        field_name: {required: true,maxlength: 50},
-				        field_email: {required: true,maxlength: 50,checkEmail:true},
+				        field_email: {required: true,maxlength: 50,checkEmail:true,validateEmail:true},
 				        field_username: {required: true,maxlength: 50,checkUsername:true,validateUsername:true},
 				        field_password: {required: true,maxlength: 50,checkPassword:true,validatePassword:true},
 				        // field_capabilities: {required: true,maxlength: 500},
@@ -221,7 +221,7 @@ account = {
 				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
-				        field_Email: {required: true,maxlength: 50,checkEmail:true},
+				        field_Email: {required: true,maxlength: 50,checkEmail:true,validateEmail:true},
 				    },
 				    errorElement : 'div',
 				    errorPlacement: function(error, element) {
@@ -297,9 +297,14 @@ account = {
 			}
 			else if(data.prop == "Password"){
 				$('#modal_confirm').modal('open');			
+				$('#modal_confirm .modal-footer').remove();			
 				$("#field_Password").val("");
 				$("#field_Password").attr({"type":"password"});
 				$("#form_update").append("<p><input type='checkbox' id='showPassword'><label for='showPassword'>Show password</label></p>");
+				$("#form_update").append(`<div class='display_notes'>
+								*<strong>Password</strong> must contain atleast 1 number, 1 uppercase letter, 1 lowercare letter, 1 special character* and 6 character length. <br/>
+								<u>Special characters are ! @ $ % *</u>
+							</div>`);
 
 				$("#showPassword").on("click",function(){
 					if($(this).is(':checked')){
@@ -613,7 +618,7 @@ client = {
 				    rules: {
 				        field_name: {required: true,maxlength: 50},
 				        field_phone: {required: true,maxlength: 50},
-				        field_email: {required: true,maxlength: 50,checkEmail:true},
+				        field_email: {required: true,maxlength: 50,checkEmail:true,validateEmail:true},
 				        field_address: {required: true,maxlength: 50},
 				        field_accountName: {required: true,maxlength: 50},
 				        field_accountPhone: {required: true,maxlength: 50},
@@ -803,17 +808,13 @@ client = {
 		$("#accountProfile").html(content);	
 	},
 	details:function(id){
-		client.getConfirm(id);
+		client.optionConfirm(id);
 		var content = "";
 		var getEmployer = system.ajax('../assets/harmony/Process.php?get-clientDetails',id);
 		getEmployer.done(function(data_getEmployer){
 			data_getEmployer = JSON.parse(data_getEmployer);
-
-			console.log(id);
 			var getEmployer = system.ajax('../assets/harmony/Process.php?get-employerByID',id);
 			getEmployer = JSON.parse(getEmployer.responseText);
-
-			console.log(getEmployer);
 
 			var getEmployees = system.ajax('../assets/harmony/Process.php?get-employeeByID',id);
 			getEmployees = JSON.parse(getEmployees.responseText);
@@ -943,7 +944,7 @@ client = {
 				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
-				        field_Email: {required: true,maxlength: 50,checkEmail:true},
+				        field_Email: {required: true,maxlength: 50,checkEmail:true,validateEmail:true},
 				    },
 				    errorElement : 'div',
 				    errorPlacement: function(error, element) {
@@ -981,7 +982,7 @@ client = {
 				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
-				        field_Email: {required: true,maxlength: 50,checkEmail:true},
+				        field_Email: {required: true,maxlength: 50,checkEmail:true,validateEmail:true},
 				    },
 				    errorElement : 'div',
 				    errorPlacement: function(error, element) {
@@ -1057,6 +1058,11 @@ client = {
 				$('#modal_confirm').modal('open');			
 				$("#field_Password").attr({"type":"password"});
 				$("#form_update").append("<p><input type='checkbox' id='showPassword'><label for='showPassword'>Show password</label></p>");
+				$("#form_update").append(`<div class='display_notes'>
+								*<strong>Password</strong> must contain atleast 1 number, 1 uppercase letter, 1 lowercare letter, 1 special character* and 6 character length. <br/>
+								<u>Special characters are ! @ $ % *</u>
+							</div>`);
+
 
 				$("#showPassword").on("click",function(){
 					if($(this).is(':checked')){
@@ -1196,7 +1202,7 @@ client = {
 				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
-				        field_Email: {required: true,maxlength: 50,checkEmail:true},
+				        field_Email: {required: true,maxlength: 50,checkEmail:true,validateEmail:true},
 				    },
 				    errorElement : 'div',
 				    errorPlacement: function(error, element) {
@@ -1588,10 +1594,29 @@ client = {
 		});
 		return value;
 	},
+	optionConfirm:function(id){
+		console.log();
+		content = `<div class='card-panel' style='margin-top: 0px;'>
+						<div class='row'>
+							<div class='center-align'>
+								<div class='col s12'>
+									<p>Do you want to send the remaining employee account? There are <span class='counter'>0/0</span>.<br/>Please do not interrupt the system until it is done sending accounts.<br/></p>
+									<button class='btn' data-cmd='sendAccounts'>Send</button>
+								</div
+							</div>
+						</div>
+					</div>`;
+		$("#confirmList").html(content);
+		$("#confirmList p span.counter").html(`${client.getConfirmCount(id)} left`);
+
+		$("button[data-cmd='sendAccounts']").on('click',function(){
+			client.getConfirm(id);
+			console.log('x');
+		})
+	},
 	getConfirm:function(id){
 		var content = "";
 		var data = system.ajax('../assets/harmony/Process.php?get-confirmByID',id);
-		console.log(data);
 		data.done(function(data){
 			data = JSON.parse(data);
 			if(data.length>0){
@@ -2630,7 +2655,7 @@ employee = {
 			        field_gender: {required: true,maxlength: 50},
 			        field_address: {required: true,maxlength: 100},
 			        field_phone: {required: true,maxlength: 50},
-			        field_email: {required: true,maxlength: 100,checkEmail:true},
+			        field_email: {required: true,maxlength: 100,checkEmail:true,validateEmail:true},
 			        field_position: {required: true,maxlength: 50,},
 			        field_employeeID: {required: true,maxlength: 50,validateEmployeeID:true},
 			        field_password: {required: true,maxlength: 50,checkPassword:true,validatePassword:true},
@@ -3037,7 +3062,7 @@ employee = {
 				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
-				        field_Email: {required: true,maxlength: 50,checkEmail:true},
+				        field_Email: {required: true,maxlength: 50,checkEmail:true,validateEmail:true},
 				    },
 				    errorElement : 'div',
 				    errorPlacement: function(error, element) {
@@ -3071,7 +3096,7 @@ employee = {
 				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
 				    rules: {
-				        field_Email: {required: true,maxlength: 50,checkEmail:true},
+				        field_Email: {required: true,maxlength: 50,checkEmail:true,validateEmail:true},
 				    },
 				    errorElement : 'div',
 				    errorPlacement: function(error, element) {
@@ -3119,7 +3144,7 @@ employee = {
 			    $("select").material_select();
 				$("#form_update").validate({
 				    rules: {
-				        field_Email: {required: true,maxlength: 50,checkEmail:true},
+				        field_Email: {required: true,maxlength: 50,checkEmail:true,validateEmail:true},
 				    },
 				    errorElement : 'div',
 				    errorPlacement: function(error, element) {
@@ -3590,9 +3615,8 @@ employee = {
 	        		_data = ($.type(_data) == "array")?JSON.stringify(_data):_data;
 					var data = system.ajax('../assets/harmony/Process.php?set-BulkEmployee',[_data,_id]);
 					data.done(function(data){
-						console.log(data);
 						if(data == 1){
-							Materialize.toast('Saved.',4000);
+							Materialize.toast('Saved. The system will send account confirmation to the list.',4000);
 							App.handleLoadPage(`#cmd=index;content=focusClient;${_id}`);
 						}
 						else{

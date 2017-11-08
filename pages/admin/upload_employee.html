@@ -34,7 +34,7 @@
     var hash = hash.split(';');
     var id = hash[2];
     var client = id.split("-");
-    $("#bread1").attr({"href":"#cmd=index;content=focusClient;"+client[0]});
+    $("#bread1").attr({"href":`#cmd=index;content=focusClient;${client[0]}`});
 	employee.upload(id);
     $("select").material_select();
 </script>
