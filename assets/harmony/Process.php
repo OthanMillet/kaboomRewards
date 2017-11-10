@@ -753,10 +753,11 @@ $function = new DatabaseClasses;
 			$currentPoints = $function->PDO("SELECT * FROM tbl_points WHERE id = '{$employee_id}';");
 			$newpoints = $currentPoints[0][2]+$points;
 	        $id = $currentPoints[0][3].'-'.($count+1);
+	        $remarks = $function->escape($data[0][1]['value']);
 
 			$query = $function->PDO("UPDATE tbl_points SET points = '{$newpoints}' WHERE id = '{$employee_id}' AND company_id = '{$currentPoints[0][3]}';");
 			if($query->execute()){
-				$query2 = $function->PDO("INSERT INTO tbl_pointsactivity(id,points,addedby,employee_id,`date`,remarks) VALUES('{$id}','{$points}','admin','{$currentPoints[0][1]}','{$date}','{$data[0][1]['value']}')");
+				$query2 = $function->PDO("INSERT INTO tbl_pointsactivity(id,points,addedby,employee_id,`date`,remarks) VALUES('{$id}','{$points}','admin','{$currentPoints[0][1]}','{$date}',{$remarks})");
 				if($query2->execute()){
 					$log = $function->log("add","admin","adding '{$points}' points employees");
 					echo 1;
@@ -1064,6 +1065,7 @@ $function = new DatabaseClasses;
 		if(isset($_GET['update-adminPicture'])){
 			$data = $_POST['data'];
 			$user = $function->getAdmin();
+
 			$session = $_SESSION['kaboom'];
 			$picture = $function->saveImage($user,$data[1]);
 			$query = $function->PDO("UPDATE tbl_admin SET picture = '{$picture}' WHERE id = '{$user}';");

@@ -71,11 +71,11 @@
     $(".dropdown-button").dropdown();
     $('.tooltipped').tooltip({delay: 50});
 
-    var hash = window.location.hash;
-    var hash = hash.split(';');
-    var id = hash[2];
-    var client = id.split("-");
+    let hash = window.location.hash;
+    hash = hash.split(';');
+    let id = hash[2];
+    let client = id.split("-");
     $("#bread1").attr({"href":`#cmd=index;content=focusClient;${client[0]}`});
-    employee.details(id);
+    employee.ini(id);
 	points.add(id);
 </script>

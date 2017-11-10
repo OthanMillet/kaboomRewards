@@ -81,29 +81,34 @@ account = {
 		account.updatePicture();
 	},
 	list:function(){
-		var content = "";
-		var data = system.html('../assets/harmony/Process.php?get-listAdmin');
-		var actions = "", status = "";
+		let content = "";
+		let data = system.html('../assets/harmony/Process.php?get-listAdmin');
+		let admin = account.get();
+		admin = JSON.parse(admin);
+		let actions = "", status = "";
 		data.done(function(data){
 			data = JSON.parse(data);
 			$.each(data,function(i,v){
-				if(Number(v[6]) == 1){
-					status = "Active";
-					var actions = `<a data-cmd='deactivateAdmin' data-name='${v[1]}' data-node='${v[0]}' class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='50' data-tooltip='Deactivate account' data-cmd='update'>
-								  	<i class='material-icons right hover black-text'>mode_edit</i>
-								  </a>`;	
+
+				if(admin[0][0] != v[0]){
+					if(Number(v[6]) == 1){
+						status = "Active";
+						actions = `<a data-cmd='deactivateAdmin' data-name='${v[1]}' data-node='${v[0]}' class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='50' data-tooltip='Deactivate account' data-cmd='update'>
+									  	<i class='material-icons right hover black-text'>mode_edit</i>
+									  </a>`;	
+					}
+					else{
+						status = "Deactivated";
+						actions = `<a data-cmd='activateAdmin' data-name='${v[1]}' data-node='${v[0]}' class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='50' data-tooltip='Activate account' data-cmd='update'>
+									  	<i class='material-icons right hover black-text'>mode_edit</i>
+									  </a>`;	
+					}					
+					content += `<tr>
+									<td>${v[1]}</td>
+									<td>${status}</td>
+									<td>${actions}</td>
+								</tr>`;
 				}
-				else{
-					status = "Deactivated";
-					var actions = `<a data-cmd='activateAdmin' data-name='${v[1]}' data-node='${v[0]}' class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='50' data-tooltip='Activate account' data-cmd='update'>
-								  	<i class='material-icons right hover black-text'>mode_edit</i>
-								  </a>`;	
-				}
-				content += `<tr>
-								<td>${v[1]}</td>
-								<td>${status}</td>
-								<td>${actions}</td>
-							</tr>`;
 			})	
 
 			content = `<table class='table bordered'>
@@ -378,8 +383,8 @@ account = {
 								<button class='btn blue btn-floating btn-flat tooltipped' data-cmd='cancel' type='button' data-tooltip='Cancel' data-position='top'>
 									<i class='material-icons right hover white-text'>close</i>
 								</button>
-								<button class='btn blue btn-floating btn-flat hidden tooltipped right' data-cmd='save' type='button' data-tooltip='Save' data-position='top'>
-									<i class='material-icons right hover white-text'>save</i>
+								<button class='btn blue btn-flat hidden right white-text' data-cmd='save' type='button'>
+									Save
 								</button>
 							</div>`;
     		$("#profile_picture2").html(content);
@@ -412,18 +417,14 @@ account = {
 							    	$("button[data-cmd='rotate']").removeClass('hidden');
 							    	
 						            $("button[data-cmd='save']").click(function(){									    	
-								    	$(this).html("<i class='mdi-content-save'></i>").addClass('disabled');
-
-								    	console.log("saving...");
+								    	$(this).html("Uploading...").addClass('disabled');
 								    	if(status){
-											var data = system.ajax('../assets/harmony/Process.php?update-adminPicture',["picture",$image.cropper("getDataURL")]); // 
+											var data = system.ajax('../assets/harmony/Process.php?update-adminPicture',["picture",$image.cropper("getDataURL")]);
 											data.done(function(data){
-												console.log(data);
 												Materialize.toast('Picture has been changed.',4000);
-												system.clearForm();
+												var data = account.get();
+												account.display(JSON.parse(data));
 												$('#modal_confirm').modal('close');	
-												var data = this.get();
-												this.display(JSON.parse(data));
 											});
 								    		status = false;
 								    	}
@@ -460,8 +461,8 @@ account = {
 						  <label for='field_description'>Remarks: </label>
 						  <textarea class='materialize-textarea' data-field='field_description' name='field_description'></textarea>`;
 			$("#modal_confirm .modal-content").html(content);
-			$("#modal_confirm .modal-footer").html(`<a class='waves-effect waves-red red white-text btn-flat modal-action modal-close'>Cancel</a>
-													<a data-cmd='button_proceed' class='waves-effect waves-grey btn-flat modal-action'>Proceed</a>`);
+			$("#modal_confirm .modal-footer").html(`<a class='waves-effect btn-flat modal-action modal-close'>Cancel</a>
+													<a data-cmd='button_proceed' class='waves-effect waves-blue blue btn-flat modal-action white-text'>Proceed</a>`);
 			$('#modal_confirm').modal('open');			
 
 			$("a[data-cmd='button_proceed']").on("click",function(){
@@ -475,12 +476,9 @@ account = {
 				else{
 					var data = system.ajax('../assets/harmony/Process.php?deactivate-admin',[id,remarks]);
 					data.done(function(data){
-						// console.log(data);
 						if(data == 1){
 							Materialize.toast('Account deactivaded.',4000);
-							system.clearForm();
-							var data = this.get();
-							this.display(JSON.parse(data));
+							account.list();
 							$('#modal_confirm').modal('close');	
 						}
 						else{
@@ -495,8 +493,8 @@ account = {
 		$("a[data-cmd='activateAdmin']").on('click',function(){
 			var id = $(this).data('node');
 			$("#modal_confirm .modal-content").html("Arey you sure ACTIVATE "+$(this).data('name')+"'s account?");
-			$("#modal_confirm .modal-footer").html(`<a class='waves-effect waves-red red white-text btn-flat modal-action modal-close'>Cancel</a>
-													<a data-cmd='button_proceed' class='waves-effect waves-grey btn-flat modal-action modal-close'>Proceed</a>`);
+			$("#modal_confirm .modal-footer").html(`<a class='waves-effect btn-flat modal-action modal-close'>Cancel</a>
+													<a data-cmd='button_proceed' class='white-text waves-effect waves-blue blue btn-flat modal-action modal-close'>Proceed</a>`);
 			$('#modal_confirm').modal('open');			
 
 			$("a[data-cmd='button_proceed']").on("click",function(){
@@ -505,9 +503,7 @@ account = {
 					console.log(data);
 					if(data == 1){
 						Materialize.toast('Account activaded.',4000);
-						system.clearForm();
-						var data = this.get();
-						this.display(JSON.parse(data));
+						account.list();
 						$('#modal_confirm').modal('close');	
 					}
 					else{
@@ -661,6 +657,7 @@ client = {
 	},
 	companyProfile(data){
 		data = data[0];
+		console.log('xx');
 		if(Number(data[5]) == 1){
 			status = "Active";
 			var actions = `<a data-cmd='deactivateEmployer' data-name='${data[1]}' data-node='${data[0]}' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Deactivate account' data-cmd='update'>
@@ -685,35 +682,35 @@ client = {
 				        	<img src='../assets/images/profile/${profile}' alt='' class='circle'>
 				        	<a data-cmd='updateCompanyLogo' data-value='${profile}' data-name='${data[1]}' data-node='${data[0]}' data-prop='Picture' class='btn waves-effect white-text no-shadow black' style='font-size: 10px;z-index: 1;padding: 0 12px;top:40px;'>Change</a>
 						</div>
-						<a data-cmd='updateCompany' data-value='${data[1]}' data-name='${data[1]}' data-node='${data[0]}' data-prop='Name' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update account'>
+						<a data-for='companyName' data-cmd='updateCompany' data-value='${data[1]}' data-name='${data[1]}' data-node='${data[0]}' data-prop='Name' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update account'>
 							<i class='material-icons right hover black-text'>mode_edit</i>
 						</a>
-				        <span class='card-title activator grey-text text-darken-4'>${data[1]} </span>
+				        <span for='companyName' class='card-title activator grey-text text-darken-4'>${data[1]} </span>
 						<div class='divider'></div>
 						<table>
 							<tr>
 								<td class='bold truncate' style='width:120px'><i class='mdi-action-perm-phone-msg cyan-text text-darken-2'></i> Phone:</td>
-								<td class='grey-text truncate'> ${data[4]}</td>
+								<td class='grey-text truncate' for='companyPhone'> ${data[4]}</td>
 								<td>
-									<a data-cmd='updateCompany' data-value='${data[4]}' data-name='${data[1]}' data-node='${data[0]}' data-prop='Phone' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
+									<a data-for='companyPhone' data-cmd='updateCompany' data-value='${data[4]}' data-name='${data[1]}' data-node='${data[0]}' data-prop='Phone' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
 										<i class='material-icons right hover black-text'>mode_edit</i>
 									</a>
 								</td>
 							</tr>
 							<tr>
 								<td class='bold truncate' style='width:120px'><i class='mdi-communication-email cyan-text text-darken-2'></i> Email:</td>
-								<td class='grey-text truncate'> ${data[3]}</td>
+								<td class='grey-text truncate' for='companyEmail'> ${data[3]}</td>
 								<td>
-									<a data-cmd='updateCompany' data-value='${data[3]}' data-name='${data[1]}' data-node='${data[0]}' data-prop='Email' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update email'>
+									<a data-for='companyEmail' data-cmd='updateCompany' data-value='${data[3]}' data-name='${data[1]}' data-node='${data[0]}' data-prop='Email' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update email'>
 										<i class='material-icons right hover black-text'>mode_edit</i>
 									</a>
 								</td>
 							</tr>
 							<tr>
 								<td class='bold truncate' style='width:120px'><i class='mdi-action-room cyan-text text-darken-2'></i> Address:</td>
-								<td class='grey-text truncate'> ${data[2]}</td>
+								<td class='grey-text truncate' for='companyAddress'> ${data[2]}</td>
 								<td>
-									<a data-cmd='updateCompany' data-value='${data[2]}' data-name='${data[1]}' data-node='${data[0]}' data-prop='Address' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update address'>
+									<a data-for='companyAddress' data-cmd='updateCompany' data-value='${data[2]}' data-name='${data[1]}' data-node='${data[0]}' data-prop='Address' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update address'>
 										<i class='material-icons right hover black-text'>mode_edit</i>
 									</a>
 								</td>
@@ -724,17 +721,16 @@ client = {
 		$("#companyProfile").html(content);	
 	},
 	accountProfile(data){
-		console.log(data);
 		data = data[0];
 		if(Number(data[8]) == 1){
 			status = "Active";
-			var actions = `<a data-cmd='deactivateEmployer' data-name='${data[2]}' data-node='${data[0]}' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Deactivate account' data-cmd='update'>
+			var actions = `<a data-for='accountStatus' data-cmd='deactivateEmployer' data-name='${data[2]}' data-node='${data[0]}' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Deactivate account' data-cmd='update'>
 						  	<i class='material-icons right hover black-text'>lock_open</i>
 						  </a>`;	
 		}
 		else{
 			status = "Deactivated";
-			var actions = `<a data-cmd='activateEmployer' data-name='${data[2]}' data-node='${data[0]}' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Activate account' data-cmd='update'>
+			var actions = `<a data-for='accountStatus' data-cmd='activateEmployer' data-name='${data[2]}' data-node='${data[0]}' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Activate account' data-cmd='update'>
 						  	<i class='material-icons right hover black-text'>lock</i>
 						  </a>`;	
 		}
@@ -750,10 +746,10 @@ client = {
 				        	<img src='../assets/images/profile/${profile}' alt='' class='circle'>
 				        	<a data-cmd='updateEmployerPicture' data-value='${profile}' data-name='${data[2]}' data-node='${data[0]}' data-prop='Picture' class='btn waves-effect white-text no-shadow black' style='font-size: 10px;z-index: 1;padding: 0 12px;top:40px;'>Change</a>
 						</div>
-						<a data-cmd='updateEmployer' data-value='${data[2]}' data-name='${data[2]}' data-node='${data[0]}' data-prop='Name' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update account'>
+						<a data-for='accountName' data-cmd='updateEmployer' data-value='${data[2]}' data-name='${data[2]}' data-node='${data[0]}' data-prop='Name' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update account'>
 							<i class='material-icons right hover black-text'>mode_edit</i>
 						</a>
-				        <span class='card-title activator grey-text text-darken-4'>${data[2]} </span>
+				        <span class='card-title activator grey-text text-darken-4' for='accountName'>${data[2]} </span>
 						<div class='divider'></div>
 						<table>
 							<tr>
@@ -763,32 +759,32 @@ client = {
 							</tr>
 							<tr>
 								<td class='bold truncate' style='width:120px'><i class='mdi-action-info-outline cyan-text text-darken-2'></i> Status:</td>
-								<td class='grey-text truncate'> ${status} </td>
+								<td class='grey-text truncate' for='accountStatus'> ${status} </td>
 								<td>${actions}</td>
 							</tr>
 							<tr>
 								<td class='bold truncate' style='width:120px'><i class='mdi-action-perm-phone-msg cyan-text text-darken-2'></i> Phone:</td>
-								<td class='grey-text truncate'> ${data[4]}</td>
+								<td class='grey-text truncate' for='accountPhone'> ${data[4]}</td>
 								<td>
-									<a data-cmd='updateEmployer' data-value='${data[4]}' data-name='${data[1]}' data-node='${data[0]}' data-prop='Phone' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
+									<a data-for='accountPhone' data-cmd='updateEmployer' data-value='${data[4]}' data-name='${data[1]}' data-node='${data[0]}' data-prop='Phone' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
 										<i class='material-icons right hover black-text'>mode_edit</i>
 									</a>
 								</td>
 							</tr>
 							<tr>
 								<td class='bold truncate' style='width:120px'><i class='mdi-communication-email cyan-text text-darken-2'></i> Email:</td>
-								<td class='grey-text truncate'> ${data[3]}</td>
+								<td class='grey-text truncate' for='accountEmail'> ${data[3]}</td>
 								<td>
-									<a data-cmd='updateEmployer' data-value='${data[3]}' data-name='${data[1]}' data-node='${data[0]}' data-prop='Email' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update email'>
+									<a data-for='accountEmail' data-cmd='updateEmployer' data-value='${data[3]}' data-name='${data[1]}' data-node='${data[0]}' data-prop='Email' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update email'>
 										<i class='material-icons right hover black-text'>mode_edit</i>
 									</a>
 								</td>
 							</tr>
 							<tr>
 								<td class='bold truncate' style='width:120px'><i class='mdi-action-verified-user cyan-text text-darken-2'></i> Username:</td>
-								<td class='grey-text truncate'> ${data[5]}</td>
+								<td class='grey-text truncate' for='accountUsername'> ${data[5]}</td>
 								<td>
-									<a data-cmd='updateEmployer' data-value='${data[5]}' data-name='${data[1]}' data-node='${data[0]}' data-prop='Username' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update account'>
+									<a data-for='accountUsername' data-cmd='updateEmployer' data-value='${data[5]}' data-name='${data[1]}' data-node='${data[0]}' data-prop='Username' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update account'>
 										<i class='material-icons right hover black-text'>mode_edit</i>
 									</a>
 								</td>
@@ -887,12 +883,10 @@ client = {
 						else{
 							var ajax = system.ajax('../assets/harmony/Process.php?update-employer',[id,_form]);
 							ajax.done(function(ajax){
-								console.log(ajax);
 								if(ajax == 1){
-									system.clearForm();
+									$(`*[for='${data.for}']`).html(_form[0]['value']);
 									Materialize.toast('Name updated.',4000);
 									$('#modal_confirm').modal('close');	
-									client.refresh();
 								}
 								else{
 									Materialize.toast('Cannot process request.',4000);
@@ -927,10 +921,9 @@ client = {
 							var ajax = system.ajax('../assets/harmony/Process.php?update-employer',[id,_form]);
 							ajax.done(function(ajax){
 								if(ajax == 1){
-									system.clearForm();
+									$(`*[for='${data.for}']`).html(_form[0]['value']);
 									Materialize.toast('Phone updated.',4000);
 									$('#modal_confirm').modal('close');	
-									client.refresh();
 								}
 								else{
 									Materialize.toast('Cannot process request.',4000);
@@ -939,7 +932,7 @@ client = {
 						}
 				    }
 				}); 
-			}			
+			}
 			else if(data.prop == "Email"){
 				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
@@ -965,10 +958,9 @@ client = {
 							var ajax = system.ajax('../assets/harmony/Process.php?update-employer',[id,_form]);
 							ajax.done(function(ajax){
 								if(ajax == 1){
-									system.clearForm();
+									$(`*[for='${data.for}']`).html(_form[0]['value']);
 									Materialize.toast('Email updated.',4000);
 									$('#modal_confirm').modal('close');	
-									client.refresh();
 								}
 								else{
 									Materialize.toast('Cannot process request.',4000);
@@ -1003,10 +995,9 @@ client = {
 							var ajax = system.ajax('../assets/harmony/Process.php?update-employer',[id,_form]);
 							ajax.done(function(ajax){
 								if(ajax == 1){
-									system.clearForm();
+									$(`*[for='${data.for}']`).html(_form[0]['value']);
 									Materialize.toast('Address updated.',4000);
 									$('#modal_confirm').modal('close');	
-									client.refresh();
 								}
 								else{
 									Materialize.toast('Cannot process request.',4000);
@@ -1041,10 +1032,9 @@ client = {
 							var ajax = system.ajax('../assets/harmony/Process.php?update-employer',[id,_form]);
 							ajax.done(function(ajax){
 								if(ajax == 1){
-									system.clearForm();
+									$(`*[for='${data.for}']`).html(_form[0]['value']);
 									Materialize.toast('Username updated.',4000);
 									$('#modal_confirm').modal('close');	
-									client.refresh();
 								}
 								else{
 									Materialize.toast('Cannot process request.',4000);
@@ -1092,10 +1082,9 @@ client = {
 						var ajax = system.ajax('../assets/harmony/Process.php?update-employer',[id,_form]);
 						ajax.done(function(ajax){
 							if(ajax == 1){
-								system.clearForm();
+								$(`*[for='${data.for}']`).html(_form[0]['value']);
 								Materialize.toast('Password updated.',4000);
 								$('#modal_confirm').modal('close');	
-								client.refresh();
 							}
 							else{
 								Materialize.toast('Cannot process request.',4000);
@@ -1145,12 +1134,10 @@ client = {
 						else{
 							var ajax = system.ajax('../assets/harmony/Process.php?update-company',[id,_form]);
 							ajax.done(function(ajax){
-								console.log(ajax);
 								if(ajax == 1){
-									system.clearForm();
+									$(`*[for='${data.for}']`).html(_form[0]['value']);
 									Materialize.toast('Name updated.',4000);
 									$('#modal_confirm').modal('close');	
-									client.refresh();
 								}
 								else{
 									Materialize.toast('Cannot process request.',4000);
@@ -1185,10 +1172,9 @@ client = {
 							var ajax = system.ajax('../assets/harmony/Process.php?update-company',[id,_form]);
 							ajax.done(function(ajax){
 								if(ajax == 1){
-									system.clearForm();
+									$(`*[for='${data.for}']`).html(_form[0]['value']);
 									Materialize.toast('Phone updated.',4000);
 									$('#modal_confirm').modal('close');	
-									client.refresh();
 								}
 								else{
 									Materialize.toast('Cannot process request.',4000);
@@ -1223,10 +1209,9 @@ client = {
 							var ajax = system.ajax('../assets/harmony/Process.php?update-company',[id,_form]);
 							ajax.done(function(ajax){
 								if(ajax == 1){
-									system.clearForm();
+									$(`*[for='${data.for}']`).html(_form[0]['value']);
 									Materialize.toast('Email updated.',4000);
 									$('#modal_confirm').modal('close');	
-									client.refresh();
 								}
 								else{
 									Materialize.toast('Cannot process request.',4000);
@@ -1261,10 +1246,9 @@ client = {
 							var ajax = system.ajax('../assets/harmony/Process.php?update-company',[id,_form]);
 							ajax.done(function(ajax){
 								if(ajax == 1){
-									system.clearForm();
+									$(`*[for='${data.for}']`).html(_form[0]['value']);
 									Materialize.toast('Address updated.',4000);
 									$('#modal_confirm').modal('close');	
-									client.refresh();
 								}
 								else{
 									Materialize.toast('Cannot process request.',4000);
@@ -1343,8 +1327,7 @@ client = {
 											var data = system.ajax('../assets/harmony/Process.php?update-employerPicture',[id,$image.cropper("getDataURL")]); // 
 											data.done(function(data){
 												Materialize.toast('Picture has been changed.',4000);
-												system.clearForm();
-												client.refresh();
+												App.handleLoadPage("#cmd=index;content=focusClient;"+id);
 												$('#modal_confirm').modal('close');	
 											});
 								    		status = false;
@@ -1441,8 +1424,7 @@ client = {
 											var data = system.ajax('../assets/harmony/Process.php?update-employerCompanyLogo',[id,$image.cropper("getDataURL")]); // 
 											data.done(function(data){
 												Materialize.toast('Picture has been changed.',4000);
-												system.clearForm();
-												client.refresh();
+												App.handleLoadPage("#cmd=index;content=focusClient;"+id);
 												$('#modal_confirm').modal('close');	
 											});
 								    		status = false;
@@ -1476,12 +1458,12 @@ client = {
 	deactivate:function(){
 		$("a[data-cmd='deactivateEmployer']").on('click',function(){
 			var id = $(this).data('node');
-			var content = "Arey you sure DEACTIVATE ${$(this).data('name')}'s account?<br/>"+
-						  "<label for='field_description'>Remarks: </label>"+
-						  "<textarea class='materialize-textarea' data-field='field_description' name='field_description'></textarea>";
+			var content = `Arey you sure DEACTIVATE ${$(this).data('name')}'s account?<br/>
+						  <label for='field_description'>Remarks: </label>
+						  <textarea class='materialize-textarea' data-field='field_description' name='field_description'></textarea>`;
 			$("#modal_confirm .modal-content").html(content);
-			$("#modal_confirm .modal-footer").html("<a class='waves-effect waves-red red white-text btn-flat modal-action modal-close'>Cancel</a>"+
-												   "<a data-cmd='button_proceed' class='waves-effect waves-grey btn-flat modal-action'>Proceed</a>");
+			$("#modal_confirm .modal-footer").html(`<a class='waves-effect waves-red red white-text btn-flat modal-action modal-close'>Cancel</a>
+												   <a data-cmd='button_proceed' class='waves-effect waves-grey btn-flat modal-action'>Proceed</a>`);
 			$('#modal_confirm').modal('open');			
 
 			$("a[data-cmd='button_proceed']").on("click",function(){
@@ -1498,8 +1480,7 @@ client = {
 						console.log(data);
 						if(data == 1){
 							Materialize.toast('Account deactivaded.',4000);
-							system.clearForm();
-							client.refresh();
+							client.accountProfile();
 							$('#modal_confirm').modal('close');	
 						}
 						else{
@@ -1523,8 +1504,7 @@ client = {
 				data.done(function(data){
 					if(data == 1){
 						Materialize.toast('Account activaded.',4000);
-						system.clearForm();
-						client.refresh();
+						client.details();
 						$('#modal_confirm').modal('close');	
 					}
 					else{
@@ -2122,8 +2102,8 @@ product = {
 							<button class='btn blue btn-floating btn-flat tooltipped' data-cmd='cancel' type='button' data-tooltip='Cancel' data-position='top'>
 								<i class='material-icons right hover white-text'>close</i>
 							</button>
-							<button class='btn blue btn-floating btn-flat hidden tooltipped right' data-cmd='save' type='button' data-tooltip='Save' data-position='top'>
-								<i class='material-icons right hover white-text'>save</i>
+							<button class='btn blue white-text btn-flat hidden right' data-cmd='save' type='button'>
+								Save
 							</button>
 						</div>`;
 		$("#profile_picture2").html(content);
@@ -2156,7 +2136,7 @@ product = {
 						    	$("button[data-cmd='rotate']").removeClass('hidden');
 						    	
 					            $("button[data-cmd='save']").click(function(){									    	
-							    	$(this).html("<i class='mdi-action-cached icon-spin'></i>").addClass('disabled');
+							    	$(this).html("Uploading...").addClass('disabled');
 							    	if(status){
 										var ajax = system.ajax('../assets/harmony/Process.php?update-productPicture',[id,$image.cropper("getDataURL")]);
 										ajax.done(function(ajax){
@@ -2633,6 +2613,13 @@ product = {
 }	
 
 employee = {
+	ini:function(id){
+		points.add(id);
+		employee.getPoints(id);
+		employee.getPointsActivity(id);
+		employee.getBuysActivity(id);
+		employee.details(id);
+	},
 	get:function(){
 		var data = system.html('../assets/harmony/Process.php?get-employee');
 		return data;
@@ -2737,14 +2724,11 @@ employee = {
 		});
 	},
 	details:function(id){
-		points.add(id);
-		employee.getPoints(id);
-		employee.getPointsActivity(id);
-		employee.getBuysActivity(id);
-		var content = "";
-		var data = system.ajax('../assets/harmony/Process.php?get-employeeDetails',id);
+		let content = "";
+		let data = system.ajax('../assets/harmony/Process.php?get-employeeDetails',id);
 		data.done(function(data){
 			data = JSON.parse(data);
+
 			if(data.length<=0){
 				var data = system.xml("pages.xml");
 				$(data.responseText).find("errorContent").each(function(i,content){
@@ -2778,12 +2762,11 @@ employee = {
 						        	<img src='../assets/images/profile/${profile}' alt='' class='circle'>
 						        	<a data-value='${profile}' data-cmd='updateEmployeePicture' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-prop='Picture' class='btn waves-effect white-text no-shadow black' style='font-size: 10px;z-index: 1;padding: 0 12px;top:40px;'>Change</a>
 								</div>
-								<a data-value='${JSON.stringify([data[0][4],data[0][5],data[0][3]])}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-prop='Name' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update account'>
+								<a data-for='employeeName' data-value='${JSON.stringify([data[0][4],data[0][5],data[0][3]])}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-prop='Name' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update account'>
 									<i class='material-icons right hover black-text'>mode_edit</i>
 								</a>
-						        <span class='card-title activator grey-text text-darken-4'>${data[0][4]} ${data[0][5]} ${data[0][3]} </span>
+						        <span class='card-title activator grey-text text-darken-4' for='employeeName'>${data[0][4]} ${data[0][5]} ${data[0][3]} </span>
 								<div class='divider'></div>
-
 								<table>
 									<tr>
 										<td class='bold truncate' style='width:120px'><i class='mdi-action-info-outline cyan-text text-darken-2'></i> Status: </td>
@@ -2792,63 +2775,63 @@ employee = {
 									</tr>
 									<tr>
 										<td class='bold truncate' style='width:120px'><i class='mdi-action-perm-identity cyan-text text-darken-2'></i> Nickname: </td>
-										<td class='grey-text truncate'>${data[0][6]}</td>
+										<td class='grey-text truncate' for='employeeNickname'>${data[0][6]}</td>
 										<td>
-											<a data-value='${data[0][6]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Nickname' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
+											<a data-for='employeeNickname' data-value='${data[0][6]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Nickname' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
 												<i class='material-icons right hover black-text'>mode_edit</i>
 											</a>
 										</td>
 									</tr>
 									<tr>
 										<td class='bold truncate' style='width:120px'><i class='mdi-action-work cyan-text text-darken-2'></i> Position: </td>
-										<td class='grey-text truncate'>${data[0][13]}</td>
+										<td class='grey-text truncate' for='employeePosition'>${data[0][13]}</td>
 										<td>
-											<a data-value='${data[0][13]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Position' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
+											<a data-for='employeePosition' data-value='${data[0][13]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Position' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
 												<i class='material-icons right hover black-text'>mode_edit</i>
 											</a>
 										</td>
 									</tr>
 									<tr>
 										<td class='bold truncate' style='width:120px'><i class='mdi-action-perm-phone-msg cyan-text text-darken-2'></i> Phone: </td>
-										<td class='grey-text truncate'>${data[0][9]}</td>
+										<td class='grey-text truncate' for='employeePhone'>${data[0][9]}</td>
 										<td>
-											<a data-value='${data[0][9]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Phone' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
+											<a data-for='employeePhone' data-value='${data[0][9]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Phone' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
 												<i class='material-icons right hover black-text'>mode_edit</i>
 											</a>
 										</td>
 									</tr>
 									<tr>
 										<td class='bold truncate' style='width:120px'><i class='mdi-communication-email cyan-text text-darken-2'></i> Email: </td>
-										<td class='grey-text truncate'>${data[0][10]}</td>
+										<td class='grey-text truncate' for='employeeEmail'>${data[0][10]}</td>
 										<td>
-											<a data-value='${data[0][10]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Email' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
+											<a data-for='employeeEmail' data-value='${data[0][10]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Email' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
 												<i class='material-icons right hover black-text'>mode_edit</i>
 											</a>
 										</td>
 									</tr>
 									<tr>
 										<td class='bold truncate' style='width:120px'><i class='mdi-maps-map cyan-text text-darken-2'></i> Address: </td>
-										<td class='grey-text truncate'>${data[0][11]}</td>
+										<td class='grey-text truncate' for='employeeAddress'>${data[0][11]}</td>
 										<td>
-											<a data-value='${data[0][11]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Address' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
+											<a data-for='employeeAddress' data-value='${data[0][11]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Address' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
 												<i class='material-icons right hover black-text'>mode_edit</i>
 											</a>
 										</td>
 									</tr>
 									<tr>
 										<td class='bold truncate' style='width:120px'><i class='mdi-action-cached cyan-text text-darken-2'></i> Gender:</td>
-										<td class='grey-text truncate'> ${data[0][7]}</td>
+										<td class='grey-text truncate' for='employeeGender'> ${data[0][7]}</td>
 										<td>
-											<a data-value='${data[0][7]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Gender' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
+											<a data-for='employeeGender' data-value='${data[0][7]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Gender' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
 												<i class='material-icons right hover black-text'>mode_edit</i>
 											</a>
 										</td>
 									</tr>
 									<tr>
 										<td class='bold truncate' style='width:120px'><i class='mdi-action-event cyan-text text-darken-2'></i> Date of Birth:</td>
-										<td class='grey-text truncate'> ${data[0][8]}</td>
+										<td class='grey-text truncate' for='employeeDOB'> ${data[0][8]}</td>
 										<td>
-											<a data-value='${data[0][8]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Date of Birth' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
+											<a data-for='employeeDOB' data-value='${data[0][8]}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-node='${data[0][0]}' data-prop='Date of Birth' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update phone'>
 												<i class='material-icons right hover black-text'>mode_edit</i>
 											</a>
 										</td>
@@ -2880,6 +2863,13 @@ employee = {
 				employee.activate();
 				employee.update();
 				employee.updatePicture();
+
+				if(data[0][15] == 0){
+					$("#add_points").attr({'disabled':'true'});
+				}
+				else{
+					$("#add_points").removeAttr('disabled');					
+				}
 			}
 		});
 	},
@@ -2887,39 +2877,38 @@ employee = {
 		$("a[data-cmd='updateEmployee']").on('click',function(){
 			var data = $(this).data();
 			var id = data.node;
-
-			var content = "<h4>Change "+data.prop+"</h4>"+
-						  "<form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>"+
-						  "		<label for='field_"+data.prop+"'>"+data.prop+": </label>"+
-						  "		<input id='field_"+data.prop+"' type='text' name='field_"+data.prop+"' data-error='.error_"+data.prop+"' value='"+data.value+"'>"+
-						  "		<div class='error_"+data.prop+"'></div>"+
-						  "		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>"+
-						  "		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>"+
-						  "</form>";
+			var content = `<h4>Change ${data.prop}</h4>
+						  <form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>
+						  		<label for='field_${data.prop}'>${data.prop}: </label>
+						  		<input id='field_${data.prop}' type='text' name='field_${data.prop}' data-error='.error_${data.prop}' value='${data.value}'>
+						  		<div class='error_${data.prop}'></div>
+						  		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>
+						  		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>
+						  </form>`;
 			$("#modal_confirm .modal-content").html(content);
 			$('#modal_confirm .modal-footer').html("");			
 
 			if(data.prop == "Name"){
-				var content = "<h4>Change "+data.prop+"</h4>"+
-							  "<form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>"+
-							  "		<div class='col s12'>"+
-							  "			<label for='field_gname'>Given Name: </label>"+
-							  "			<input id='field_gname' type='text' name='field_gname' data-error='.error_gname' value='"+data.value[0]+"'>"+
-							  "			<div class='error_gname'></div>"+
-							  "		</div>"+
-							  "		<div class='col s12'>"+
-							  "			<label for='field_mname'>Middle Name: </label>"+
-							  "			<input id='field_mname' type='text' name='field_mname' data-error='.error_mname' value='"+data.value[1]+"'>"+
-							  "			<div class='error_mname'></div>"+
-							  "		</div>"+
-							  "		<div class='col s12'>"+
-							  "			<label for='field_fname'>Family Name: </label>"+
-							  "			<input id='field_fname' type='text' name='field_fname' data-error='.error_fname' value='"+data.value[2]+"'>"+
-							  "			<div class='error_fname'></div>"+
-							  "		</div>"+
-							  "		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>"+
-							  "		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>"+
-							  "</form>";
+				var content = `<h4>Change ${data.prop}</h4>
+							  <form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>
+							  		<div class='col s12'>
+							  			<label for='field_gname'>Given Name: </label>
+							  			<input id='field_gname' type='text' name='field_gname' data-error='.error_gname' value='${data.value[0]}'>
+							  			<div class='error_gname'></div>
+							  		</div>
+							  		<div class='col s12'>
+							  			<label for='field_mname'>Middle Name: </label>
+							  			<input id='field_mname' type='text' name='field_mname' data-error='.error_mname' value='${data.value[1]}'>
+							  			<div class='error_mname'></div>
+							  		</div>
+							  		<div class='col s12'>
+							  			<label for='field_fname'>Family Name: </label>
+							  			<input id='field_fname' type='text' name='field_fname' data-error='.error_fname' value='${data.value[2]}'>
+							  			<div class='error_fname'></div>
+							  		</div>
+							  		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>
+							  		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>
+							  </form>`;
 				$("#modal_confirm .modal-content").html(content);
 				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
@@ -2940,14 +2929,13 @@ employee = {
 					},
 					submitHandler: function (form) {
 						var _form = $(form).serializeArray();
-						var data = system.ajax('../assets/harmony/Process.php?update-employee',[id,_form]);
-						data.done(function(data){
-							console.log(data);
-							if(data == 1){
-								system.clearForm();
+
+						var ajax = system.ajax('../assets/harmony/Process.php?update-employee',[id,_form]);
+						ajax.done(function(ajax){
+							if(ajax == 1){
+								$(`*[for='${data.for}']`).html(`${_form[0]['value']} ${_form[1]['value']} ${_form[2]['value']}`);
 								Materialize.toast('Name updated.',4000);
 								$('#modal_confirm').modal('close');	
-								App.handleLoadPage("#cmd=index;content=focusEmployee;"+id);
 							}
 							else{
 								Materialize.toast('Cannot process request.',4000);
@@ -2957,7 +2945,7 @@ employee = {
 				}); 
 			}			
 			else if(data.prop == "Nickname"){
-				$('#modal_confirm').modal('open');			
+				$('#modal_confirm').modal('open');
 				$("#form_update").validate({
 				    rules: {
 				        field_Nickname: {required: true,maxlength: 50},
@@ -2974,14 +2962,13 @@ employee = {
 					},
 					submitHandler: function (form) {
 						var _form = $(form).serializeArray();
-						var data = system.ajax('../assets/harmony/Process.php?update-employee',[id,_form]);
-						data.done(function(data){
-							console.log(data);
-							if(data == 1){
-								system.clearForm();
+						var ajax = system.ajax('../assets/harmony/Process.php?update-employee',[id,_form]);
+						ajax.done(function(ajax){
+							console.log(ajax);
+							if(ajax == 1){
+								$(`*[for='${data.for}']`).html(_form[0]['value']);
 								Materialize.toast('Name updated.',4000);
 								$('#modal_confirm').modal('close');	
-								App.handleLoadPage("#cmd=index;content=focusEmployee;"+id);
 							}
 							else{
 								Materialize.toast('Cannot process request.',4000);
@@ -3008,14 +2995,12 @@ employee = {
 					},
 					submitHandler: function (form) {
 						var _form = $(form).serializeArray();
-						var data = system.ajax('../assets/harmony/Process.php?update-employee',[id,_form]);
-						data.done(function(data){
-							console.log(data);
-							if(data == 1){
-								system.clearForm();
+						var ajax = system.ajax('../assets/harmony/Process.php?update-employee',[id,_form]);
+						ajax.done(function(ajax){
+							if(ajax == 1){
+								$(`*[for='${data.for}']`).html(_form[0]['value']);
 								Materialize.toast('Name updated.',4000);
 								$('#modal_confirm').modal('close');	
-								App.handleLoadPage("#cmd=index;content=focusEmployee;"+id);
 							}
 							else{
 								Materialize.toast('Cannot process request.',4000);
@@ -3042,14 +3027,12 @@ employee = {
 					},
 					submitHandler: function (form) {
 						var _form = $(form).serializeArray();
-						var data = system.ajax('../assets/harmony/Process.php?update-employee',[id,_form]);
-						data.done(function(data){
-							console.log(data);
-							if(data == 1){
-								system.clearForm();
+						var ajax = system.ajax('../assets/harmony/Process.php?update-employee',[id,_form]);
+						ajax.done(function(ajax){
+							if(ajax == 1){
+								$(`*[for='${data.for}']`).html(_form[0]['value']);
 								Materialize.toast('Name updated.',4000);
 								$('#modal_confirm').modal('close');	
-								App.handleLoadPage("#cmd=index;content=focusEmployee;"+id);
 							}
 							else{
 								Materialize.toast('Cannot process request.',4000);
@@ -3076,14 +3059,12 @@ employee = {
 					},
 					submitHandler: function (form) {
 						var _form = $(form).serializeArray();
-						var data = system.ajax('../assets/harmony/Process.php?update-employee',[id,_form]);
-						data.done(function(data){
-							console.log(data);
-							if(data == 1){
-								system.clearForm();
+						var ajax = system.ajax('../assets/harmony/Process.php?update-employee',[id,_form]);
+						ajax.done(function(ajax){
+							if(ajax == 1){
+								$(`*[for='${data.for}']`).html(_form[0]['value']);
 								Materialize.toast('Email updated.',4000);
 								$('#modal_confirm').modal('close');	
-								App.handleLoadPage("#cmd=index;content=focusEmployee;"+id);
 							}
 							else{
 								Materialize.toast('Cannot process request.',4000);
@@ -3110,14 +3091,12 @@ employee = {
 					},
 					submitHandler: function (form) {
 						var _form = $(form).serializeArray();
-						var data = system.ajax('../assets/harmony/Process.php?update-employee',[id,_form]);
-						data.done(function(data){
-							console.log(data);
-							if(data == 1){
-								system.clearForm();
+						var ajax = system.ajax('../assets/harmony/Process.php?update-employee',[id,_form]);
+						ajax.done(function(ajax){
+							if(ajax == 1){
+								$(`*[for='${data.for}']`).html(_form[0]['value']);
 								Materialize.toast('Address updated.',4000);
 								$('#modal_confirm').modal('close');	
-								App.handleLoadPage("#cmd=index;content=focusEmployee;"+id);
 							}
 							else{
 								Materialize.toast('Cannot process request.',4000);
@@ -3127,18 +3106,18 @@ employee = {
 				}); 
 			}
 			else if(data.prop == "Gender"){
-				var content = "<h4>Change "+data.prop+"</h4>"+
-							  "<form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>"+
-							  "		<div class='col s12'>"+
-							  "		<label for='field_gender' class='active'>Gender: </label>"+
-							  "		<select name='field_Gender'>"+
-							  "			<option selected>Male</option>"+
-							  "			<option>Female</option>"+
-							  "		</select>"+
-							  "		</div>"+
-							  "		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>"+
-							  "		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>"+
-							  "</form>";
+				var content = `<h4>Change ${data.prop}</h4>
+							  <form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>
+							  		<div class='col s12'>
+							  		<label for='field_gender' class='active'>Gender: </label>
+							  		<select name='field_Gender'>
+							  			<option selected>Male</option>
+							  			<option>Female</option>
+							  		</select>
+							  		</div>
+							  		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>
+							  		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>
+							  </form>`;
 				$("#modal_confirm .modal-content").html(content);
 				$('#modal_confirm').modal('open');			
 			    $("select").material_select();
@@ -3158,14 +3137,12 @@ employee = {
 					},
 					submitHandler: function (form) {
 						var _form = $(form).serializeArray();
-						var data = system.ajax('../assets/harmony/Process.php?update-employee',[id,_form]);
-						data.done(function(data){
-							console.log(data);
-							if(data == 1){
-								system.clearForm();
+						var ajax = system.ajax('../assets/harmony/Process.php?update-employee',[id,_form]);
+						ajax.done(function(ajax){
+							if(ajax == 1){
+								$(`*[for='${data.for}']`).html(_form[0]['value']);
 								Materialize.toast('Gender updated.',4000);
 								$('#modal_confirm').modal('close');	
-								App.handleLoadPage("#cmd=index;content=focusEmployee;"+id);
 							}
 							else{
 								Materialize.toast('Cannot process request.',4000);
@@ -3175,14 +3152,14 @@ employee = {
 				}); 
 			}
 			else if(data.prop == "Date of Birth"){
-				var content = "<h4>Change "+data.prop+"</h4>"+
-							  "<form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>"+
-							  "		<label for='field_dob'>Date of birth: </label>"+
-							  "		<input id='field_dob' type='text' name='field_dob' data-error='.error_dob' value='"+data.value+"'>"+
-							  "		<div class='error_dob'></div>"+
-							  "		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>"+
-							  "		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>"+
-							  "</form>";
+				var content = `<h4>Change ${data.prop}</h4>
+							  <form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>
+							  		<label for='field_dob'>Date of birth: </label>
+							  		<input id='field_dob' type='text' name='field_dob' data-error='.error_dob' value='${data.value}'>
+							  		<div class='error_dob'></div>
+							  		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>
+							  		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>
+							  </form>`;
 				$("#modal_confirm .modal-content").html(content);
 				$('#modal_confirm').modal('open');			
 				$("#form_update").validate({
@@ -3201,14 +3178,12 @@ employee = {
 					},
 					submitHandler: function (form) {
 						var _form = $(form).serializeArray();
-						var data = system.ajax('../assets/harmony/Process.php?update-employee',[id,_form]);
-						data.done(function(data){
-							console.log(data);
-							if(data == 1){
-								system.clearForm();
+						var ajax = system.ajax('../assets/harmony/Process.php?update-employee',[id,_form]);
+						ajax.done(function(ajax){
+							if(ajax == 1){
+								$(`*[for='${data.for}']`).html(_form[0]['value']);
 								Materialize.toast('Date of birth updated.',4000);
 								$('#modal_confirm').modal('close');	
-								App.handleLoadPage("#cmd=index;content=focusEmployee;"+id);
 							}
 							else{
 								Materialize.toast('Cannot process request.',4000);
@@ -3321,12 +3296,12 @@ employee = {
 	deactivate:function(){
 		$("a[data-cmd='deactivateEmployee']").on('click',function(){
 			var id = $(this).data('node');
-			var content = "Arey you sure DEACTIVATE "+$(this).data('name')+"'s account?<br/>"+
-						  "<label for='field_description'>Remarks: </label>"+
-						  "<textarea class='materialize-textarea' data-field='field_description' name='field_description'></textarea>";
+			var content = `Arey you sure DEACTIVATE ${$(this).data('name')}'s account?<br/>
+						  <label for='field_description'>Remarks: </label>
+						  <textarea class='materialize-textarea' data-field='field_description' name='field_description'></textarea>`;
 			$("#modal_confirm .modal-content").html(content);
-			$("#modal_confirm .modal-footer").html("<a class='waves-effect waves-red red white-text btn-flat modal-action modal-close'>Cancel</a>"+
-												   "<a data-cmd='button_proceed' class='waves-effect waves-grey btn-flat modal-action'>Proceed</a>");
+			$("#modal_confirm .modal-footer").html(`<a class='waves-effect btn-flat modal-action modal-close'>Cancel</a>
+												   <a data-cmd='button_proceed' class='waves-effect waves-blue blue white-text btn-flat modal-action'>Proceed</a>`);
 			$('#modal_confirm').modal('open');			
 
 			$("a[data-cmd='button_proceed']").on("click",function(){
@@ -3340,11 +3315,9 @@ employee = {
 				else{
 					var data = system.ajax('../assets/harmony/Process.php?deactivate-employee',[id,remarks]);
 					data.done(function(data){
-						console.log(data);
 						if(data == 1){
 							Materialize.toast('Account deactivaded.',4000);
-							system.clearForm();
-							App.handleLoadPage("#cmd=index;content=focusEmployee");
+							employee.details(id);
 							$('#modal_confirm').modal('close');	
 						}
 						else{
@@ -3358,9 +3331,9 @@ employee = {
 	activate:function(){
 		$("a[data-cmd='activateEmployee']").on('click',function(){
 			var id = $(this).data('node');
-			$("#modal_confirm .modal-content").html("Arey you sure ACTIVATE "+$(this).data('name')+"'s account?");
-			$("#modal_confirm .modal-footer").html("<a class='waves-effect waves-red red white-text btn-flat modal-action modal-close'>Cancel</a>"+
-												   "<a data-cmd='button_proceed' class='waves-effect waves-grey btn-flat modal-action modal-close'>Proceed</a>");
+			$("#modal_confirm .modal-content").html(`Arey you sure ACTIVATE ${$(this).data('name')}'s account?`);
+			$("#modal_confirm .modal-footer").html(`<a class='waves-effect btn-flat modal-action modal-close'>Cancel</a>
+												   <a data-cmd='button_proceed' class='waves-effect waves-blue blue white-text btn-flat modal-action modal-close'>Proceed</a>`);
 			$('#modal_confirm').modal('open');			
 
 			$("a[data-cmd='button_proceed']").on("click",function(){
@@ -3368,8 +3341,7 @@ employee = {
 				data.done(function(data){
 					if(data == 1){
 						Materialize.toast('Account activaded.',4000);
-						system.clearForm();
-						client.refresh();
+						employee.details(id);
 						$('#modal_confirm').modal('close');	
 					}
 					else{
@@ -3633,7 +3605,6 @@ employee = {
 points = {
 	add:function(id){
 		$("#add_points").on("click",function(){
-			console.log(id);
 			var data = system.xml("pages.xml");
 			$(data.responseText).find("addPoints").each(function(i,content){
 				$("#modal_popUp .modal-content").html(content);

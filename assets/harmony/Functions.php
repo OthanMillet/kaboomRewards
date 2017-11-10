@@ -26,17 +26,17 @@ class DatabaseClasses extends DataClasses{
 	}
 
 	function getEmployee(){
-		$user = DatabaseClasses::PDO("SELECT * FROM tbl_employee WHERE employee_id = '{$_SESSION['kaboom'][0]}' AND password = '{$_SESSION['kaboom'][1]}'");
+		$user = DatabaseClasses::PDO("SELECT * FROM tbl_employee WHERE employee_id = '{$_SESSION['kaboom'][0]}'");
 		return (count($user)<=0)?0:$user[0][0];
 	}
 
 	function getUser(){
-		$user = DatabaseClasses::PDO("SELECT * FROM tbl_employer WHERE username = '{$_SESSION['kaboom'][0]}' AND password = '{$_SESSION['kaboom'][1]}'");
+		$user = DatabaseClasses::PDO("SELECT * FROM tbl_employer WHERE username = '{$_SESSION['kaboom'][0]}'");
 		return (count($user)<=0)?0:$user[0][0];
 	}
 
 	function getAdmin(){
-		$user = DatabaseClasses::PDO("SELECT * FROM tbl_admin WHERE username = '{$_SESSION['kaboom'][0]}' AND password = '{$_SESSION['kaboom'][1]}'");
+		$user = DatabaseClasses::PDO("SELECT * FROM tbl_admin WHERE username = '{$_SESSION['kaboom'][0]}'");
 		return (count($user)<=0)?0:$user[0][0];
 	}
 
