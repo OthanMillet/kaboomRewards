@@ -726,13 +726,13 @@ client = {
 			status = "Active";
 			var actions = `<a data-for='accountStatus' data-cmd='deactivateEmployer' data-name='${data[2]}' data-node='${data[0]}' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Deactivate account' data-cmd='update'>
 						  	<i class='material-icons right hover black-text'>lock_open</i>
-						  </a>`;	
+						  </a>`;
 		}
 		else{
 			status = "Deactivated";
 			var actions = `<a data-for='accountStatus' data-cmd='activateEmployer' data-name='${data[2]}' data-node='${data[0]}' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Activate account' data-cmd='update'>
 						  	<i class='material-icons right hover black-text'>lock</i>
-						  </a>`;	
+						  </a>`;
 		}
 
 		var profile = ((data[7] == "") || data[7] == null)?"avatar.jpg":data[7];
@@ -1458,12 +1458,12 @@ client = {
 	deactivate:function(){
 		$("a[data-cmd='deactivateEmployer']").on('click',function(){
 			var id = $(this).data('node');
-			var content = `Arey you sure DEACTIVATE ${$(this).data('name')}'s account?<br/>
-						  <label for='field_description'>Remarks: </label>
-						  <textarea class='materialize-textarea' data-field='field_description' name='field_description'></textarea>`;
-			$("#modal_confirm .modal-content").html(content);
-			$("#modal_confirm .modal-footer").html(`<a class='waves-effect waves-red red white-text btn-flat modal-action modal-close'>Cancel</a>
-												   <a data-cmd='button_proceed' class='waves-effect waves-grey btn-flat modal-action'>Proceed</a>`);
+			$("#modal_confirm .modal-content").html(`Arey you sure DEACTIVATE ${$(this).data('name')}'s account?<br/>
+													<label for='field_description'>Remarks: </label>
+													<textarea class='materialize-textarea' data-field='field_description' name='field_description'></textarea>
+													<a class='waves-effect btn-flat modal-action modal-close'>Cancel</a>
+												    <a data-cmd='button_proceed' class='waves-effect waves-blue blue white-text btn-flat modal-action'>Proceed</a>`);
+			$('#modal_confirm .modal-footer').html("");			
 			$('#modal_confirm').modal('open');			
 
 			$("a[data-cmd='button_proceed']").on("click",function(){
@@ -1477,11 +1477,10 @@ client = {
 				else{
 					var data = system.ajax('../assets/harmony/Process.php?deactivate-employer',[id,remarks]);
 					data.done(function(data){
-						console.log(data);
 						if(data == 1){
 							Materialize.toast('Account deactivaded.',4000);
-							client.accountProfile();
-							$('#modal_confirm').modal('close');	
+							App.handleLoadPage("#cmd=index;content=focusClient;"+id);
+							$('body').attr({'style':'unset'});
 						}
 						else{
 							Materialize.toast('Cannot process request.',4000);
@@ -1494,9 +1493,12 @@ client = {
 	activate:function(){
 		$("a[data-cmd='activateEmployer']").on('click',function(){
 			var id = $(this).data('node');
-			$("#modal_confirm .modal-content").html(`Arey you sure ACTIVATE ${$(this).data('name')}'s account?`);
-			$("#modal_confirm .modal-footer").html(`<a class='waves-effect waves-red red white-text btn-flat modal-action modal-close'>Cancel</a>
-													<a data-cmd='button_proceed' class='waves-effect waves-grey btn-flat modal-action modal-close'>Proceed</a>`);
+			$("#modal_confirm .modal-content").html(`Arey you sure ACTIVATE ${$(this).data('name')}'s account?
+													<div class='row'>
+														<a class='waves-effect btn-flat modal-action modal-close'>Cancel</a>
+														<a data-cmd='button_proceed' class='waves-effect waves-blue blue white-text btn-flat modal-action modal-close'>Proceed</a>
+													</div>`);
+			$('#modal_confirm .modal-footer').html("");			
 			$('#modal_confirm').modal('open');			
 
 			$("a[data-cmd='button_proceed']").on("click",function(){
@@ -1504,8 +1506,8 @@ client = {
 				data.done(function(data){
 					if(data == 1){
 						Materialize.toast('Account activaded.',4000);
-						client.details();
-						$('#modal_confirm').modal('close');	
+						App.handleLoadPage("#cmd=index;content=focusClient;"+id);
+						$('body').attr({'style':'unset'});
 					}
 					else{
 						Materialize.toast('Cannot process request.',4000);
