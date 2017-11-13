@@ -6,12 +6,16 @@
 	</div>
 	<div class="divider"></div>
 	<div class="row margin">
-        <div class="col s12">
-            <h5>Bulk upload<br/><small>* Upload csv files only</small></h5>
-            <label class='active'>Select excel file: <span id="display_excelFile"></span></label><br/>
+        <div class="col s12 m6 l8">
+            <h5>Bulk upload<br/><label>* Upload csv files only</label></h5>
+            <label class='active'>Select excel file: <span id="display_excelFile"></span></label>
+            <br/>
             <label for="field_file" class='btn waves-effect waves-light red' style='color: #fff;cursor:pointer;'>Select file</label>
             <input id='field_file' class="btn btn-sm blue waves-effect waves-light hidden" type="file" name="field_file" data-error=".error_excelFile">
             <br/><br/><div class="error_excelFile"></div>
+        </div>
+        <div class="col s12 m6 l4"><br/>
+            <a data-cmd='download' class="waves-effect waves-light right">Download the template here</a>
         </div>
 	</div>
     <div class="row">
@@ -35,6 +39,8 @@
     var id = hash[2];
     var client = id.split("-");
     $("#bread1").attr({"href":`#cmd=index;content=focusClient;${client[0]}`});
-	employee.upload(id);
+    employee.upload(id);
+    employee.download();
     $("select").material_select();
+    // sapnupuas7836
 </script>

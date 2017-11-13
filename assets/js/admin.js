@@ -3602,6 +3602,25 @@ employee = {
 			});
         });
 	},
+	download:function(){
+		let content = `
+			<h5>Download Employee Spreadsheet</h5>
+			<p>
+				After downloading the file fill in the list with new employees. Make sure you save it as CSV file. System will only accept CSV file.
+			</p>
+			<div class='divider'></div>
+			<p>
+				<a href='../assets/files/employees.xlsx' target='_blank' class="btn btn-flat red white-text waves-effect waves-light right modal-close">Download</a>
+				<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Close</a>
+			</p>
+		`;
+
+		$("a[data-cmd='download']").on('click',function(){
+			console.log("xxx");
+			$("#modal_popUp .modal-content").html(content);
+			$('#modal_popUp').modal('open');
+		})	
+	}
 }
 
 points = {
