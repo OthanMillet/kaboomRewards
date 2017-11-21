@@ -354,8 +354,6 @@ account = {
 	updatePicture:function(){
 		$("a[data-cmd='updateAdminPicture']").on('click',function(){
 			var data = $(this).data();
-			console.log(data);
-
 			var picture = "../assets/images/avatar.jpg";
 			var content = `<h4>Change ${data.prop}</h4>
   							<div class='row'>
@@ -418,7 +416,7 @@ account = {
 											var data = system.ajax('../assets/harmony/Process.php?update-adminPicture',["picture",$image.cropper("getDataURL")]);
 											data.done(function(data){
 												Materialize.toast('Picture has been changed.',4000);
-												var data = account.get();
+												data = account.get();
 												account.display(JSON.parse(data));
 												$('#modal_confirm').modal('close');	
 											});
@@ -676,7 +674,7 @@ client = {
 				    <div class='card-content'>
 				        <div class=' responsive-img activator card-profile-image circle' style='margin-top: -65px;'>
 				        	<img src='../assets/images/profile/${profile}' alt='' class='circle'>
-				        	<a data-cmd='updateCompanyLogo' data-value='${profile}' data-name='${data[1]}' data-node='${data[0]}' data-prop='Picture' class='btn waves-effect white-text no-shadow black' style='font-size: 10px;z-index: 1;padding: 0 12px;top:40px;'>Change</a>
+				        	<a data-cmd='updateCompanyLogo' data-value='${profile}' data-name='${data[1]}' data-node='${data[0]}' data-prop='Picture' class='hide btn waves-effect white-text no-shadow black' style='font-size: 10px;z-index: 1;padding: 0 12px;top:40px;'>Change</a>
 						</div>
 						<a data-for='companyName' data-cmd='updateCompany' data-value='${data[1]}' data-name='${data[1]}' data-node='${data[0]}' data-prop='Name' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update account'>
 							<i class='material-icons right hover black-text'>mode_edit</i>
@@ -1767,7 +1765,6 @@ product = {
 		});
 	},
 	update:function(id,data){
-		console.log(data);
 		if(data[1] == "Product"){
 			var content = `<h4>Change ${data[1]}</h4>
 						  <form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>
@@ -2768,7 +2765,7 @@ employee = {
 					    <div class='card-content'>
 					        <div class=' responsive-img activator card-profile-image circle' style='margin-top: -65px;'>
 					        	<img src='../assets/images/profile/${profile}' alt='' class='circle'>
-					        	<a data-value='${profile}' data-cmd='updateEmployeePicture' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-prop='Picture' class='btn waves-effect white-text no-shadow black' style='font-size: 10px;z-index: 1;padding: 0 12px;top:40px;'>Change</a>
+					        	<a data-value='${profile}' data-cmd='updateEmployeePicture' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-prop='Picture' class='hide btn waves-effect white-text no-shadow black' style='font-size: 10px;z-index: 1;padding: 0 12px;top:40px;'>Change</a>
 							</div>
 							<a data-for='employeeName' data-value='${JSON.stringify([data[0][4],data[0][5],data[0][3]])}' data-cmd='updateEmployee' data-name='${data[0][4]} ${data[0][5]} ${data[0][3]}' data-node='${data[0][0]}' data-prop='Name' class='tooltipped btn-floating waves-effect black-text no-shadow white right' data-position='left' data-delay='50' data-tooltip='Update account'>
 								<i class='material-icons right hover black-text'>mode_edit</i>
@@ -2885,6 +2882,7 @@ employee = {
 	},
 	update:function(){
 		$("a[data-cmd='updateEmployee']").on('click',function(){
+			let _this = this;
 			var data = $(this).data();
 			var id = data.node;
 			var content = `<h4>Change ${data.prop}</h4>
@@ -2943,7 +2941,8 @@ employee = {
 						var ajax = system.ajax('../assets/harmony/Process.php?update-employee',[id,_form]);
 						ajax.done(function(ajax){
 							if(ajax == 1){
-								$(`*[for='${data.for}']`).html(`${_form[0]['value']} ${_form[1]['value']} ${_form[2]['value']}`);
+								$(`*[for='${data.for}']`).html();
+								$(_this).attr({'data-value':`${_form[0]['value']} ${_form[1]['value']} ${_form[2]['value']}`});
 								Materialize.toast('Name updated.',4000);
 								$('#modal_confirm').modal('close');	
 							}
@@ -2977,6 +2976,7 @@ employee = {
 							console.log(ajax);
 							if(ajax == 1){
 								$(`*[for='${data.for}']`).html(_form[0]['value']);
+								$(_this).attr({'data-value':_form[0]['value']});
 								Materialize.toast('Name updated.',4000);
 								$('#modal_confirm').modal('close');	
 							}
@@ -3009,6 +3009,7 @@ employee = {
 						ajax.done(function(ajax){
 							if(ajax == 1){
 								$(`*[for='${data.for}']`).html(_form[0]['value']);
+								$(_this).attr({'data-value':_form[0]['value']});
 								Materialize.toast('Name updated.',4000);
 								$('#modal_confirm').modal('close');	
 							}
@@ -3041,6 +3042,7 @@ employee = {
 						ajax.done(function(ajax){
 							if(ajax == 1){
 								$(`*[for='${data.for}']`).html(_form[0]['value']);
+								$(_this).attr({'data-value':_form[0]['value']});
 								Materialize.toast('Name updated.',4000);
 								$('#modal_confirm').modal('close');	
 							}
@@ -3073,6 +3075,7 @@ employee = {
 						ajax.done(function(ajax){
 							if(ajax == 1){
 								$(`*[for='${data.for}']`).html(_form[0]['value']);
+								$(_this).attr({'data-value':_form[0]['value']});
 								Materialize.toast('Email updated.',4000);
 								$('#modal_confirm').modal('close');	
 							}
@@ -3105,6 +3108,7 @@ employee = {
 						ajax.done(function(ajax){
 							if(ajax == 1){
 								$(`*[for='${data.for}']`).html(_form[0]['value']);
+								$(_this).attr({'data-value':_form[0]['value']});
 								Materialize.toast('Address updated.',4000);
 								$('#modal_confirm').modal('close');	
 							}
@@ -3151,6 +3155,7 @@ employee = {
 						ajax.done(function(ajax){
 							if(ajax == 1){
 								$(`*[for='${data.for}']`).html(_form[0]['value']);
+								$(_this).attr({'data-value':_form[0]['value']});
 								Materialize.toast('Gender updated.',4000);
 								$('#modal_confirm').modal('close');	
 							}
@@ -3192,6 +3197,7 @@ employee = {
 						ajax.done(function(ajax){
 							if(ajax == 1){
 								$(`*[for='${data.for}']`).html(_form[0]['value']);
+								$(_this).attr({'data-value':_form[0]['value']});
 								Materialize.toast('Date of birth updated.',4000);
 								$('#modal_confirm').modal('close');	
 							}
