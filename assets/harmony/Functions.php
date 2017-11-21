@@ -1,14 +1,7 @@
 <?php
-include("gabruX/Functions.php");
-$Function = new DataClasses;
 
 //secure this file
-class DatabaseClasses extends DataClasses{
-
-	public $Data;
-	public $Row;
-	public $Key;
-	public $Value;
+class DatabaseClasses{
 
 	function DBCon(){
 		$host = "localhost";
@@ -304,5 +297,19 @@ class DatabaseClasses extends DataClasses{
         return $result;
 	}
 
+	function mailTemplate($receiver,$subject,$message){
+        $headers  = 'MIME-Version: 1.0' . "\r\n";
+        $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+        $headers .= 'From: KABOOM REWARDS <kaboomrewards.com>' . "\r\n";
+
+        $template = "<div style='margin:0 auto; padding:20px; text-align:center;font-family:helvetica neue,helvetica,arial,sans-serif; width:500px; border:dashed 1px #ccc;'>
+            <div>{$message}</div><br/><br/><br/>
+            <a style='font-size: 10px; color:#333' href='http://kaboomrewards.com'>Kaboom Rewards</a>
+        </div>";
+
+        $result = mail($receiver,$subject,$template,$headers);
+        return $result;
+	}
 }
 ?>
+

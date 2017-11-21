@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    $('.tooltipped').tooltip({delay: 1});
+	$('.tooltipped').tooltip({delay: 1});
 });
 
 product = {
@@ -39,33 +39,33 @@ product = {
 		$.each(suggestions,function(i,v){
 			var search = system.searchJSON(data_wishlist,1,v[0]);
 			content = `<div class='row'>
-						    <div class='card'>
-						        <div class='card-image waves-effect waves-block waves-light'><img alt='product-img' class='activator' draggable='false' src='assets/images/products/${v[10]}'></div>
-						        <ul class='card-action-buttons'>
-						            <li>
+							<div class='card'>
+								<div class='card-image waves-effect waves-block waves-light'><img alt='product-img' class='activator' draggable='false' src='assets/images/products/${v[10]}'></div>
+								<ul class='card-action-buttons'>
+									<li>
 										<button class='btn-floating waves-effect shopping' data-cmd='addWishlist' data-wishlist='${v[0]}' data-node='${v[0]}'>
 											<i class='mdi-action-favorite'></i>
 										</button>
 										<button class='btn-floating waves-effect shopping cyan' data-cmd='addCart' data-node='${v[0]}'>
 											<i class='mdi-action-shopping-cart'></i>
 										</button>
-						            </li>
-						        </ul>
-						        <div class='card-content'>
-						            <div class='row'>
-						                <div class='col s8'>
-						                    <p class='card-title grey-text text-darken-4'><a class='grey-text text-darken-4' href='#'>${v[1]}</a></p>
-						                </div>
-						                <div class='col s4'>
-						                    <p class='right' style='font-size: 24px;line-height: 32px;'>${v[3]}</p>
-						                </div>
-						            </div>
-						        </div>
-						        <div class='card-reveal grey darken-4'>
-						            <p class='card-title'><a class='white-text' href='#'>${v[1]}</a><i class='mdi-navigation-close right white-text'></i></p>
-						            <p class='white-text'>${v[5]}</p>
-						        </div>
-						    </div>
+									</li>
+								</ul>
+								<div class='card-content'>
+									<div class='row'>
+										<div class='col s8'>
+											<p class='card-title grey-text text-darken-4'><a class='grey-text text-darken-4' href='#'>${v[1]}</a></p>
+										</div>
+										<div class='col s4'>
+											<p class='right' style='font-size: 24px;line-height: 32px;'>${v[3]}</p>
+										</div>
+									</div>
+								</div>
+								<div class='card-reveal grey darken-4'>
+									<p class='card-title'><a class='white-text' href='#'>${v[1]}</a><i class='mdi-navigation-close right white-text'></i></p>
+									<p class='white-text'>${v[5]}</p>
+								</div>
+							</div>
 						</div>`;
 			$(".product").append(content);
 
@@ -108,13 +108,13 @@ product = {
 		$("#display_productList").html(content);
 
 		var table = $('#products').DataTable({
-	        "order": [[ 0, 'asc' ]],
-	        "drawCallback": function ( settings ) {
-	            var api = this.api();
-	            var rows = api.rows( {page:'current'} ).nodes();
-	            var last=null;
-	        }
-	    });
+			"order": [[ 0, 'asc' ]],
+			"drawCallback": function ( settings ) {
+				var api = this.api();
+				var rows = api.rows( {page:'current'} ).nodes();
+				var last=null;
+			}
+		});
 	},
 	listGrid:function(){
 		var data = system.xml("pages.xml");
@@ -134,15 +134,15 @@ product = {
 				$('#modal_popUp').openModal('show');
 
 				$("#form_addProduct").validate({
-				    rules: {
-				        field_productName: {required: true,maxlength: 50},
-				        field_qty: {required: true,maxlength: 50,checkPositiveNumber:true},
-				        field_price: {required: true,maxlength: 50,checkCurrency:true},
-				        field_description: {required: true,maxlength: 900},
-				        field_category: {required: true,maxlength: 500},
-				    },
-				    errorElement : 'div',
-				    errorPlacement: function(error, element) {
+					rules: {
+						field_productName: {required: true,maxlength: 50},
+						field_qty: {required: true,maxlength: 50,checkPositiveNumber:true},
+						field_price: {required: true,maxlength: 50,checkCurrency:true},
+						field_description: {required: true,maxlength: 900},
+						field_category: {required: true,maxlength: 500},
+					},
+					errorElement : 'div',
+					errorPlacement: function(error, element) {
 						var placement = $(element).data('error');
 						if(placement){
 							$(placement).append(error)
@@ -164,7 +164,7 @@ product = {
 								Materialize.toast('Cannot process request.',4000);
 							}
 						});
-				    }
+					}
 				});
 			});
 		})
@@ -214,44 +214,44 @@ market = {
 				disabled = "";
 
 				content += `<div class='col l4 m6 s12 gallery-item gallery-expand gallery-filter product ${v[4]}'>
-				            	<div class='gallery-curve-wrapper'>
-				            	    <a class='gallery-cover gray'>
-				            	        <img alt='placeholder' src='assets/images/products/${v[10]}' style='width:100%'>
-				            	    </a>
-				            	    <div class='gallery-header row'>
-					            	        <span>${v[1]}</span>
-					            	        <span class='gj right'>${v[3]}</span>
-				            	    </div>
-				            	    <div class='gallery-body row'>
-				            	    	<div class='col s12'>
-					            	        <div class='title-wrapper'>
-					            	            <h3>${v[1]}</h3>
-					            	            <span class='gj'>${v[3]}</span>
-					            	        </div>
-					            	        <div style='top:30px; position:relative;'>
-						            	        <p class='fi'>${v[5]}</p>
-						            	        <div class='carousel-wrapper'>
-						            	            <div class='t carousel initialized'>
-						            	                <a class='carousel-item active' href='#one!'>
-						            	                    <img src='assets/images/logo.png'>
-						            	                </a>
-						            	                <a class='carousel-item' href='#two!'>
-						            	                    <img src='assets/images/logo.png'>
-						            	                </a> 
-						            	                <a class='carousel-item' href='#three!'>
-						            	                    <img src='assets/images/logo.png'>
-						            	                </a> 
-						            	            </div>
-						            	        </div>
-					            	        </div>
-				            	    	</div>
-				            	    </div>
-				            	    <div class='gallery-action'>
-				            	        <button class='btn-floating btn-large waves-effect waves-light shopping' data-cmd='addWishlist' data-wishlist='${v[0]}' data-node='${v[0]}'><i class='material-icons'>favorite</i></button>
-				            	        <button class='btn-floating btn-large waves-effect waves-light shopping cyan' data-cmd='addCart' ${disabled} data-node='${v[0]}'><i class='material-icons'>shopping_cart</i></button>
-				            		</div>
-				            	</div>
-				            </div>`;
+								<div class='gallery-curve-wrapper'>
+									<a class='gallery-cover gray'>
+										<img alt='placeholder' src='assets/images/products/${v[10]}' style='width:100%'>
+									</a>
+									<div class='gallery-header row'>
+										<div class='col s10'><span class='truncate'>${v[1]}</span></div>
+										<div class='col s2'><span class='gj right'>${v[3]}</span></div>									
+									</div>
+									<div class='gallery-body row'>
+										<div class='col s12'>
+											<div class='title-wrapper'>
+												<h3>${v[1]}</h3>
+												<span class='gj'>${v[3]}</span>
+											</div>
+											<div style='top:30px; position:relative;'>
+												<p class='fi'>${v[5]}</p>
+												<div class='carousel-wrapper'>
+													<div class='t carousel initialized'>
+														<a class='carousel-item active' href='#one!'>
+															<img src='assets/images/logo.png'>
+														</a>
+														<a class='carousel-item' href='#two!'>
+															<img src='assets/images/logo.png'>
+														</a> 
+														<a class='carousel-item' href='#three!'>
+															<img src='assets/images/logo.png'>
+														</a> 
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class='gallery-action'>
+										<button class='btn-floating btn-large waves-effect waves-light shopping' data-cmd='addWishlist' data-wishlist='${v[0]}' data-node='${v[0]}'><i class='material-icons'>favorite</i></button>
+										<button class='btn-floating btn-large waves-effect waves-light shopping cyan' data-cmd='addCart' ${disabled} data-node='${v[0]}'><i class='material-icons'>shopping_cart</i></button>
+									</div>
+								</div>
+							</div>`;
 		});
 
 		$("#products").html(content);
@@ -288,7 +288,7 @@ market = {
 		});
 	},
 	getFilterField:function(){
-        let a = document.getElementById('price-slider');
+		let a = document.getElementById('price-slider');
 		let search = $("#field_searchProduct").val();
 		let sort = $("#field_sortProduct").val();
 		return [a.noUiSlider.get(),search,sort];
@@ -297,22 +297,22 @@ market = {
 		let priceRange = market.minMaxPricedProducts();
 		priceRange = JSON.parse(priceRange);
 
-        let price = document.getElementById('price-slider');
-        noUiSlider.create(price,{
-            start: priceRange,
-            connect: true,
-            step: 1,
-            margin: (Number(priceRange[1])*0.10),
-            orientation: 'horizontal',
-            range: {
-                'min': 0,
-                'max': Number(priceRange[1])
-            },
-        });
+		let price = document.getElementById('price-slider');
+		noUiSlider.create(price,{
+			start: priceRange,
+			connect: true,
+			step: 1,
+			margin: (Number(priceRange[1])*0.10),
+			orientation: 'horizontal',
+			range: {
+				'min': 0,
+				'max': Number(priceRange[1])
+			},
+		});
 
-        market.sortUpdatePriceRange(price);
+		market.sortUpdatePriceRange(price);
 		price.noUiSlider.on('slide', function(){
-	        market.sortUpdatePriceRange(price);
+			market.sortUpdatePriceRange(price);
 		});
 
 		console.log("xx");
@@ -351,22 +351,22 @@ market = {
 		let priceRange = market.minMaxPricedProducts();
 		priceRange = JSON.parse(priceRange);
 
-        let price = document.getElementById('price-slider');
-        noUiSlider.create(price,{
-            start: priceRange,
-            connect: true,
-            step: 1,
-            margin: (Number(priceRange[1])*0.10),
-            orientation: 'horizontal',
-            range: {
-                'min': 0,
-                'max': Number(priceRange[1])
-            },
-        });
+		let price = document.getElementById('price-slider');
+		noUiSlider.create(price,{
+			start: priceRange,
+			connect: true,
+			step: 1,
+			margin: (Number(priceRange[1])*0.10),
+			orientation: 'horizontal',
+			range: {
+				'min': 0,
+				'max': Number(priceRange[1])
+			},
+		});
 
-        market.sortUpdatePriceRange(price);
+		market.sortUpdatePriceRange(price);
 		price.noUiSlider.on('slide', function(){
-	        market.sortUpdatePriceRange(price);
+			market.sortUpdatePriceRange(price);
 		});
 
 		price.noUiSlider.on('change', function(){
@@ -529,7 +529,7 @@ cart = {
 			if(data == 1){
 				Materialize.toast('Order Placed.',4000);
 				cart.removeProduct();
-		    	window.location.reload(true);
+				window.location.reload(true);
 			} 
 			else if(data == 2){
 				Materialize.toast('Insufficient points.',4000);
@@ -656,9 +656,9 @@ cart = {
 profile = {
 	ini:function(){
 		profile.getAccount();
-        system.forceLogout(function(){
-        	profile.logout();
-        });
+		system.forceLogout(function(){
+			profile.logout();
+		});
 	},
 	check:function(){
 		let retData;
@@ -704,13 +704,13 @@ profile = {
 			console.log(data);
 
 			let content = `<div class="col s12 m12 l12">
-                                <div class="center">
-                                    <img src="assets/images/company/logoClient.png" draggable='false' alt="" class="responsive-img valign profile-image">
-                                </div>
-                                <h5><strong>WELCOME,<br/> <i class='pink-text'>${data[0][4]} ${data[0][5].substring(0,1)}. ${data[0][3]}</i></strong></h5>
-                                <p><span class="pink-text hide">Position: </span><br/>${data[0][13]}<br/>
-                                <span class="pink-text hide">Address: </span><br/>${data[0][11]}</p>
-                            </div>
+								<div class="center">
+									<img src="assets/images/company/logoClient.png" draggable='false' alt="" class="responsive-img valign profile-image">
+								</div>
+								<h5><strong>WELCOME,<br/> <i class='pink-text'>${data[0][4]} ${data[0][5].substring(0,1)}. ${data[0][3]}</i></strong></h5>
+								<p><span class="pink-text hide">Position: </span><br/>${data[0][13]}<br/>
+								<span class="pink-text hide">Address: </span><br/>${data[0][11]}</p>
+							</div>
 			`;
 
 			$("#display_account").html(content);
@@ -718,15 +718,15 @@ profile = {
 			profile.displayPoints(data[0][0]);
 		}
 		else{
-	    	$("#display_cart").removeClass('bounceInUp').addClass("bounceOutUp");
-	    	$("#display_login").removeClass("bounceOutUp").addClass('bounceInUp');
+			$("#display_cart").removeClass('bounceInUp').addClass("bounceOutUp");
+			$("#display_login").removeClass("bounceOutUp").addClass('bounceInUp');
 		}
 
 
 			console.log('ss');
 		$("a[data-cmd='logout']").on("click",function(){
 			console.log('ss');
-        	profile.logout();
+			profile.logout();
 		});
 	},
 	logout:function(){

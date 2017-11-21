@@ -8,8 +8,27 @@ var App = function () {
         },
         handleHashChange: function(){
             $(window).on('hashchange',function() {
+                $(".side-nav").sideNav("hide");
+
                 if (window.location.hash) {
-                    App.handleLoadPage(window.location.hash);
+                    $('#subcontent').html(`<div style='margin-top:25%; text-align: center;'>
+                                            <div class='preloader-wrapper active'>
+                                                <div class='spinner-layer spinner-green-only'>
+                                                    <div class='circle-clipper left'>
+                                                        <div class='circle'></div>
+                                                    </div>
+                                                    <div class='gap-patch'>
+                                                        <div class='circle'></div>
+                                                    </div>
+                                                    <div class='circle-clipper right'>
+                                                        <div class='circle'></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>`);
+                    setTimeout(function(){
+                        App.handleLoadPage(window.location.hash);
+                    },100);
                 }
             });
         },
@@ -23,8 +42,7 @@ var App = function () {
             }
 
             var targetUrl = newhash[0].replace('#cmd=','../pages/'+node+'/')+".html";
-
-            $('.jvectormap-label, .jvector-label, .AutoFill_border ,#gritter-notice-wrapper, .ui-autocomplete, .colorpicker, .FixedHeader_Header, .FixedHeader_Cloned .lightboxOverlay, .lightbox').remove();
+            // $('.jvectormap-label, .jvector-label, .AutoFill_border ,#gritter-notice-wrapper, .ui-autocomplete, .colorpicker, .FixedHeader_Header, .FixedHeader_Cloned .lightboxOverlay, .lightbox').remove();
 
             var content = system.html(targetUrl);
             content.done(function(data){
@@ -42,9 +60,11 @@ var App = function () {
                     targetUrl = newhash[1].replace('content=','../pages/'+node+'/')+".html";
                 }
 
+
                 var subcontent = system.html(targetUrl);
                 subcontent.done(function(data){
                     $('#subcontent').html(data);
+                    $('.tooltipped').tooltip({delay: 50});
                     $("a").parent('li').removeClass("active");
                     $("a[href='"+hash+"']").parent('li').addClass("active");
                 });

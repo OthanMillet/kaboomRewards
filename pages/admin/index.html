@@ -2,17 +2,6 @@
 <script src="../assets/js/admin.js"></script>
 <script>
     login.ini();
-    var count = 0;
-    $("#showMenu").on("click",function(){
-        count++;
-        $("#slide-out").attr({"style":"width: 240px; left: 0px;top: 64px !important;"});
-        if((count%2)==1){
-            $("#slide-out").removeClass('slideOutLeft').addClass('slideInLeft');
-        }
-        else{
-            $("#slide-out").removeClass('slideInLeft').addClass('slideOutLeft');
-        }
-    });
 
     $("#log-out").on("click",function(){
         login.kill();

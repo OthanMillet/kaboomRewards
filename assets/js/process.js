@@ -46,7 +46,7 @@ var system = function(){
 		        cache:false
 		    });
 		},
-		send_mail:function(email,subject,message,callback){
+		send_mail:function(email,subject,message){
 			return system.ajax('../assets/harmony/Process.php?send-mail',[email,subject,message]);
 		},
 		loading: function(_switch){
@@ -157,11 +157,16 @@ login = {
 				var data = system.ajax('assets/harmony/Process.php?login',_form);
 				data.done(function(data){
 					data = JSON.parse(data);
+					console.log(data);
 					if(data[0] == 'Active'){
 						localStorage.setItem("hash",data[1]);
 						Materialize.toast('Success. Please wait.',4000,'',function(){
 					    	$(location).attr('href','account/');
 						});
+					}
+					else if(data[0] == 'Deactivated'){
+						localStorage.setItem("hash",data[1]);
+						Materialize.toast('Sorry. Your account is deactivated.',4000);
 					}
 					else{
 						Materialize.toast('Login Failed.',4000);
@@ -221,7 +226,7 @@ login = {
 				var data = system.ajax('assets/harmony/Process.php?marketLogin',_form);
 				data.done(function(data){
 					console.log(data);
-					if(data == "Active"){
+					if(data.trim() == "Active"){
 						localStorage.setItem("hash","employee");
 						Materialize.toast('Success.',4000);
 
@@ -232,7 +237,7 @@ login = {
 
 		                $(".chat-collapse").sideNav("hide");
 					}
-					else if(data == "Deactivated"){
+					else if(data.trim() == "Deactivated"){
 						Materialize.toast('Account is deactivated.',4000);
 					}
 					else{

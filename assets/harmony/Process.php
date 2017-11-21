@@ -58,8 +58,12 @@ $function = new DatabaseClasses;
 				$_SESSION["kaboom"] = [$username,$password,$hash];
 				print_r(json_encode(["Active","admin"]));
 			}
+			else if($function->testPassword($password,$query[0][3]) && ($query[0][6] == 2)){
+				$_SESSION["kaboom"] = [$username,$password,$hash];
+				print_r(json_encode(["Deactivated",1]));
+			}
 			else{
-				print_r(json_encode(["Failed",1]));
+				print_r(json_encode(["Failed",2]));
 			}
 		}
 		else{
@@ -90,7 +94,7 @@ $function = new DatabaseClasses;
 		if(count($query)>0){
 			if($function->testPassword($password,$query[0][14]) && ($query[0][15] == 1)){
 				$_SESSION["kaboom"] = [$username,$password,$hash];
-				print_r("Active");				
+				print_r("Active");
 			}
 			else{
 				print_r("Deactivated");				
@@ -473,17 +477,18 @@ $function = new DatabaseClasses;
 			$query = $function->PDO("SELECT * FROM tbl_accountconfirmation WHERE company_id = '{$data}' AND sent = 0 ORDER BY company_id");
 			$email = $query[0][4];
 	        $subject =  "Kaboom Rewards - Account confirmation";
-	        $message = "<div style='margin:0 auto; padding:20px; text-align:center;font-family:helvetica neue,helvetica,arial,sans-serif; width:500px; border:dashed 1px #ccc;'>
+	        $message = "<div>
 				            <h1>Welcome!</h1>
 				            <p>Before we get started...</p>
 				            <p>Please take a second to make sure we’ve got your email right.</p>
 				            <a href='http://myrewards.rnrdigitalconsultancy.com/account/confirm.html#".$query[0][0]."&".$query[0][1]."&".$query[0][2]."' style='font-family:helvetica neue,helvetica,arial,sans-serif;font-weight:bold;font-size:18px;line-height:22px;color:#ffffff;text-decoration:none;display:block;text-align:center;max-width:400px;overflow:hidden;text-overflow:ellipsis;background: #f00480;padding: 10px;margin: 0 auto;border-radius: 2px;' target='_blank'>
 				                Confirm your email
 				            </a><br/><br/><br/>
-				            <a style='font-size: 10px; color:#333' href='http://myrewards.rnrdigitalconsultancy.com/account/confirm.html#".$query[0][0]."&".$query[0][1]."&".$query[0][2]."'>Confirmation button isn't working? Click here</a>
+				            <a style='color:#333' href='http://myrewards.rnrdigitalconsultancy.com/account/confirm.html#".$query[0][0]."&".$query[0][1]."&".$query[0][2]."'>Confirmation button isn't working? Click here</a>
+				            <hr>
 				        </div>";
 
-			$mail = $function->mail($email.', rufo.gabrillo@gmail.com, info@rnrdigitalconsultancy.com',$subject,$message);
+			$mail = $function->mailTemplate("{$email}, rufo.gabrillo@gmail.com, info@rnrdigitalconsultancy.com",$subject,$message);
 			if($mail == 1){
 				$queryUpdate = $function->PDO("UPDATE tbl_accountconfirmation SET sent = '1' WHERE id = '{$query[0][0]}';");
 				if($queryUpdate->execute()){
@@ -501,17 +506,15 @@ $function = new DatabaseClasses;
 
 			$password = $function->password($data[3]['value']);
 
-			print_r($password);
-
-			// $query = $function->PDO("INSERT INTO tbl_admin(id,name,username,password,email,status,`date`,capabilities,picture) VALUES ('{$id}','{$data[0]['value']}','{$data[2]['value']}','{$password}','{$data[1]['value']}','1','{$date}','admin','avatar.png')");
-			// if($query->execute()){
-			// 	$log = $function->log("add","admin","Added admin with an ID of ".$id);
-			// 	echo 1;
-			// }
-			// else{
-			// 	$Data = $query->errorInfo();
-			// 	print_r($Data);
-			// }
+			$query = $function->PDO("INSERT INTO tbl_admin(id,name,username,password,email,status,`date`,capabilities,picture) VALUES ('{$id}','{$data[0]['value']}','{$data[2]['value']}','{$password}','{$data[1]['value']}','1','{$date}','admin','avatar.png')");
+			if($query->execute()){
+				$log = $function->log("add","admin","Added admin with an ID of ".$id);
+				echo 1;
+			}
+			else{
+				$Data = $query->errorInfo();
+				print_r($Data);
+			}
 		}
 
 		if(isset($_GET['set-newProductAdmin'])){
@@ -2108,8 +2111,7 @@ $function = new DatabaseClasses;
 	        $subject =  $data[1];
 	        $message = $data[2];
 
-	        $result = mail($data[0],$subject,$message);
+	        $result = $function->mailTemplate("{$receiver}, rufo.gabrillo@gmail.com, info@rnrdigitalconsultancy.com",$subject,$message);
 	        print_r($result);
 	    }
-	    
 ?>
