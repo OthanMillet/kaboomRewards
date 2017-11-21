@@ -1663,6 +1663,20 @@ $function = new DatabaseClasses;
 				}
 		    }
 
+		    if(isset($_GET['delete-admin'])){
+				$user = $function->getUser();
+		    	$data = $_POST['data'];
+				$query = $function->PDO("DELETE FROM tbl_admin WHERE id = '{$data}';");
+				if($query->execute()){
+					$log = $function->log2($user,"Removing admin account","Delete");
+					echo 1;
+				}
+				else{
+					$Data = $query->errorInfo();
+					print_r($Data);
+				}
+		    }
+
 		    if(isset($_GET['activate-employer'])){
 				$user = $function->getUser();
 		    	$data = $_POST['data'];

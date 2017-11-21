@@ -94,14 +94,17 @@ account = {
 					if(Number(v[6]) == 1){
 						status = "Active";
 						actions = `<a data-cmd='deactivateAdmin' data-name='${v[1]}' data-node='${v[0]}' class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='50' data-tooltip='Deactivate account' data-cmd='update'>
-									  	<i class='material-icons right hover black-text'>mode_edit</i>
-									  </a>`;	
+									  	<i class='material-icons right hover black-text'>lock_open</i>
+									</a>`;	
 					}
 					else{
 						status = "Deactivated";
-						actions = `<a data-cmd='activateAdmin' data-name='${v[1]}' data-node='${v[0]}' class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='50' data-tooltip='Activate account' data-cmd='update'>
-									  	<i class='material-icons right hover black-text'>mode_edit</i>
-									  </a>`;	
+						actions = `<a data-cmd='deleteAdmin' data-name='${v[1]}' data-node='${v[0]}' class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='50' data-tooltip='Delete account' data-cmd='update'>
+									  	<i class='material-icons right hover black-text'>delete_forever</i>
+									</a>
+									<a data-cmd='activateAdmin' data-name='${v[1]}' data-node='${v[0]}' class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='50' data-tooltip='Activate account' data-cmd='update'>
+									  	<i class='material-icons right hover black-text'>lock_outline</i>
+									</a>`;	
 					}					
 					content += `<tr>
 									<td>${v[1]}</td>
@@ -119,6 +122,7 @@ account = {
 
 			account.deactivate();
 			account.activate();
+			account.delete();
 		});
 	},
 	add:function(){
@@ -493,6 +497,30 @@ account = {
 
 			$("a[data-cmd='button_proceed']").on("click",function(){
 				var data = system.ajax('../assets/harmony/Process.php?activate-admin',id);
+				data.done(function(data){
+					console.log(data);
+					if(data == 1){
+						Materialize.toast('Account activaded.',4000);
+						account.list();
+						$('#modal_confirm').modal('close');	
+					}
+					else{
+						Materialize.toast('Cannot process request.',4000);
+					}
+				});
+			});
+		})
+	},
+	delete:function(){
+		$("a[data-cmd='deleteAdmin']").on('click',function(){
+			var id = $(this).data('node');
+			$("#modal_confirm .modal-content").html("Arey you sure DELETE "+$(this).data('name')+"'s account?");
+			$("#modal_confirm .modal-footer").html(`<a class='waves-effect btn-flat modal-action modal-close'>Cancel</a>
+													<a data-cmd='button_proceed' class='white-text waves-effect waves-blue blue btn-flat modal-action modal-close'>Proceed</a>`);
+			$('#modal_confirm').modal('open');			
+
+			$("a[data-cmd='button_proceed']").on("click",function(){
+				var data = system.ajax('../assets/harmony/Process.php?delete-admin',id);
 				data.done(function(data){
 					console.log(data);
 					if(data == 1){
