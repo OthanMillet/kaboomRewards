@@ -522,9 +522,8 @@ account = {
 			$("a[data-cmd='button_proceed']").on("click",function(){
 				var data = system.ajax('../assets/harmony/Process.php?delete-admin',id);
 				data.done(function(data){
-					console.log(data);
 					if(data == 1){
-						Materialize.toast('Account activaded.',4000);
+						Materialize.toast('Account deleted.',4000);
 						account.list();
 						$('#modal_confirm').modal('close');	
 					}

@@ -11,10 +11,6 @@ product = {
 		var data = system.html('assets/harmony/Process.php?get-availableProducts');
 		return data.responseText;
 	},
-	get:function(){
-		var data = system.html('assets/harmony/Process.php?get-availableProducts');
-		return data.responseText;
-	},
 	getByID:function(id){
 		var ret = [];
 		var data = system.ajax('assets/harmony/Process.php?get-productsByID',id);
@@ -219,8 +215,8 @@ market = {
 										<img alt='placeholder' src='assets/images/products/${v[10]}' style='width:100%'>
 									</a>
 									<div class='gallery-header row'>
-										<div class='col s10'><span class='truncate'>${v[1]}</span></div>
-										<div class='col s2'><span class='gj right'>${v[3]}</span></div>									
+										<div class='truncate' style='height:30px; overflow:hidden;'>${v[1]}</div>
+										<div class='bold' style="font-size:20px;">${v[3]}</div>
 									</div>
 									<div class='gallery-body row'>
 										<div class='col s12'>
