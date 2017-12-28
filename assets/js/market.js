@@ -325,9 +325,9 @@ market = {
 		let search = $("#field_searchProduct").val();
 		let sort = $("#field_sortProduct").val();
 		let checkedbrands = $("#display_brands input");
-		let brands = [];
+		let brands = [''];
 		let checkedcategories = $("#display_categories input");
-		let categories = [];
+		let categories = [''];
 
 		$.each(checkedbrands,function(i,v){
 			if(v.checked){
@@ -362,23 +362,6 @@ market = {
 		market.sortUpdatePriceRange(price);
 		price.noUiSlider.on('slide', function(){
 			market.sortUpdatePriceRange(price);
-		});
-
-		$("#field_sortProduct").on("change",function(){
-			let sort = $(this).val();
-
-			console.log(market.getFilterField());
-			// var data = system.ajax('assets/harmony/Process.php?get-sortProducts',sort);
-			// data.done(function(data){
-			// 	// console.log(data);
-			// 	data = JSON.parse(data);
-			// 	if(data.length > 0){
-			// 		market.products(data);
-			// 	}
-			// 	else{
-			// 		$("#products").html("<h4 class='center grey-text'>Search yield no result</h4>");
-			// 	}
-			// });				
 		});
 
 		price.noUiSlider.on('change', function(){
@@ -464,6 +447,26 @@ market = {
 				market.products();
 			}
 		});
+
+		// $("#field_searchProduct").on('keyup',function(){
+		// 	var search = $(this).val();
+		// 	if(search != ''){
+		// 		var data = system.ajax('assets/harmony/Process.php?get-filteredProducts',market.getFilterField());
+		// 		data.done(function(data){
+		// 			data = JSON.parse(data);
+		// 			if(data.length > 0){
+		// 				market.products(data);
+		// 			}
+		// 			else{
+		// 				$("#products").html("<h4 class='center grey-text'>Search yield no result</h4>");
+		// 			}
+		// 		});
+		// 	}
+		// 	else{
+		// 		market.products();
+		// 	}
+		// });
+
 	},
 	sortUpdatePriceRange:function(price){
 		var priceRange = price.noUiSlider.get();
