@@ -346,3 +346,11 @@ nav .brand-logo {
   font-size: 12px;
   text-align: left;
 }
+
+.profile-table tr td{
+      padding: unset !important;
+}
+
+.bold{
+  font-weight: bold;
+}

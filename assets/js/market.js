@@ -11,6 +11,14 @@ product = {
 		var data = system.html('assets/harmony/Process.php?get-availableProducts');
 		return data.responseText;
 	},
+	getCategory:function(){
+		var data = system.html('assets/harmony/Process.php?get-category');
+		return data.responseText;
+	},
+	getBrands:function(){
+		var data = system.html('assets/harmony/Process.php?get-brands');
+		return data.responseText;
+	},
 	getByID:function(id){
 		var ret = [];
 		var data = system.ajax('assets/harmony/Process.php?get-productsByID',id);
@@ -71,6 +79,28 @@ product = {
 
 		});
 	},
+	listBrand:function(){
+		let brands = JSON.parse(this.getBrands());
+		let content = "";
+		$.each(brands,function(i,v){
+			content += `<li>
+                            <input value='${v[0]}' id="field_brand${i}" name="field_brand${i}" type="checkbox">
+                            <label for="field_brand${i}">${v[0]}</label>
+                        </li>`;
+		})
+		$("#display_brands").html(content);
+	},
+	listCateogry:function(){
+		let category = JSON.parse(this.getCategory());
+		let content = "";
+		$.each(category,function(i,v){
+			content += `<li>
+                            <input value='${v[0]}' id="field_category${i}" name="field_category${i}" type="checkbox">
+                            <label for="field_category${i}">${v[0]}</label>
+                        </li>`;
+		})
+		$("#display_categories").html(content);
+	},
 	list:function(){
 		var content = "";
 		var data = product.get();
@@ -87,7 +117,7 @@ product = {
 							<td>published</td>
 							<td width='1px'>
 								<a class='tooltipped btn-floating waves-effect black-text no-shadow grey lighten-5 right' data-position='left' data-delay='50' data-tooltip='Show' data-cmd='update'>
-									<i class='mdi-navigation-more-vert right black-text'></i>
+									<i class='material-icons right black-text'>more_vert</i>
 								</a>
 							</td>
 						</tr>`;
@@ -244,7 +274,7 @@ market = {
 									</div>
 									<div class='gallery-action'>
 										<button class='btn-floating btn-large waves-effect waves-light shopping' data-cmd='addWishlist' data-wishlist='${v[0]}' data-node='${v[0]}'><i class='material-icons'>favorite</i></button>
-										<button class='btn-floating btn-large waves-effect waves-light shopping cyan' data-cmd='addCart' ${disabled} data-node='${v[0]}'><i class='material-icons'>shopping_cart</i></button>
+										<button class='btn-floating btn-large waves-effect waves-light shopping cyan' data-cmd='addCart' data-price='${v[3]}' ${disabled} data-node='${v[0]}'><i class='material-icons'>shopping_cart</i></button>
 									</div>
 								</div>
 							</div>`;
@@ -275,19 +305,42 @@ market = {
 		});
 
 		$("button[data-cmd='addCart']").on('click',function(){
-			$(this).attr({"disabled":true});
 			let data = $(this).data();
 			let cartCount = cart.count();
-			localStorage.setItem(`cartCount`,((cartCount*1)+1));
-			localStorage.setItem(`cart-${((cartCount*1)+1)}`,JSON.stringify([data.node,0]));
-			Materialize.toast('Thanks! You bought 1 product.',4000);
+
+			if(profile.getPoints() >= data.price){
+				$(this).attr({"disabled":true});
+				$("#display_cartTotal").html((cartCount*1)+1);
+				localStorage.setItem(`cartCount`,((cartCount*1)+1));
+				localStorage.setItem(`cart-${((cartCount*1)+1)}`,JSON.stringify([data.node,1]));
+				Materialize.toast('Thanks! You added 1 product to your cart.',4000);
+			}
+			else{
+				Materialize.toast('Insufficient points.',4000);
+			}
 		});
 	},
 	getFilterField:function(){
 		let a = document.getElementById('price-slider');
 		let search = $("#field_searchProduct").val();
 		let sort = $("#field_sortProduct").val();
-		return [a.noUiSlider.get(),search,sort];
+		let checkedbrands = $("#display_brands input");
+		let brands = [];
+		let checkedcategories = $("#display_categories input");
+		let categories = [];
+
+		$.each(checkedbrands,function(i,v){
+			if(v.checked){
+				brands.push(v.value);
+			}
+		});
+
+		$.each(checkedcategories,function(i,v){
+			if(v.checked){
+				categories.push(v.value);
+			}
+		});
+		return [a.noUiSlider.get(),search,sort,brands,categories];
 	},
 	sort:function(){
 		let priceRange = market.minMaxPricedProducts();
@@ -311,7 +364,6 @@ market = {
 			market.sortUpdatePriceRange(price);
 		});
 
-		console.log("xx");
 		$("#field_sortProduct").on("change",function(){
 			let sort = $(this).val();
 
@@ -344,10 +396,12 @@ market = {
 		});
 	},
 	filter:function(){
+		product.listBrand();
+		product.listCateogry();
 		let priceRange = market.minMaxPricedProducts();
+		let price = document.getElementById('price-slider');
 		priceRange = JSON.parse(priceRange);
 
-		let price = document.getElementById('price-slider');
 		noUiSlider.create(price,{
 			start: priceRange,
 			connect: true,
@@ -409,7 +463,7 @@ market = {
 			else{
 				market.products();
 			}
-		})
+		});
 	},
 	sortUpdatePriceRange:function(price){
 		var priceRange = price.noUiSlider.get();
@@ -460,7 +514,7 @@ market = {
 								<div class='col s12 m4 l4'>
 									<div class='card'>
 										<div class='card-image'>
-										<img alt='' class='responsive-img valign' draggable='false' src='assets/images/products/${data[10]}'>
+											<img alt='' class='responsive-img valign' draggable='false' src='assets/images/products/${data[10]}'>
 										</div>
 									</div>
 								</div>
@@ -486,6 +540,15 @@ market = {
 cart = {
 	ini:function(){
 		this.showCart();
+		profile.getAccountCart();
+		this.shippingAddress();
+
+		let total = 0;
+		$.each($("input[data-cmd='input']"),function(i,v){
+			total = total + ((v.value*1)*(v.dataset.cost*1));
+		});
+
+		cart.check(total);
 	},
 	count:function(){
 		let cartList = 0;
@@ -557,7 +620,6 @@ cart = {
 		let id = profile.get()[0][0];
 		products = JSON.parse(products);
 
-		console.log("xx");
 		if(cartList.length > 0){
 			$.each(cartList,function(i,v){
 				search = system.searchJSON(products,0,v[1][0]);
@@ -567,20 +629,18 @@ cart = {
 					subtotal = subtotal + total;
 					content += `<tr class='animated'>
 									<td>
-										<div class='row'>
-											<div class='col s4'>
-												<img src='assets/images/products/${search[0][10]}' alt='' style='width: 100px;' />
-											</div>
-											<div class='col s8'>
-												<span class='title'><b style='font-size:20px;'>${search[0][1]}</b><br/><span class='grey-text'>${search[0][3]}pts<span></span><br/><br/>
-												<button data-cmd='removeCart' data-cart='${v[0]}' class='btn-floating btn-flat tiny grey lighten-4'><i class='material-icons right hover black-text'>close</i></button> remove
-											</div>
-										</div>
+										<img src='assets/images/products/${search[0][10]}' alt='' style='width: 100px;' />
+									</td>
+									<td>
+										<span class='title'>
+										<div style='font-size:20px; height:30px; overflow:hidden;'>${search[0][1]}</div>
+										<span class='grey-text'>${search[0][3]}pts</span><br/><br/>
+										<button data-cmd='removeCart' data-cart='${v[0]}' class='btn-floating btn-flat tiny grey lighten-4'><i class='material-icons right hover black-text'>close</i></button> remove
 									</td>
 									<td>
 										<input data-cmd='input' data-cart='${v[0]}' data-limit='${search[0][2]}' data-cost='${search[0][3]}' value='${v[1][1]}' type='number' pattern='[1-9]*' class='validate valid' style='width: 40px;height: 35px;text-align: center;'/>
 									</td>
-									<td style='text-align:right;'>
+									<td style='text-align:right;'>	
 										<div class='row'>
 											<div class='col s12'>
 												<p class='count' style='font-size: 20px;'>${total}</p>
@@ -598,7 +658,6 @@ cart = {
 			$("button[data-cmd='checkOut']").removeAttr('disabled');
 		}
 		else{
-			console.log("xxx");
 			$("button[data-cmd='checkOut']").attr({'disabled':true});
 			$("#display_productInCart").html(`<div class='row'><h5 class='center grey-text'>You dont have any products.</h5></div>`);
 		}
@@ -611,11 +670,13 @@ cart = {
 			let count = Number($(this).val());
 			let cartList = JSON.parse(localStorage.getItem(data.cart));
 
+			console.log(data);
 
-			if(($(this).val() < data.limit) && ((points-(count*data.cost)) >= 0) && ($(this).val()>0)){
-				$.each($("input[data-cmd='input']"),function(i,v){
-					total = total + ((v.value*1)*(v.dataset.cost*1));
-				});
+			console.log(($(this).val() < data.limit));
+			console.log(($(this).val()>0));
+
+			if(($(this).val() < data.limit) && ($(this).val()>0)){
+				total = cart.subtotalCart();
 
 				cartList = JSON.stringify([cartList[0],Number($(this).val())]);
 				localStorage.setItem(data.cart,cartList);
@@ -631,11 +692,20 @@ cart = {
 		});
 
 		$("button[data-cmd='removeCart']").on('click',function(){
-			var _this = this;
+			let total = 0;
+			let _this = this;
 			$(_this).parents('tr').addClass('fadeOutUpBig');
 			setTimeout(function(){
+				let data = $(_this).data();
 				$(_this).parents('tr').remove();
-				var data = $(_this).data();
+
+				total = cart.subtotalCart();
+				// $.each($("input[data-cmd='input']"),function(i,v){
+				// 	total = total + ((v.value*1)*(v.dataset.cost*1));
+				// });
+
+				$("#display_total span").html(total);
+				cart.check(total);
 				localStorage.removeItem(data.cart);
 				Materialize.toast('Product has been removed.',4000);
 				$("#display_cartTotal").html(cart.get().length);
@@ -644,10 +714,38 @@ cart = {
 
 		$("button[data-cmd='checkOut']").on('click',function(){
 			let cartList = cart.get();
-			cart.checkout(cartList);
+			let total = 0;
+
+			total = cart.subtotalCart();
+			// $.each($("input[data-cmd='input']"),function(i,v){
+			// 	total = total + ((v.value*1)*(v.dataset.cost*1));
+			// });
+
+			if(profile.getPoints() < total){
+				Materialize.toast('Insufficient points.',4000);
+			}
+			else{
+				Materialize.toast('Proceed',4000);
+				// cart.checkout(cartList);
+			}
 		});
 	},
-}
+	shippingAddress:function(){
+		$("#field_address").on('click',function(){
+			let shipping = $(this)[0].checked;
+			console.log(shipping);
+			(shipping)?$('#display_differentAddress').removeClass('hidden'):$('#display_differentAddress').addClass('hidden');
+		})
+	},
+	subtotalCart:function(){
+		let total = 0;
+		$.each($("input[data-cmd='input']"),function(i,v){
+			total = total + ((v.value*1)*(v.dataset.cost*1));
+		});
+
+		return total;
+	},
+};
 
 profile = {
 	ini:function(){
@@ -696,21 +794,19 @@ profile = {
 		if(data.length>0){
 			$("#display_logo").attr({"style":"width:200px;"});
 			$("#display_headerAccount").removeClass('hide');
-
-			console.log(data);
-
 			let content = `<div class="col s12 m12 l12">
 								<div class="center">
 									<img src="assets/images/company/logoClient.png" draggable='false' alt="" class="responsive-img valign profile-image">
 								</div>
-								<h5><strong>WELCOME,<br/> <i class='pink-text'>${data[0][4]} ${data[0][5].substring(0,1)}. ${data[0][3]}</i></strong></h5>
-								<p><span class="pink-text hide">Position: </span><br/>${data[0][13]}<br/>
-								<span class="pink-text hide">Address: </span><br/>${data[0][11]}</p>
-							</div>
-			`;
+								<h5><strong>Hello <span class='pink-text'>${data[0][4]} ${data[0][5].substring(0,1)}. ${data[0][3]}</span></strong></h5>
+								<p>
+									<i class='material-icons left white-text'>work</i> ${data[0][13]}<br/>
+									<i class='material-icons left white-text'>place</i> ${data[0][11]}
+								</p>
+							</div>`;
 
 			$("#display_account").html(content);
-			$(".display_accountName").html(`WELCOME, ${data[0][4]} ${data[0][5].substring(0,1)}. ${data[0][3]}`);
+			$(".display_accountName").html(`Hello, ${data[0][4]} ${data[0][5].substring(0,1)}. ${data[0][3]}`);
 			profile.displayPoints(data[0][0]);
 		}
 		else{
@@ -718,12 +814,36 @@ profile = {
 			$("#display_login").removeClass("bounceOutUp").addClass('bounceInUp');
 		}
 
-
-			console.log('ss');
 		$("a[data-cmd='logout']").on("click",function(){
-			console.log('ss');
 			profile.logout();
 		});
+	},
+	getAccountCart:function(){
+		let data = this.get();
+		let points = this.getPoints();
+
+
+		console.log(data);
+
+		let content = `
+					<tr>
+						<td class="bold" width='80px'>Name: </td>
+						<td>${data[0][4]} ${data[0][5]} ${data[0][3]} </td>
+					</tr>
+					<tr>
+						<td class="bold">Position: </td>
+						<td>${data[0][13]}</td>
+					</tr>
+					<tr>
+						<td class="bold">Points: </td>
+						<td>${points}</td>
+					</tr>
+					<tr>
+						<td class="bold">Address: </td>
+						<td>${data[0][11]}</td>
+					</tr>
+		`;
+		$("#display_accountCart").html(content);
 	},
 	logout:function(){
 		let data = system.ajax('assets/harmony/Process.php?kill-session',"");
@@ -781,3 +901,7 @@ wishlist = {
 		});
 	}
 };
+
+
+// #1e4799
+// #f57e24

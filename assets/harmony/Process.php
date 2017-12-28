@@ -263,12 +263,12 @@ $function = new DatabaseClasses;
 		}
 
 		if(isset($_GET['get-brands'])){
-			$query = $function->PDO("SELECT * FROM tbl_brand ORDER BY `brandName` DESC");
+			$query = $function->PDO("SELECT brandName FROM tbl_brand ORDER BY `brandName` DESC");
 			print_r(json_encode($query));
 		}
 
 		if(isset($_GET['get-category'])){
-			$query = $function->PDO("SELECT * FROM tbl_productcategories ORDER BY `category` DESC");
+			$query = $function->PDO("SELECT category FROM tbl_productcategories ORDER BY `category` DESC");
 			print_r(json_encode($query));
 		}
 

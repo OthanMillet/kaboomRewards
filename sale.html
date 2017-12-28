@@ -63,6 +63,14 @@
                             <form id='form_productFilter'>
                                 <div class="filter-container">
                                     <div class="row">
+                                        <label for="price-slider" class="active">Category</label><br/>
+                                        <ul id='display_categories'></ul>
+                                    </div>
+                                    <div class="row">
+                                        <label for="price-slider" class="active">Brands</label><br/>
+                                        <ul id='display_brands'></ul>
+                                    </div>
+                                    <div class="row">
                                         <div class="input-field">
                                             <input name="search" name='field_searchProduct' id='field_searchProduct' type="text" >
                                             <label for="search">Search</label>
@@ -73,7 +81,6 @@
                                                 <option >Price ascending</option>
                                                 <option >Price descending</option>
                                                 <option >Newly arrived</option>
-                                                <!-- <option >Popularity</option> -->
                                             </select>
                                         </div>
                                     </div>
@@ -86,18 +93,6 @@
                                                 <div class="col-s6 right" id='price-max' style="margin-top: 5px;">100</div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="row hide">
-                                        <ul id='display_brands'>
-                                            <li>
-                                                <input id="field_brand1" name="field_brand1" type="checkbox">
-                                                <label for="field_brand1">Brand A (100)</label>
-                                            </li>
-                                            <li>
-                                                <input id="field_brand2" name="field_brand2" type="checkbox">
-                                                <label for="field_brand2">Brand B (74)</label>
-                                            </li>
-                                        </ul>
                                     </div>
                                 </div>
                             </form>
