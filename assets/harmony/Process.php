@@ -328,30 +328,35 @@ $function = new DatabaseClasses;
 
 			$brand = "";
 			$category = "";
+			$match = "";
 
-			for($x=1;$x<count($data[3]);$x++){
-				$brand .= "{$data[3][$x]}";
-			}
+			if(count($data[3])>1 || count($data[4])>1){
+				for($x=1;$x<count($data[3]);$x++){
+					$brand .= "{$data[3][$x]}";
+				}
 
-			for($x=1;$x<count($data[4]);$x++){
-				$category .= "{$data[4][$x]}";
+				for($x=1;$x<count($data[4]);$x++){
+					$category .= "{$data[4][$x]}";
+				}
+
+				$match = "AND MATCH(category,brand) AGAINST('{$brand} {$category}' IN BOOLEAN MODE)";
 			}
 
 			switch($sort){
 				case "Price ascending":
-					$query = $function->PDO("SELECT * FROM tbl_product WHERE (qty>0 AND status = 'Published') AND (price BETWEEN '{$min}' AND '{$max}') AND (product_name LIKE '{$search}%') AND (qty>0 AND status = 'Published') AND MATCH(category,brand) AGAINST('{$brand} {$category}' IN BOOLEAN MODE) ORDER BY `price` ASC");
+					$query = $function->PDO("SELECT * FROM tbl_product WHERE (qty>0 AND status = 'Published') AND (price BETWEEN '{$min}' AND '{$max}') AND (product_name LIKE '{$search}%') AND (qty>0 AND status = 'Published') {$match} ORDER BY `price` ASC");
 					break;
 				case "Price descending":
-					$query = $function->PDO("SELECT * FROM tbl_product WHERE (qty>0 AND status = 'Published') AND (price BETWEEN '{$min}' AND '{$max}') AND (product_name LIKE '{$search}%') AND (qty>0 AND status = 'Published') AND MATCH(category,brand) AGAINST('{$brand} {$category}' IN BOOLEAN MODE) ORDER BY `price` DESC");
+					$query = $function->PDO("SELECT * FROM tbl_product WHERE (qty>0 AND status = 'Published') AND (price BETWEEN '{$min}' AND '{$max}') AND (product_name LIKE '{$search}%') AND (qty>0 AND status = 'Published') {$match} ORDER BY `price` DESC");
 					break;
 				case "Newly arrived":
-					$query = $function->PDO("SELECT * FROM tbl_product WHERE (qty>0 AND status = 'Published') AND (price BETWEEN '{$min}' AND '{$max}') AND (product_name LIKE '{$search}%') AND (qty>0 AND status = 'Published') AND MATCH(category,brand) AGAINST('{$brand} {$category}' IN BOOLEAN MODE) ORDER BY `date` DESC");
+					$query = $function->PDO("SELECT * FROM tbl_product WHERE (qty>0 AND status = 'Published') AND (price BETWEEN '{$min}' AND '{$max}') AND (product_name LIKE '{$search}%') AND (qty>0 AND status = 'Published') {$match} ORDER BY `date` DESC");
 					break;
 				case "Popularity":
-					$query = $function->PDO("SELECT * FROM tbl_product WHERE (qty>0 AND status = 'Published') AND (price BETWEEN '{$min}' AND '{$max}') AND (product_name LIKE '{$search}%') AND (qty>0 AND status = 'Published') AND MATCH(category,brand) AGAINST('{$brand} {$category}' IN BOOLEAN MODE) ORDER BY `product_name`");
+					$query = $function->PDO("SELECT * FROM tbl_product WHERE (qty>0 AND status = 'Published') AND (price BETWEEN '{$min}' AND '{$max}') AND (product_name LIKE '{$search}%') AND (qty>0 AND status = 'Published') {$match} ORDER BY `product_name`");
 					break;
 				default:
-					$query = $function->PDO("SELECT * FROM tbl_product WHERE (qty>0 AND status = 'Published') AND (price BETWEEN '{$min}' AND '{$max}') AND (product_name LIKE '{$search}%') AND (qty>0 AND status = 'Published') AND MATCH(category,brand) AGAINST('{$brand} {$category}' IN BOOLEAN MODE) ORDER BY `product_name`");
+					$query = $function->PDO("SELECT * FROM tbl_product WHERE (qty>0 AND status = 'Published') AND (price BETWEEN '{$min}' AND '{$max}') AND (product_name LIKE '{$search}%') AND (qty>0 AND status = 'Published') {$match} ORDER BY `product_name`");
 			};
 
 			print_r(json_encode($query));

@@ -403,70 +403,39 @@ market = {
 		});
 
 		price.noUiSlider.on('change', function(){
-			var data = system.ajax('assets/harmony/Process.php?get-filteredProducts',market.getFilterField());
-			data.done(function(data){
-				data = JSON.parse(data);
-				if(data.length > 0){
-					market.products(data);
-				}
-				else{
-					$("#products").html("<h4 class='center grey-text'>Search yield no result</h4>");
-				}
-			});				
+			market.fetchFilter();
 		});
 
 		$("#field_sortProduct").on("change",function(){
-			let sort = $(this).val();
-				var data = system.ajax('assets/harmony/Process.php?get-filteredProducts',market.getFilterField());
-				data.done(function(data){
-					data = JSON.parse(data);
-					if(data.length > 0){
-						market.products(data);
-					}
-					else{
-						$("#products").html("<h4 class='center grey-text'>Search yield no result</h4>");
-					}
-				});				
+			market.fetchFilter();
 		});
 
 		$("#field_searchProduct").on('keyup',function(){
 			var search = $(this).val();
 			if(search != ''){
-				var data = system.ajax('assets/harmony/Process.php?get-filteredProducts',market.getFilterField());
-				data.done(function(data){
-					data = JSON.parse(data);
-					if(data.length > 0){
-						market.products(data);
-					}
-					else{
-						$("#products").html("<h4 class='center grey-text'>Search yield no result</h4>");
-					}
-				});
+				market.fetchFilter();
 			}
 			else{
 				market.products();
 			}
 		});
 
-		// $("#field_searchProduct").on('keyup',function(){
-		// 	var search = $(this).val();
-		// 	if(search != ''){
-		// 		var data = system.ajax('assets/harmony/Process.php?get-filteredProducts',market.getFilterField());
-		// 		data.done(function(data){
-		// 			data = JSON.parse(data);
-		// 			if(data.length > 0){
-		// 				market.products(data);
-		// 			}
-		// 			else{
-		// 				$("#products").html("<h4 class='center grey-text'>Search yield no result</h4>");
-		// 			}
-		// 		});
-		// 	}
-		// 	else{
-		// 		market.products();
-		// 	}
-		// });
+		$("#display_categories input, #display_brands input").on('click',function(){
+			market.fetchFilter();
+		});
 
+	},
+	fetchFilter:function(){
+		let data = system.ajax('assets/harmony/Process.php?get-filteredProducts',market.getFilterField());
+		data.done(function(data){
+			data = JSON.parse(data);
+			if(data.length > 0){
+				market.products(data);
+			}
+			else{
+				$("#products").html("<h4 class='center grey-text'>Search yield no result</h4>");
+			}
+		});
 	},
 	sortUpdatePriceRange:function(price){
 		var priceRange = price.noUiSlider.get();
