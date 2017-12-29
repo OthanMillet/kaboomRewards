@@ -254,6 +254,9 @@ recover = {
 		this.sendCode();
 	},
 	sendCode:function(){
+		let node = (window.location.hash != "#employee")?"login.html":"index.html";
+		console.log(node);
+
 		$("#display_cardTitle").html('Enter your email to recover your account');
 		$("#display_form").html(`<form id="form_forgot" method="get" action="" novalidate="novalidate">
                                     <div class="row">
@@ -273,7 +276,7 @@ recover = {
                                             <p class="margin medium-small"><a data-cmd='redirect'>Enter recovery code</a></p>
                                         </div>          
                                         <div class="input-field col s12 m6 l6">
-                                            <p class="margin right-align medium-small"><a href="login.html">Back to login page</a></p>
+                                            <p class="margin right-align medium-small"><a href="${node}">Back to login page</a></p>
                                         </div>          
                                     </div>
                                 </form>`);
@@ -296,10 +299,9 @@ recover = {
 				let _form = $(form).serializeArray();
 				let data = system.ajax('assets/harmony/Process.php?validateEmail',_form[0]['value']);
 				data.done(function(data){
-					if(data[0] == 1){
+					if(data == 1){
 						let codeData = system.ajax('assets/harmony/Process.php?email-code',_form[0]['value']);
 						codeData.done(function(data){
-							console.log(data);
 							Materialize.toast('Recovery code is sent.',4000);
 							recover.validateCode();
 						});

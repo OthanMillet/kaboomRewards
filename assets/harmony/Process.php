@@ -263,12 +263,12 @@ $function = new DatabaseClasses;
 		}
 
 		if(isset($_GET['get-brands'])){
-			$query = $function->PDO("SELECT brandName FROM tbl_brand ORDER BY `brandName` DESC");
+			$query = $function->PDO("SELECT brand as brand, COUNT(*) as count FROM tbl_product GROUP BY brand ORDER BY count DESC");
 			print_r(json_encode($query));
 		}
 
 		if(isset($_GET['get-category'])){
-			$query = $function->PDO("SELECT category FROM tbl_productcategories ORDER BY `category` DESC");
+			$query = $function->PDO("SELECT category as category, COUNT(*) as count FROM tbl_product GROUP BY category ORDER BY count DESC");
 			print_r(json_encode($query));
 		}
 
@@ -278,7 +278,9 @@ $function = new DatabaseClasses;
 		}
 
 		if(isset($_GET['get-availableProducts'])){
-			$query = $function->PDO("SELECT * FROM tbl_product WHERE qty>0 AND status = 'Published' ORDER BY `product_name`");
+			$data = $_POST['data'];
+
+			$query = $function->PDO("SELECT * FROM tbl_product WHERE qty>0 AND status = 'Published' ORDER BY `product_name` LIMIT {$data[0]},{$data[1]}");
 			print_r(json_encode($query));
 		}
 

@@ -7,8 +7,10 @@ product = {
 		this.add();
 		this.list();
 	},
-	get:function(){
-		var data = system.html('assets/harmony/Process.php?get-availableProducts');
+	get:function(min,max){
+		min = ((typeof min == undefined) || (min == null))?0:min;
+		max = ((typeof max == undefined) || (max == null))?20:max;
+		var data = system.ajax('assets/harmony/Process.php?get-availableProducts',[min,max]);
 		return data.responseText;
 	},
 	getCategory:function(){
@@ -76,30 +78,60 @@ product = {
 			if(search.length>0){
 				$("button[data-wishlist='"+search[1]+"']").attr({"disabled":"true"});
 			}
-
 		});
 	},
 	listBrand:function(){
 		let brands = JSON.parse(this.getBrands());
 		let content = "";
 		$.each(brands,function(i,v){
-			content += `<li>
+			hide = (i>=5)?'hide':'';
+			content += `<li class='${hide}'>
                             <input value='${v[0]}' id="field_brand${i}" name="field_brand${i}" type="checkbox">
-                            <label for="field_brand${i}">${v[0]}</label>
-                        </li>`;
+                            <label for="field_brand${i}">${v[0]} (${v[1]})</label>
+                        </li>`;				
 		})
 		$("#display_brands").html(content);
+		if(brands.length>5){
+			$("#display_brands").append("<a href='#!' data-cmd='showMore_brand' class='link'>show more</a>");
+		}
+
+		$("a[data-cmd='showMore_brand']").on('click',function(){
+			if($("#display_brands")[0].className=='unhidden'){
+				$("#display_brands").removeClass('unhidden');
+				$("#display_brands li.unhide").addClass('hide').removeClass('unhide');
+			}
+			else{
+				$("#display_brands").addClass('unhidden');
+				$("#display_brands li.hide").addClass('unhide').removeClass('hide');
+			}
+		})
 	},
 	listCateogry:function(){
 		let category = JSON.parse(this.getCategory());
 		let content = "";
+		let hide = '';
 		$.each(category,function(i,v){
-			content += `<li>
-                            <input value='${v[0]}' id="field_category${i}" name="field_category${i}" type="checkbox">
-                            <label for="field_category${i}">${v[0]}</label>
-                        </li>`;
-		})
+			hide = (i>=5)?'hide':'';
+			content += `<li class='${hide}'>
+	                            <input value='${v[0]}' id="field_category${i}" name="field_category${i}" type="checkbox">
+	                            <label for="field_category${i}">${v[0]} (${v[1]})</label>
+	                        </li>`;				
+		});
 		$("#display_categories").html(content);
+		if(category.length>5){
+			$("#display_categories").append("<a href='#!' data-cmd='showMore_category' class='link'>show more</a>");
+		}
+
+		$("a[data-cmd='showMore_category']").on('click',function(){
+			if($("#display_categories")[0].className=='unhidden'){
+				$("#display_categories").removeClass('unhidden');
+				$("#display_categories li.unhide").addClass('hide').removeClass('unhide');
+			}
+			else{
+				$("#display_categories").addClass('unhidden');
+				$("#display_categories li.hide").addClass('unhide').removeClass('hide');
+			}
+		});
 	},
 	list:function(){
 		var content = "";
@@ -220,6 +252,14 @@ market = {
 				wishlist.ini();
 				market.products();
 				cart.count();
+
+				let count = 21;
+				let prod = '';
+				$("a[data-cmd='showMore_products']").on('click',function(){
+					prod = product.get(count,count+20);
+					market.products(JSON.parse(prod));
+					count = count + 20;
+				});
 			}
 		});	
 	},
@@ -280,7 +320,7 @@ market = {
 							</div>`;
 		});
 
-		$("#products").html(content);
+		$("#products").append(content);
 
 		$(".product").on('click',function(e){
 			$(this).galleryExpand('open');
@@ -423,11 +463,11 @@ market = {
 		$("#display_categories input, #display_brands input").on('click',function(){
 			market.fetchFilter();
 		});
-
 	},
 	fetchFilter:function(){
 		let data = system.ajax('assets/harmony/Process.php?get-filteredProducts',market.getFilterField());
 		data.done(function(data){
+			// console.log(data);
 			data = JSON.parse(data);
 			if(data.length > 0){
 				market.products(data);
@@ -586,11 +626,10 @@ cart = {
 		let total = 0, subtotal = 0;
 		let content = "";
 		let search = [];
-		let products = product.get();
 		let cartList = cart.get(), _cart = "";
 		let account = profile.get();
 		let id = profile.get()[0][0];
-		products = JSON.parse(products);
+		products = JSON.parse(product.get());
 
 		if(cartList.length > 0){
 			$.each(cartList,function(i,v){
