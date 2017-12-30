@@ -541,7 +541,7 @@ $function = new DatabaseClasses;
 			$date = $function->PDO_DateAndTime();
 
 			$user = $function->getAdmin();
-			$query = $function->PDO("INSERT INTO tbl_product(id,product_name,qty,price,category,description,picture,brand,status,`date`,addedby,lastupdateby) VALUES ('{$id}','{$data[0]['value']}','{$data[1]['value']}','{$data[2]['value']}','{$data[4]['value']}','{$data[3]['value']}','default.png','{$data[5]['value']}','Published','{$date}','{$user}','{$user}')");
+			$query = $function->PDO("INSERT INTO tbl_product(id,product_name,qty,price,category,description,picture1,brand,status,`date`,addedby,lastupdateby) VALUES ('{$id}','{$data[0]['value']}','{$data[1]['value']}','{$data[2]['value']}','{$data[4]['value']}','{$data[3]['value']}','default.png','{$data[5]['value']}','Published','{$date}','{$user}','{$user}')");
 			if($query->execute()){
 				$function->log("add",$user,"Added product with an ID of ".$id);
 				echo 1;
@@ -1539,10 +1539,10 @@ $function = new DatabaseClasses;
 			$data = $_POST['data'];
 			$id = $data[0];
 
-			if($data[1][0]['name'] == "field_product"){
-				$query = $function->PDO("UPDATE tbl_product SET product_name = '{$data[1][0]['value']}' WHERE id = '{$id}';");
+			if($data[1][0] == "field_product"){
+				$query = $function->PDO("UPDATE tbl_product SET product_name = '{$data[1][1]}' WHERE id = '{$id}';");
 				if($query->execute()){
-					$log = $function->log2($id,"Product name is updated to {$data[1][0]['value']}.","Update");
+					$log = $function->log2($id,"Product name is updated to {$data[1][1]}.","Update");
 					echo 1;
 				}
 				else{
@@ -1550,10 +1550,10 @@ $function = new DatabaseClasses;
 					print_r($Data);
 				}
 			}
-			else if($data[1][0]['name'] == "field_price"){
-				$query = $function->PDO("UPDATE tbl_product SET price = '{$data[1][0]['value']}' WHERE id = '{$id}';");
+			else if($data[1][0] == "field_price"){
+				$query = $function->PDO("UPDATE tbl_product SET price = '{$data[1][1]}' WHERE id = '{$id}';");
 				if($query->execute()){
-					$log = $function->log2($id,"Product price is updated to {$data[1][0]['value']}.","Update");
+					$log = $function->log2($id,"Product price is updated to {$data[1][1]}.","Update");
 					echo 1;
 				}
 				else{
@@ -1561,10 +1561,10 @@ $function = new DatabaseClasses;
 					print_r($Data);
 				}
 			}
-			else if($data[1][0]['name'] == "field_qty"){
-				$query = $function->PDO("UPDATE tbl_product SET qty = '{$data[1][0]['value']}' WHERE id = '{$id}';");
+			else if($data[1][0] == "field_qty"){
+				$query = $function->PDO("UPDATE tbl_product SET qty = '{$data[1][1]}' WHERE id = '{$id}';");
 				if($query->execute()){
-					$log = $function->log2($id,"Product SKU is updated to {$data[1][0]['value']}.","Update");
+					$log = $function->log2($id,"Product SKU is updated to {$data[1][1]}.","Update");
 					echo 1;
 				}
 				else{
@@ -1572,10 +1572,10 @@ $function = new DatabaseClasses;
 					print_r($Data);
 				}
 			}
-			else if($data[1][0]['name'] == "field_categories"){
-				$query = $function->PDO("UPDATE tbl_product SET category = '{$data[1][0]['value']}' WHERE id = '{$id}';");
+			else if($data[1][0] == "field_categories"){
+				$query = $function->PDO("UPDATE tbl_product SET category = '{$data[1][1]}' WHERE id = '{$id}';");
 				if($query->execute()){
-					$log = $function->log2($id,"Product categories are updated to {$data[1][0]['value']}.","Update");
+					$log = $function->log2($id,"Product categories are updated to {$data[1][1]}.","Update");
 					echo 1;
 				}
 				else{
@@ -1583,10 +1583,10 @@ $function = new DatabaseClasses;
 					print_r($Data);
 				}
 			}
-			else if($data[1][0]['name'] == "field_description"){
-				$query = $function->PDO("UPDATE tbl_product SET description = '{$data[1][0]['value']}' WHERE id = '{$id}';");
+			else if($data[1][0] == "field_description"){
+				$query = $function->PDO("UPDATE tbl_product SET description = '{$data[1][1]}' WHERE id = '{$id}';");
 				if($query->execute()){
-					$log = $function->log2($id,"Product description are updated to {$data[1][0]['value']}.","Update");
+					$log = $function->log2($id,"Product description are updated to {$data[1][1]}.","Update");
 					echo 1;
 				}
 				else{
@@ -1594,10 +1594,10 @@ $function = new DatabaseClasses;
 					print_r($Data);
 				}
 			}
-			else if($data[1][0]['name'] == "field_status"){
-				$query = $function->PDO("UPDATE tbl_product SET status = '{$data[1][0]['value']}' WHERE id = '{$id}';");
+			else if($data[1][0] == "field_status"){
+				$query = $function->PDO("UPDATE tbl_product SET status = '{$data[1][1]}' WHERE id = '{$id}';");
 				if($query->execute()){
-					$log = $function->log2($id,"Product status is updated to {$data[1][0]['value']}.","Update");
+					$log = $function->log2($id,"Product status is updated to {$data[1][1]}.","Update");
 					echo 1;
 				}
 				else{
@@ -1612,7 +1612,7 @@ $function = new DatabaseClasses;
 			$id = $data[0];
 
 			$picture = $function->saveProductImage($id,$data[1]);
-			$query = $function->PDO("UPDATE tbl_product SET picture = '{$picture}' WHERE id = '{$id}';");
+			$query = $function->PDO("UPDATE tbl_product SET picture1 = '{$picture}' WHERE id = '{$id}';");
 			if($query->execute()){
 				$log = $function->log2($id,"Product picture is updated to {$picture}.","Update");
 				echo 1;

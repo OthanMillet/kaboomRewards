@@ -119,13 +119,30 @@ var system = function(){
 		random:function(min,max){
 			return Math.floor(Math.random() * (max - min + 1) + min);
 		},
-		froala:function(element){
-		    $(function() {
-				$(element).froalaEditor({
-					toolbarButtons:['fullscreen', 'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 'fontFamily', 'fontSize', 'color', 'inlineStyle', 'paragraphStyle', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', 'quote', '-', 'insertLink', 'insertTable', '|', 'emoticons', 'specialCharacters', 'insertHR', 'selectAll', 'clearFormatting', '|', 'spellChecker', 'help', 'html', '|', 'undo', 'redo'],
-					quickInsertButtons: ['table', 'ol', 'ul', 'hr']
-				});
-		    });
+		quill:function(element){
+			let option = {
+					modules: {
+						toolbar:[
+							['bold', 'italic', 'underline', 'strike'],       
+							['blockquote', 'code-block'],
+							[{ 'header': 1 }, { 'header': 2 }],             
+							[{ 'list': 'ordered'}, { 'list': 'bullet' }],
+							[{ 'script': 'sub'}, { 'script': 'super' }],      
+							[{ 'indent': '-1'}, { 'indent': '+1' }],          
+							[{ 'direction': 'rtl' }],                         
+							[{ 'size': ['small', false, 'large', 'huge'] }], 
+							[{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+							[{ 'color': [] }, { 'background': [] }],         
+							[{ 'font': [] }],
+							[{ 'align': [] }],
+							['clean']                                         
+						],
+					},
+					placeholder: 'Description',
+					theme: 'snow'
+			};
+	    	let editor = new Quill(element,option);
+	    	return editor;
 		},		
 	}
 }();

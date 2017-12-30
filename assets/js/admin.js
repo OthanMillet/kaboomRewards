@@ -1744,6 +1744,15 @@ product = {
 							</td>
 						</tr>
 						<tr>
+							<td class='bold'>Brand:</td>
+							<td class='grey-text'>${data[0][11]}</td>
+							<td>
+								<a data-cmd='updateProduct' data-value='${data[0][11]}' data-node='${data[0][0]}' data-prop='Brand' class='right tooltipped btn-floating waves-effect no-shadow white right' data-position='left' data-delay='0' data-tooltip='Update'>
+									<i class='material-icons right black-text hover'>mode_edit</i>
+								</a>
+							</td>
+						</tr>
+						<tr>
 							<td class='bold'>Category:</td>
 							<td class='grey-text'>${chipsContent}</td>
 							<td>
@@ -1825,9 +1834,8 @@ product = {
 						Materialize.toast('You did not even change the product name.',4000);
 					}
 					else{
-						var ajax = system.ajax('../assets/harmony/Process.php?update-product',[id,_form]);
+						var ajax = system.ajax('../assets/harmony/Process.php?update-product',[id,['field_product',_form[0]['value']]]);
 						ajax.done(function(ajax){
-							console.log(ajax);
 							if(ajax == 1){
 								system.clearForm();
 								Materialize.toast('Product updated.',4000);
@@ -1875,8 +1883,9 @@ product = {
 						Materialize.toast('You did not even change the product name.',4000);
 					}
 					else{
-						var ajax = system.ajax('../assets/harmony/Process.php?update-product',[id,_form]);
+						var ajax = system.ajax('../assets/harmony/Process.php?update-product',[id,["field_price",_form[0]['value']]]);
 						ajax.done(function(ajax){
+							console.log(ajax);
 							if(ajax == 1){
 								system.clearForm();
 								Materialize.toast('Product updated.',4000);
@@ -1924,9 +1933,8 @@ product = {
 						Materialize.toast('You did not even change the product name.',4000);
 					}
 					else{
-						var ajax = system.ajax('../assets/harmony/Process.php?update-product',[id,_form]);
+						var ajax = system.ajax('../assets/harmony/Process.php?update-product',[id,["field_qty",_form[0]['value']]]);
 						ajax.done(function(ajax){
-							console.log(ajax);
 							if(ajax == 1){
 								system.clearForm();
 								Materialize.toast('Product updated.',4000);
@@ -1941,18 +1949,17 @@ product = {
 			    }
 			}); 
 		}			
-		else if(data[1] == "Category"){
-
+		else if(data[1] == "Brand"){
 			let productCategory = product.getCategory();
 			let categoryContent = "";
 			productCategory = JSON.parse(productCategory);
 
 			for(let c of productCategory){
-				if(data[2] == c[1]){
-					categoryContent += `<option selected>${c[1]}</option>`;
+				if(data[2] == c[0]){
+					categoryContent += `<option selected>${c[0]}</option>`;
 				}
 				else{
-					categoryContent += `<option>${c[1]}</option>`;
+					categoryContent += `<option>${c[0]}</option>`;
 				}
 			}
 			$("#field_category").html(categoryContent);
@@ -1991,7 +1998,73 @@ product = {
 						Materialize.toast('You did not even change the category.',4000);
 					}
 					else{
-						var ajax = system.ajax('../assets/harmony/Process.php?update-product',[id,_form]);
+						var ajax = system.ajax('../assets/harmony/Process.php?update-product',[id,["field_categories",_form[0]['value']]]);
+						ajax.done(function(ajax){
+							console.log(ajax);
+							if(ajax == 1){
+								system.clearForm();
+								Materialize.toast('Product updated.',4000);
+								$('#modal_confirm').modal('close');	
+								product.refresh();
+							}
+							else{
+								Materialize.toast('Cannot process request.',4000);
+							}
+						});
+					}
+			    }
+			}); 
+		}			
+		else if(data[1] == "Category"){
+			let productCategory = product.getCategory();
+			let categoryContent = "";
+			productCategory = JSON.parse(productCategory);
+
+			for(let c of productCategory){
+				if(data[2] == c[0]){
+					categoryContent += `<option selected>${c[0]}</option>`;
+				}
+				else{
+					categoryContent += `<option>${c[0]}</option>`;
+				}
+			}
+			$("#field_category").html(categoryContent);
+
+			var content = `<h4>Change ${data[1]}</h4>
+						  <form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>
+						  		<div class='col s12'>
+						  			<label for='field_categories'>${data[1]}: </label>
+						  			<select id='field_categories' type='text' length='100' name='field_categories' data-error='.error_categories'>${categoryContent}</select>
+						  			<div class='error_categories'></div>
+						  		</div>
+						  		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>
+						  		<a class='waves-effect waves-grey grey-text btn-flat modal-action modal-close right'>Cancel</a>
+						  </form>`;
+			$("#modal_confirm .modal-content").html(content);
+			$('#modal_confirm').modal('open');		
+		    $("select").material_select();
+
+			$("#form_update").validate({
+			    rules: {
+			        field_categories: {required: true,maxlength: 50,checkCurrency:true},
+			    },
+			    errorElement : 'div',
+			    errorPlacement: function(error, element) {
+					var placement = $(element).data('error');
+					if(placement){
+						$(placement).append(error)
+					} 
+					else{
+						error.insertAfter(element);
+					}
+				},
+				submitHandler: function (form) {
+					var _form = $(form).serializeArray();
+					if(data[2] == _form[0]['value']){
+						Materialize.toast('You did not even change the category.',4000);
+					}
+					else{
+						var ajax = system.ajax('../assets/harmony/Process.php?update-product',[id,["field_categories",_form[0]['value']]]);
 						ajax.done(function(ajax){
 							console.log(ajax);
 							if(ajax == 1){
@@ -2014,8 +2087,8 @@ product = {
 						  		<div class='row'>
 						  			<div class='col s12'>
 						  				<label for='field_price'>${data[1]}: </label>
-						  				<textarea class='materialize-textarea' id='field_description' data-field='field_description' data-error='.error_description' name='field_description'>${data[2]}</textarea>
-						  				<div class='error_description'></div>
+						  				<div id='field_description'></div>
+						  				<div id='display_errorDescription'></div>
 						  			</div>
 						  		</div>
 						  		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>
@@ -2024,31 +2097,32 @@ product = {
 			$("#modal_popUp .modal-content").html(content);
 			$('#modal_popUp').modal('open');
 
-			system.froala("#field_description");
+			let editor = system.quill('#field_description');
+			editor.clipboard.dangerouslyPasteHTML(data[2]);
+
+			var limit = 1000;
+			editor.on('text-change', function(delta, old, source) {
+				if (editor.getLength() > limit) {
+					editor.deleteText(limit, editor.getLength());
+					$("#field_description").attr({"style":"box-shadow:0px 1px 1px red"});
+					$("#display_errorDescription").html("You have reached max input allowed.");
+				}
+				else{
+					$("#field_description").attr({"style":"box-shadow:0px 1px 1px green"});
+					$("#display_errorDescription").html("");
+				}
+			});
 
 			$("#form_update").validate({
-			    rules: {
-			        field_description: {required: true,maxlength: 1000},
-			    },
-			    errorElement : 'div',
-			    errorPlacement: function(error, element) {
-					var placement = $(element).data('error');
-					if(placement){
-						$(placement).append(error)
-					} 
-					else{
-						error.insertAfter(element);
-					}
-				},
 				submitHandler: function (form) {
-					var _form = $(form).serializeArray();
-					if(data[2] == _form[0]['value']){
+					let _form = editor.root.innerHTML;
+					console.log(editor.root.innerHTML);
+					if(data[2] == _form){
 						Materialize.toast('You did not even change the product name.',4000);
 					}
 					else{
-						var ajax = system.ajax('../assets/harmony/Process.php?update-product',[id,_form]);
+						var ajax = system.ajax('../assets/harmony/Process.php?update-product',[id,['field_description',_form]]);
 						ajax.done(function(ajax){
-							console.log(ajax);
 							if(ajax == 1){
 								system.clearForm();
 								Materialize.toast('Description is updated.',4000);
@@ -2095,9 +2169,8 @@ product = {
 				},
 				submitHandler: function (form) {
 					var _form = $(form).serializeArray();
-					var ajax = system.ajax('../assets/harmony/Process.php?update-product',[id,_form]);
+					var ajax = system.ajax('../assets/harmony/Process.php?update-product',[id,["field_status",_form[0]['value']]]);
 					ajax.done(function(ajax){
-						console.log(ajax);
 						if(ajax == 1){
 							system.clearForm();
 							Materialize.toast('status is updated.',4000);
