@@ -1690,11 +1690,10 @@ product = {
 		return data.responseText;
 	},
 	display:function(id){
-		var content = "", image = "", productImage = '',chips = [],chipsContent = "";
+		var content = "", image = [], productImage = "",  chips = [],chipsContent = "";
 		var data = system.ajax('../assets/harmony/Process.php?get-productDetails',id);
 		data.done(function(data){
 			data = JSON.parse(data);
-			productImage = ((data[0][10] == "") || (data[0][10] == null))?"default.png":data[0][10];
 			if(data[0][4].length>0){
 				if(data[0][4][0] == "["){
 					chips = JSON.parse(data[0][4]);
@@ -1710,10 +1709,11 @@ product = {
 				chipsContent = "No category";				
 			}
 
-			image = `<div class='card-profile-image'>
-					  	<img class='activator' width='100%' draggable='false' src='../assets/images/products/${productImage}' alt='product-img'>
-					  	<a data-cmd='updateProductPicture' data-value='${productImage}' data-node='${data[0][0]}' data-prop='Picture' class='btn waves-effect white-text no-shadow black' style='font-size: 10px;z-index: 1;padding: 0 12px;top: -36px;'>Change</a>
-					</div>`;
+			for(let x = 0; x <= 4; x++){
+				productImage = ((data[0][10+x] == "") || (data[0][10+x] == null))?"default.png":data[0][10+x];
+				image.push(`<div class='card-profile-image'><img class='activator' width='100%' draggable='false' src='../assets/images/products/${productImage}' alt='product-img'><a data-cmd='updateProductPicture' data-value='${productImage}' data-picture="${x}" data-node='${data[0][0]}' data-prop='Picture' class='btn waves-effect white-text no-shadow black' style='font-size: 10px;z-index: 1;padding: 0 12px;top: -36px;'>Change</a></div>`);
+			}
+
 			content = `
 					<table>
 						<tr>
@@ -1745,9 +1745,9 @@ product = {
 						</tr>
 						<tr>
 							<td class='bold'>Brand:</td>
-							<td class='grey-text'>${data[0][11]}</td>
+							<td class='grey-text'>${data[0][15]}</td>
 							<td>
-								<a data-cmd='updateProduct' data-value='${data[0][11]}' data-node='${data[0][0]}' data-prop='Brand' class='right tooltipped btn-floating waves-effect no-shadow white right' data-position='left' data-delay='0' data-tooltip='Update'>
+								<a data-cmd='updateProduct' data-value='${data[0][15]}' data-node='${data[0][0]}' data-prop='Brand' class='right tooltipped btn-floating waves-effect no-shadow white right' data-position='left' data-delay='0' data-tooltip='Update'>
 									<i class='material-icons right black-text hover'>mode_edit</i>
 								</a>
 							</td>
@@ -1785,7 +1785,14 @@ product = {
 							<td></td>
 						</tr>
 					</table>`;
-			$("#product").html(`<div class='col s12 m3 l3' style='padding-top: 0.5rem;'>${image}</div><div class='col s12 m9 l9'>${content}</div>`);
+
+			$("#product").html(`
+				<div class='col s12 m3 l3' style='padding-top: 0.5rem;'>${image[0]}</div>
+				<div class='col s12 m3 l3' style='padding-top: 0.5rem;'>${image[1]}</div>
+				<div class='col s12 m3 l3' style='padding-top: 0.5rem;'>${image[2]}</div>
+				<div class='col s12 m3 l3' style='padding-top: 0.5rem;'>${image[3]}</div>
+				<div class='col s12 m12 l12'>${content}</div>
+			`);
 			
 			$("a[data-cmd='updateProduct']").on('click',function(){
 				var data = $(this).data();
@@ -1795,7 +1802,7 @@ product = {
 
 			$("a[data-cmd='updateProductPicture']").on('click',function(){
 				var data = $(this).data();
-				data = [data.node,data.prop,data.value];
+				data = [data.node,data.prop,data.value,data.picture];
 				product.updatePicture(id,data);
 			})
 		});
@@ -1950,25 +1957,25 @@ product = {
 			}); 
 		}			
 		else if(data[1] == "Brand"){
-			let productCategory = product.getCategory();
-			let categoryContent = "";
-			productCategory = JSON.parse(productCategory);
+			let productBrand = product.getBrands();
+			let brandContent = "";
+			productBrand = JSON.parse(productBrand);
 
-			for(let c of productCategory){
+			for(let c of productBrand){
 				if(data[2] == c[0]){
-					categoryContent += `<option selected>${c[0]}</option>`;
+					brandContent += `<option selected>${c[0]}</option>`;
 				}
 				else{
-					categoryContent += `<option>${c[0]}</option>`;
+					brandContent += `<option>${c[0]}</option>`;
 				}
 			}
-			$("#field_category").html(categoryContent);
+			$("#field_category").html(brandContent);
 
 			var content = `<h4>Change ${data[1]}</h4>
 						  <form id='form_update' class='formValidate' method='get' action='' novalidate='novalidate'>
 						  		<div class='col s12'>
 						  			<label for='field_categories'>${data[1]}: </label>
-						  			<select id='field_categories' type='text' length='100' name='field_categories' data-error='.error_categories'>${categoryContent}</select>
+						  			<select id='field_categories' type='text' length='100' name='field_categories' data-error='.error_categories'>${brandContent}</select>
 						  			<div class='error_categories'></div>
 						  		</div>
 						  		<button type='submit' data-cmd='button_proceed' class='waves-effect waves-grey grey lighten-5 blue-text btn-flat modal-action right'>Save</button>
@@ -1998,7 +2005,7 @@ product = {
 						Materialize.toast('You did not even change the category.',4000);
 					}
 					else{
-						var ajax = system.ajax('../assets/harmony/Process.php?update-product',[id,["field_categories",_form[0]['value']]]);
+						var ajax = system.ajax('../assets/harmony/Process.php?update-product',[id,["field_brand",_form[0]['value']]]);
 						ajax.done(function(ajax){
 							console.log(ajax);
 							if(ajax == 1){
@@ -2244,9 +2251,8 @@ product = {
 					            $("button[data-cmd='save']").click(function(){									    	
 							    	$(this).html("Uploading...").addClass('disabled');
 							    	if(status){
-										var ajax = system.ajax('../assets/harmony/Process.php?update-productPicture',[id,$image.cropper("getDataURL")]);
+										var ajax = system.ajax('../assets/harmony/Process.php?update-productPicture',[id,$image.cropper("getDataURL"),data[3]]);
 										ajax.done(function(ajax){
-											console.log(ajax);
 											if(ajax == 1){
 												Materialize.toast('Picture has been changed.',4000);
 												$('#modal_confirm').modal('close');	
@@ -2335,27 +2341,25 @@ product = {
 	},
 	add:function(){
 		$("#add_product").on('click',function(){
-			var data = system.xml("pages.xml");
+			let data = system.xml("pages.xml");
 			$(data.responseText).find("addProduct").each(function(i,content){
 				$("#modal_popUp .modal-content").html(content);
 				$('#modal_popUp').modal('open');
 
-				let productCategory = product.getCategory();
+				let productCategory = product.getCategory('all');
+				let productBrand = product.getBrands('all');
 				let categoryContent = "";
+				let brandContent = "";
 				productCategory = JSON.parse(productCategory);
+				productBrand = JSON.parse(productBrand);
 
 				for(let c of productCategory){
-					categoryContent += `<option>${c[1]}</option>`;
+					categoryContent += `<option>${c[0]}</option>`;
 				}
 				$("#field_category").html(categoryContent);
 
-				let productBrand = product.getBrands();
-				let brandContent = "";
-				productBrand = JSON.parse(productBrand);
-				console.log(productBrand);
-
 				for(let b of productBrand){
-					brandContent += `<option>${b[1]}</option>`;
+					brandContent += `<option>${b[0]}</option>`;
 				}
 
 				$("#field_brand").html(brandContent);
@@ -2382,15 +2386,13 @@ product = {
 					},
 					submitHandler: function (form) {
 						var _form = $(form).serializeArray();
-						console.log(_form);
 						var data = system.ajax('../assets/harmony/Process.php?set-newProductAdmin',_form);
 						data.done(function(data){
-							console.log(data);
-							if(data == 1){
+							let result = JSON.parse(data);
+							if(result[0] == 1){
 								$('#modal_popUp').modal('close');	
 								Materialize.toast('Saved.',4000);
-								system.clearForm();
-								product.ini();
+								window.location.hash = `#cmd=index;content=focusProduct;${result[1]}`;
 							}
 							else{
 								Materialize.toast('Cannot process request.',4000);
@@ -2481,9 +2483,25 @@ product = {
 			});
 		});
 	},
-	getBrands:function(){
-		var data = system.html('../assets/harmony/Process.php?get-brands');
-		return data.responseText;
+	getBrands:function(all){
+		if(all == all){
+			var data = system.html('../assets/harmony/Process.php?get-allbrands');
+			return data.responseText;
+		}
+		else{
+			var data = system.html('../assets/harmony/Process.php?get-brands');
+			return data.responseText;			
+		}
+	},
+	getCategory:function(all){
+		if(all == all){
+			var data = system.html('../assets/harmony/Process.php?get-allcategory');
+			return data.responseText;
+		}
+		else{
+			var data = system.html('../assets/harmony/Process.php?get-category');
+			return data.responseText;
+		}
 	},
 	listBrands:function(){
 		var data = JSON.parse(this.getBrands());
@@ -2639,10 +2657,6 @@ product = {
 				});
 			});
 		});
-	},
-	getCategory:function(){
-		var data = system.html('../assets/harmony/Process.php?get-category');
-		return data.responseText;
 	},
 	listCategory:function(){
 		var data = JSON.parse(product.getCategory());

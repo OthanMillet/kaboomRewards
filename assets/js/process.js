@@ -20,7 +20,8 @@ var system = function(){
 		        data: {data: data},
 		        async: !1,
 		        cache:false,
-		        error: function() {
+		        error: function(e) {
+		        	console.log(e.responseText);
 		            console.log("Error occured")
 		        }
 		    });
@@ -32,7 +33,8 @@ var system = function(){
                 dataType: 'html',
 		        async: !1,
 		        cache:false,
-		        error: function() {
+		        error: function(e) {
+		        	console.log(e.responseText);
 		            console.log("Error occured")
 		        }
 		    });
