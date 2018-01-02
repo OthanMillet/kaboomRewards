@@ -282,8 +282,7 @@ market = {
 				disabled = "disabled";
 			else
 				disabled = "";
-
-				content += `<div class='col l4 m6 s12 gallery-item gallery-expand gallery-filter product ${v[4]}'>
+				content += `<div data-price='${v[3]}' data-date='${v[7]}' class='col l4 m6 s12 gallery-item gallery-expand gallery-filter product ${v[4]}'>
 								<div class='gallery-curve-wrapper'>
 									<a class='gallery-cover gray'>
 										<img alt='placeholder' src='assets/images/products/${v[10]}' style='width:100%'>
@@ -471,7 +470,6 @@ market = {
 	fetchFilter:function(){
 		let data = system.ajax('assets/harmony/Process.php?get-filteredProducts',market.getFilterField());
 		data.done(function(data){
-			// console.log(data);
 			data = JSON.parse(data);
 			if(data.length > 0){
 				market.products(data);
