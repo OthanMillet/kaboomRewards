@@ -600,18 +600,17 @@ cart = {
 	checkout:function(data){
 		var data = system.ajax('assets/harmony/Process.php?set-orders',data);
 		data.done(function(data){
-			console.log(data);
-			// if(data == 1){
-			// 	Materialize.toast('Order Placed.',4000);
-			// 	cart.removeProduct();
-			// 	window.location.reload(true);
-			// } 
-			// else if(data == 2){
-			// 	Materialize.toast('Insufficient points.',4000);
-			// }
-			// else{
-			// 	Materialize.toast('Cannot process orders. Try some other time.',4000);
-			// }
+			if(data == 1){
+				Materialize.toast('Order Placed.',4000);
+				cart.removeProduct();
+				window.location.reload(true);
+			} 
+			else if(data == 2){
+				Materialize.toast('Insufficient points.',4000);
+			}
+			else{
+				Materialize.toast('Cannot process orders. Try some other time.',4000);
+			}
 		});
 	},
 	removeProduct:function(){
@@ -716,13 +715,20 @@ cart = {
 		$("button[data-cmd='checkOut']").on('click',function(){
 			let cartList = cart.get();
 			let total = 0;
+			let address = ($("#field_address")[0].checked)?$("#input_shippingAddress").val():profile.get()[0][11];
 			total = cart.subtotalCart();
-			if(profile.getPoints() < total){
-				Materialize.toast('Insufficient points.',4000);
+
+			if(address == ""){
+				Materialize.toast('Shipping address is required.',4000);
 			}
 			else{
-				Materialize.toast('Proceed',4000);
-				cart.checkout(cartList);
+				if(profile.getPoints() < total){
+					Materialize.toast('Insufficient points.',4000);
+				}
+				else{
+					Materialize.toast('Proceed',4000);
+					cart.checkout([cartList,address]);
+				}				
 			}
 		});
 	},
@@ -815,9 +821,6 @@ profile = {
 	getAccountCart:function(){
 		let data = this.get();
 		let points = this.getPoints();
-
-
-		console.log(data);
 
 		let content = `
 					<tr>
