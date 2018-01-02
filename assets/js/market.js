@@ -13,6 +13,10 @@ product = {
 		var data = system.ajax('assets/harmony/Process.php?get-availableProducts',[min,max]);
 		return data.responseText;
 	},
+	count:function(){
+		var data = system.ajax('assets/harmony/Process.php?get-countProducts',[min,max]);
+		return data.responseText;
+	},
 	getCategory:function(){
 		var data = system.html('assets/harmony/Process.php?get-category');
 		return data.responseText;
@@ -552,8 +556,8 @@ market = {
 cart = {
 	ini:function(){
 		this.showCart();
-		profile.getAccountCart();
 		this.shippingAddress();
+		profile.getAccountCart();
 
 		let total = 0;
 		$.each($("input[data-cmd='input']"),function(i,v){
@@ -597,17 +601,17 @@ cart = {
 		var data = system.ajax('assets/harmony/Process.php?set-orders',data);
 		data.done(function(data){
 			console.log(data);
-			if(data == 1){
-				Materialize.toast('Order Placed.',4000);
-				cart.removeProduct();
-				window.location.reload(true);
-			} 
-			else if(data == 2){
-				Materialize.toast('Insufficient points.',4000);
-			}
-			else{
-				Materialize.toast('Cannot process orders. Try some other time.',4000);
-			}
+			// if(data == 1){
+			// 	Materialize.toast('Order Placed.',4000);
+			// 	cart.removeProduct();
+			// 	window.location.reload(true);
+			// } 
+			// else if(data == 2){
+			// 	Materialize.toast('Insufficient points.',4000);
+			// }
+			// else{
+			// 	Materialize.toast('Cannot process orders. Try some other time.',4000);
+			// }
 		});
 	},
 	removeProduct:function(){
@@ -629,13 +633,12 @@ cart = {
 		let cartList = cart.get(), _cart = "";
 		let account = profile.get();
 		let id = profile.get()[0][0];
-		products = JSON.parse(product.get());
+		let products = JSON.parse(product.get(0,'all'));
 
 		if(cartList.length > 0){
 			$.each(cartList,function(i,v){
 				search = system.searchJSON(products,0,v[1][0]);
 				if(search.length>0){
-					// console.log(total);
 					total = ((search[0][3]*1)*(v[1][1]*1));
 					subtotal = subtotal + total;
 					content += `<tr class='animated'>
@@ -661,7 +664,6 @@ cart = {
 								</tr>`;
 				}
 			});
-
 			$("#display_productInCart table tbody").html(content);
 			$("#display_total span").html(subtotal);
 			cart.options();
@@ -680,12 +682,6 @@ cart = {
 			let data = $(this).data();
 			let count = Number($(this).val());
 			let cartList = JSON.parse(localStorage.getItem(data.cart));
-
-			console.log(data);
-
-			console.log(($(this).val() < data.limit));
-			console.log(($(this).val()>0));
-
 			if(($(this).val() < data.limit) && ($(this).val()>0)){
 				total = cart.subtotalCart();
 
@@ -693,7 +689,6 @@ cart = {
 				localStorage.setItem(data.cart,cartList);
 				$(this).parent().parent().find('.count').html(count*data.cost);
 				cart.check(total);
-
 				$("#display_total span").html(total);
 			}
 			else{
@@ -709,12 +704,7 @@ cart = {
 			setTimeout(function(){
 				let data = $(_this).data();
 				$(_this).parents('tr').remove();
-
 				total = cart.subtotalCart();
-				// $.each($("input[data-cmd='input']"),function(i,v){
-				// 	total = total + ((v.value*1)*(v.dataset.cost*1));
-				// });
-
 				$("#display_total span").html(total);
 				cart.check(total);
 				localStorage.removeItem(data.cart);
@@ -726,25 +716,19 @@ cart = {
 		$("button[data-cmd='checkOut']").on('click',function(){
 			let cartList = cart.get();
 			let total = 0;
-
 			total = cart.subtotalCart();
-			// $.each($("input[data-cmd='input']"),function(i,v){
-			// 	total = total + ((v.value*1)*(v.dataset.cost*1));
-			// });
-
 			if(profile.getPoints() < total){
 				Materialize.toast('Insufficient points.',4000);
 			}
 			else{
 				Materialize.toast('Proceed',4000);
-				// cart.checkout(cartList);
+				cart.checkout(cartList);
 			}
 		});
 	},
 	shippingAddress:function(){
 		$("#field_address").on('click',function(){
 			let shipping = $(this)[0].checked;
-			console.log(shipping);
 			(shipping)?$('#display_differentAddress').removeClass('hidden'):$('#display_differentAddress').addClass('hidden');
 		})
 	},
@@ -753,7 +737,6 @@ cart = {
 		$.each($("input[data-cmd='input']"),function(i,v){
 			total = total + ((v.value*1)*(v.dataset.cost*1));
 		});
-
 		return total;
 	},
 };
