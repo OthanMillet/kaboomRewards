@@ -5,7 +5,7 @@
 		</div>
 	</div>
 	<div class="divider"></div>    	
-	<div id='display_employeeDetails' class="row margin">							
+	<div id='display_employeeDetails' class="row margin">
 		<div class='col s12 m12 l12' id="product"></div>
 	</div>
 	<div id='display_error' class="row margin"></div>
@@ -14,13 +14,8 @@
     $("select").material_select();
     $(".dropdown-button").dropdown();
     $('.tooltipped').tooltip({delay: 50});
-
     var hash = window.location.hash;
     var hash = hash.split(';');
     var id = hash[2];
 	product.display(id);
 </script>
-
-
-
-

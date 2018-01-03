@@ -354,3 +354,26 @@ nav .brand-logo {
 .bold{
   font-weight: bold;
 }
+
+span.halfway-fab {
+    position: absolute;
+    right: 24px;
+    bottom: 10px;
+}
+
+.transparent{
+	background-color:transparent !important;
+	
+}
+
+.display_listProductImages ul li{
+	display:inline-block;
+	width:100px;
+	height:100px;
+	opacity:0.5;
+}
+
+li.active{
+	border:1px solid #ccc;
+	opacity:1 !important;
+}

@@ -1,5 +1,6 @@
 $(document).ready(function(){
 	$('.tooltipped').tooltip({delay: 1});
+	$('.modal').modal();
 });
 
 product = {
@@ -268,7 +269,7 @@ market = {
 		});	
 	},
 	products:function(list){
-		let content = "",search = [], disabled = "", category = "", categoryList = "";
+		let content = "",search = [], disabled = "", category = "", categoryList = "", imageList = "";
 		let cartList = cart.get();
 
 		let account = profile.get();
@@ -278,49 +279,24 @@ market = {
 
 		$.each(list,function(i,v){
 			search = system.searchJSON(cartList,0,v[0]);
-			if(search.length>0)
-				disabled = "disabled";
-			else
-				disabled = "";
-				content += `<div data-price='${v[3]}' data-date='${v[7]}' class='col l4 m6 s12 gallery-item gallery-expand gallery-filter product ${v[4]}'>
-								<div class='gallery-curve-wrapper'>
-									<a class='gallery-cover gray'>
-										<img alt='placeholder' src='assets/images/products/${v[10]}' style='width:100%'>
-									</a>
-									<div class='gallery-header row'>
-										<div class='truncate' style='height:30px; overflow:hidden;'>${v[1]}</div>
-										<div class='bold' style="font-size:20px;">${v[3]}</div>
-									</div>
-									<div class='gallery-body row'>
-										<div class='col s12'>
-											<div class='title-wrapper'>
-												<h3>${v[1]}</h3>
-												<span class='gj'>${v[3]}</span>
-											</div>
-											<div style='top:30px; position:relative;'>
-												<p class='fi'>${v[5]}</p>
-												<div class='carousel-wrapper'>
-													<div class='t carousel initialized'>
-														<a class='carousel-item active' href='#one!'>
-															<img src='assets/images/logo.png'>
-														</a>
-														<a class='carousel-item' href='#two!'>
-															<img src='assets/images/logo.png'>
-														</a> 
-														<a class='carousel-item' href='#three!'>
-															<img src='assets/images/logo.png'>
-														</a> 
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-									<div class='gallery-action'>
-										<button class='btn-floating btn-large waves-effect waves-light shopping' data-cmd='addWishlist' data-wishlist='${v[0]}' data-node='${v[0]}'><i class='material-icons'>favorite</i></button>
-										<button class='btn-floating btn-large waves-effect waves-light shopping cyan' data-cmd='addCart' data-price='${v[3]}' ${disabled} data-node='${v[0]}'><i class='material-icons'>shopping_cart</i></button>
-									</div>
-								</div>
-							</div>`;
+			disabled = (search.length>0)?disabled = "disabled":disabled = "";
+
+			imageList = JSON.stringify([v[10],v[11],v[12],v[13]]);
+			content += `<div class='col l4 m6 s12'>
+							<div class="card">
+						        <div class="card-image waves-effect waves-block waves-light">
+						            <img class="activator" src='assets/images/products/${v[10]}'>
+						            <span class='halfway-fab'>
+										<button class='btn-floating waves-effect waves-light shopping white z-depth-0 transparent' data-cmd='addWishlist' data-wishlist='${v[0]}' data-node='${v[0]}'><i class='material-icons grey-text'>favorite</i></button>
+										<button class='btn-floating waves-effect waves-light shopping cyan' data-cmd='addCart' ${disabled} data-price='${v[3]}' data-product='${v[1]}' data-description='${v[5]}' data-node='${v[0]}' data-images='${imageList}'><i class='material-icons'>shopping_cart</i></button>
+						            </span>
+						        </div>
+						        <div class="card-content">
+									<div class='truncate' style='height:30px; overflow:hidden;'>${v[1]}</div>
+									<div class='bold' style="font-size:20px;">K ${v[3]}</div>
+						        </div>
+						    </div>
+						</div>`;				
 		});
 
 		$("#products").append(content);
@@ -329,38 +305,64 @@ market = {
 			$(this).galleryExpand('open');
 		})
 
-		$('.product').galleryExpand({
-			onShow: function(el) {
-				var carousel = el.find('.carousel.initialized');
-				carousel.carousel({
-					dist: 0,
-					padding: 10
-				});
-				$('ul.tabs').tabs();
-			}
-		});
-
 		wishlist.disableButton(id);
 		$("button[data-cmd='addWishlist']").on('click',function(){
-			$(this).attr({"disabled":true});
+			$(this).attr({"disabled":true}).addClass('white');
+			$(this).children('i').removeClass('grey-text').addClass('pink-text');
 			let data = $(this).data();
 			wishlist.save(id,data.node);
 		});
 
 		$("button[data-cmd='addCart']").on('click',function(){
-			let data = $(this).data();
-			let cartCount = cart.count();
+			let data = $(this).data(), imagesList = "";
 
-			if(profile.getPoints() >= data.price){
-				$(this).attr({"disabled":true});
-				$("#display_cartTotal").html((cartCount*1)+1);
-				localStorage.setItem(`cartCount`,((cartCount*1)+1));
-				localStorage.setItem(`cart-${((cartCount*1)+1)}`,JSON.stringify([data.node,1]));
-				Materialize.toast('Thanks! You added 1 product to your cart.',4000);
+			for(let img of data.images){
+				if(img != "default.png"){
+					imagesList += `
+	                    <li class=''><img class='' width='100%' src='assets/images/products/${img}'></li>
+					`;
+				}
 			}
-			else{
-				Materialize.toast('Insufficient points.',4000);
-			}
+
+			let content = `
+                <div class='col s12 m5 l5'>
+                    <div class='display_mainProductImage'>
+                        <img class='materialboxed' width='100%' src='assets/images/products/${data.images[0]}'>
+                    </div>
+                    <div class='display_listProductImages'>
+                        <ul>${imagesList}</ul>
+                    </div>
+                </div>
+                <div class='col s12 m7 l7'>
+                    <h4>${data.product}</h4>
+                    <h5>K ${data.price}</h5>
+                    <p>${data.description}</p>
+                    <div>
+                        <button>wishlist</button>
+                        <button>buy</button>
+                    </div>
+                </div>
+			`;
+			$('#display_product').html(content);
+			$('.materialboxed').materialbox();
+
+			$(".display_listProductImages ul li:nth-child(1)").addClass('active');
+			console.log($(".display_listProductImages ul li:nth-child(1)"));
+
+			$('#modal_cart').modal('open');
+			// let data = $(this).data();
+			// let cartCount = cart.count();
+
+			// if(profile.getPoints() >= data.price){
+			// 	$(this).attr({"disabled":true});
+			// 	$("#display_cartTotal").html((cartCount*1)+1);
+			// 	localStorage.setItem(`cartCount`,((cartCount*1)+1));
+			// 	localStorage.setItem(`cart-${((cartCount*1)+1)}`,JSON.stringify([data.node,1]));
+			// 	Materialize.toast('Thanks! You added 1 product to your cart.',4000);
+			// }
+			// else{
+			// 	Materialize.toast('Insufficient points.',4000);
+			// }
 		});
 	},
 	getFilterField:function(){
@@ -487,67 +489,6 @@ market = {
 	minMaxPricedProducts:function(){
 		var data = system.html('assets/harmony/Process.php?get-minMaxPricedProducts');
 		return data.responseText;
-	},
-	getProduct:function(id){
-		var data = product.getByID(id);
-		var suggestions = product.suggestionsByProduct(id);
-		var data_wishlist = wishlist.get();
-		var search_wihlist = system.searchJSON(data_wishlist,1,id);
-		var search_cart = system.searchJSON(data_wishlist,1,id);
-
-		var content = `<div class='row'>
-							<div class='col s12 m6 l6'>
-								<div class='card'>
-									<div class='card-image'>
-									<img alt='' class='responsive-img valign' draggable='false' src='assets/images/products/${data[10]}'>
-									</div>
-								</div>
-							</div>
-							<div class='col s12 m6 l6'>
-								<h4>${data[1]}</h4>
-								<h2 class='pink-text'>K ${data[3]}</h2>
-								<button class='btn-floating waves-effect' data-cmd='addWishlist' data-wishlist='${data[0]}' data-node='${data[0]}'><i class='mdi-action-favorite'></i></button>
-								<button class='btn waves-effect cyan' data-cmd='addCart' data-node='${data[0]}' data-price='${data[3]}' data-qty='1'>Add to cart</button>
-							</div>
-						</div>
-						<div class='row'>
-							<p>${data[5]}</p>
-						</div>`;
-		$("#display_product").html(content);
-
-		if(search_wihlist.length>0){
-			wishlist.disableButton();
-		}
-
-		$("button[data-cmd='addCart']").on('click',function(){
-			$(this).attr({"disabled":"true"});
-			var product = [$(this).data('node'),Number($(this).data('price')),Number($(this).data('qty'))];
-			cart.addToCart(product);
-
-			var content = `<div class='row'>
-								<div class='col s12 m4 l4'>
-									<div class='card'>
-										<div class='card-image'>
-											<img alt='' class='responsive-img valign' draggable='false' src='assets/images/products/${data[10]}'>
-										</div>
-									</div>
-								</div>
-								<div class='col s12 m8 l8'>
-									<h4 class='white-text'>${data[1]}</h4>
-									<h2 class='cyan-text'>K ${data[3]}</h2>
-								</div>
-							</div>
-							<div class='row'>
-								<div class='col s12'>
-									<a class='btn waves-effect pink' href='cart.html'>View my cart</a>
-									<a class='right' href='sale.html'>Continue shoping</a>
-								<div>
-							</div>`;
-
-			$("#modal .modal-content").html(content);
-			$('#modal').openModal('show');			
-			$("#display_cartTotal").html(cart.get().length);
-		});
 	},
 };
 
@@ -872,7 +813,8 @@ wishlist = {
 			} 
 			else{
 				Materialize.toast('Cannot process. Try some other time.',4000);
-				$(`button[data-node='${product}']`).removeAttr('disabled');
+				$(`button[data-node='${product}']`).removeAttr('disabled').addClass('white');
+				$(`button[data-node='${product}']`).children('i').removeClass('grey-text').addClass('pink-text');
 			}
 		});
 	},	
@@ -892,7 +834,8 @@ wishlist = {
 	disableButton:function(id){
 		var data = wishlist.get(id);
 		$.each(data,function(i,v){
-			$(`button[data-wishlist='${v[1]}']`).attr({"disabled":"true"});
+			$(`button[data-wishlist='${v[1]}']`).attr({"disabled":"true"}).addClass('white');
+			$(`button[data-wishlist='${v[1]}'] i`).removeClass('grey-text').addClass('pink-text');
 		});
 	}
 };

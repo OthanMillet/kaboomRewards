@@ -10,8 +10,8 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
         <link rel="stylesheet" href="assets/css/original.materialize.min.css">
         <link rel="stylesheet" href="assets/css/nouislider.min.css">
-        <link rel="stylesheet" href="assets/css/style.css">
         <link rel="stylesheet" href="assets/css/gallery.css">
+        <link rel="stylesheet" href="assets/css/style.css">
         <link rel="stylesheet" href="assets/css/animate.css">
     </head>
     <body>
@@ -55,54 +55,48 @@
                 <div class="categories-container pin-top"></div>
             </div>
         </nav>
-        <div class="row">
-            <div class="cx gray">
-                <div class="db">
-                    <div class="b e">
-                        <div class="col s3">
-                            <form id='form_productFilter'>
-                                <div class="filter-container">
-                                    <div class="row">
-                                        <label for="price-slider" class="active">Category</label><br/>
-                                        <ul id='display_categories'></ul>
-                                    </div>
-                                    <div class="row">
-                                        <label for="price-slider" class="active">Brands</label><br/>
-                                        <ul id='display_brands'></ul>
-                                    </div>
-                                    <div class="row">
-                                        <div class="input-field">
-                                            <input name="search" name='field_searchProduct' id='field_searchProduct' type="text" >
-                                            <label for="search">Search</label>
-                                        </div>
-                                        <div class="input-field">
-                                            <select class="initialized" name="field_sortProduct" id='field_sortProduct'>
-                                                <option disabled selected>Sort By</option>
-                                                <option >Price ascending</option>
-                                                <option >Price descending</option>
-                                                <option >Newly arrived</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="row" style="margin-bottom: 30px; margin-top: 30px;">
-                                        <label for="price-slider" class="active">Price Range</label><br/>
-                                        <div class='col s12'>
-                                            <div class="input-field">
-                                                <div id="price-slider"></div>
-                                                <div class="col-s6 left" id='price-min' style="margin-top: 5px;">0</div>
-                                                <div class="col-s6 right" id='price-max' style="margin-top: 5px;">100</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
+        <div class="row grey lighten-4">
+            <div class="col s3">
+                <form id='form_productFilter'>
+                    <div class="filter-container">
+                        <div class="row">
+                            <label for="price-slider" class="active">Category</label><br/>
+                            <ul id='display_categories'></ul>
                         </div>
-                        <div class="col s9">
-                            <div id='products'></div>
-                            <a style='width: 100%;' class="waves-effect waves-light btn z-depth-0 center grey lighten-4 grey-text" data-cmd='showMore_products'>Load More</a>
+                        <div class="row">
+                            <label for="price-slider" class="active">Brands</label><br/>
+                            <ul id='display_brands'></ul>
+                        </div>
+                        <div class="row">
+                            <div class="input-field">
+                                <input name="search" name='field_searchProduct' id='field_searchProduct' type="text" >
+                                <label for="search">Search</label>
+                            </div>
+                            <div class="input-field">
+                                <select class="initialized" name="field_sortProduct" id='field_sortProduct'>
+                                    <option disabled selected>Sort By</option>
+                                    <option >Price ascending</option>
+                                    <option >Price descending</option>
+                                    <option >Newly arrived</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-bottom: 30px; margin-top: 30px;">
+                            <label for="price-slider" class="active">Price Range</label><br/>
+                            <div class='col s12'>
+                                <div class="input-field">
+                                    <div id="price-slider"></div>
+                                    <div class="col-s6 left" id='price-min' style="margin-top: 5px;">0</div>
+                                    <div class="col-s6 right" id='price-max' style="margin-top: 5px;">100</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </form>
+            </div>
+            <div class="col s9">
+                <div id='products'></div>
+                <a style='width: 100%;' class="waves-effect waves-light btn z-depth-0 center grey lighten-4 grey-text" data-cmd='showMore_products'>Load More</a>
             </div>
         </div>
         <div class="hiddendiv common"></div>
@@ -181,6 +175,16 @@
                 </li>
             </ul>
         </aside>
+
+        <div class="modal bottom-sheet" id="modal_cart" style="max-height: 100%;">
+            <div class="modal-content row" style="min-height:768px;">
+                <div class="col s12">
+                    <a href="#!" class="right modal-action modal-close btn-floating waves-effect waves-green btn-flat"><i class="material-icons black-text">close</i></a>
+                </div>
+                <div id="display_product"></div>
+            </div>
+        </div>
+
         <script src="assets/js/jquery.js"></script>    
         <script src="assets/js/materialize.min.js"></script>
         <script src="assets/js/perfect-scrollbar.min.js"></script>
@@ -191,7 +195,6 @@
         <script src="assets/js/nouislider.min.js"></script>
         <script src="assets/js/process.js"></script>
         <script src="assets/js/market.js"></script>
-        <script src="assets/js/gallery.js"></script> 
         <script type="text/javascript">
             $(".dropdown-button").dropdown();
 
