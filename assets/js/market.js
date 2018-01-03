@@ -279,8 +279,9 @@ market = {
 
 		$.each(list,function(i,v){
 			search = system.searchJSON(cartList,0,v[0]);
-			disabled = (search.length>0)?disabled = "disabled":disabled = "";
+			disabled = (search.length>0)?"disabled":disabled = "";
 
+			console.log(disabled);
 			imageList = JSON.stringify([v[10],v[11],v[12],v[13]]);
 			content += `<div class='col l4 m6 s12'>
 							<div class="card">
@@ -334,35 +335,42 @@ market = {
                     </div>
                 </div>
                 <div class='col s12 m7 l7'>
-                    <h4>${data.product}</h4>
-                    <h5>K ${data.price}</h5>
+                    <h5>${data.product}</h5>
+                    <h5 class="bold pink-text">K ${data.price}</h5>
                     <p>${data.description}</p>
                     <div>
-                        <button>wishlist</button>
-                        <button>buy</button>
+						<button class='btn btn-flat waves-effect waves-light shopping cyan round white-text' id='addCart' data-price='${data.price}' data-node='${data.node}'><i class='material-icons right'>shopping_cart</i> Add to cart</button>
                     </div>
                 </div>
 			`;
 			$('#display_product').html(content);
 			$('.materialboxed').materialbox();
-
 			$(".display_listProductImages ul li:nth-child(1)").addClass('active');
-			console.log($(".display_listProductImages ul li:nth-child(1)"));
-
 			$('#modal_cart').modal('open');
-			// let data = $(this).data();
-			// let cartCount = cart.count();
 
-			// if(profile.getPoints() >= data.price){
-			// 	$(this).attr({"disabled":true});
-			// 	$("#display_cartTotal").html((cartCount*1)+1);
-			// 	localStorage.setItem(`cartCount`,((cartCount*1)+1));
-			// 	localStorage.setItem(`cart-${((cartCount*1)+1)}`,JSON.stringify([data.node,1]));
-			// 	Materialize.toast('Thanks! You added 1 product to your cart.',4000);
-			// }
-			// else{
-			// 	Materialize.toast('Insufficient points.',4000);
-			// }
+			$(".display_listProductImages ul li").on('click',function(){
+				$(".display_listProductImages ul li").removeClass('active');
+				let dom = $(this);
+				let imgSource = $(dom.html()).attr('src');
+				dom.attr({'class':'active'});
+				$(".display_mainProductImage img").attr({"src":imgSource});
+			})
+
+			$("#addCart").on('click',function(){
+				let data = $(this).data();
+				let cartCount = cart.count();
+
+				if(profile.getPoints() >= data.price){
+					$(this).removeClass('cyan').addClass('grey darken-4').attr({"disabled":true});
+					$("#display_cartTotal").html((cartCount*1)+1);
+					localStorage.setItem(`cartCount`,((cartCount*1)+1));
+					localStorage.setItem(`cart-${((cartCount*1)+1)}`,JSON.stringify([data.node,1]));
+					Materialize.toast('Thanks! You added 1 product to your cart.',4000);
+				}
+				else{
+					Materialize.toast('Insufficient points.',4000);
+				}
+			});
 		});
 	},
 	getFilterField:function(){

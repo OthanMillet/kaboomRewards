@@ -377,3 +377,7 @@ li.active{
 	border:1px solid #ccc;
 	opacity:1 !important;
 }
+
+.round{
+	border-radius:50px;
+}
